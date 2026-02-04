@@ -5,7 +5,7 @@ import com.zaxxer.hikari.HikariDataSource
 import io.ktor.server.application.*
 import org.jetbrains.exposed.v1.jdbc.Database
 
-const val EMBEDDED_URL = "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1"
+const val EMBEDDED_URL = "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;MODE=PostgreSQL"
 const val EMBEDDED_USER = "root"
 const val EMBEDDED_PASSWORD = ""
 

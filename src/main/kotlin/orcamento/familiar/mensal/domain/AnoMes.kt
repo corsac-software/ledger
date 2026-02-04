@@ -1,4 +1,4 @@
-package br.dev.brunorsch.orcamento.familiar.mensal
+package br.dev.brunorsch.orcamento.familiar.mensal.domain
 
 import kotlinx.datetime.Month
 import kotlinx.datetime.number
