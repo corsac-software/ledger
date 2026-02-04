@@ -1,12 +1,13 @@
-package br.dev.brunorsch.orcamento.familiar.mensal
+package br.dev.brunorsch.orcamento.familiar.mensal.domain
 
 import kotlinx.datetime.LocalDate
 
-class OrcamentoMensal(
+data class OrcamentoMensal(
     val id: Long,
+    val idUsuario: Long,
     val anoMes: AnoMes,
     val slug: String = anoMes.toFormatoSlug(),
     val dataInicio: LocalDate,
     val dataFim: LocalDate,
-    val lancamentos: List<LancamentoMensal>
+    val lancamentos: List<LancamentoMensal>? = null
 )

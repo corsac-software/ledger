@@ -1,7 +1,5 @@
-package br.dev.brunorsch.orcamento.familiar.mensal
+package br.dev.brunorsch.orcamento.familiar.mensal.domain
 
-import br.dev.brunorsch.orcamento.familiar.mensal.LancamentoMensal.Tipo.DESPESA
-import br.dev.brunorsch.orcamento.familiar.mensal.LancamentoMensal.Tipo.RECEITA
 import java.math.BigDecimal
 
 data class LancamentoMensal(
@@ -35,7 +33,7 @@ data class LancamentoMensal(
                 slug = slug,
                 descricao = descricao,
                 valor = valor,
-                tipo = RECEITA,
+                tipo = Tipo.RECEITA,
                 statusDespesa = null
             )
         }
@@ -52,7 +50,7 @@ data class LancamentoMensal(
                 slug = slug,
                 descricao = descricao,
                 valor = valor,
-                tipo = DESPESA,
+                tipo = Tipo.DESPESA,
                 statusDespesa = statusDespesa
             )
         }
