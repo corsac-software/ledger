@@ -1,5 +1,6 @@
 package br.dev.brunorsch.ledger.orcamento.mensal.domain
 
+import org.jetbrains.exposed.v1.core.dao.id.EntityID
 import java.math.BigDecimal
 
 data class LancamentoMensal(

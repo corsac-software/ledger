@@ -1,17 +1,15 @@
 package br.dev.brunorsch.ledger.orcamento.mensal.data.repository
 
-import br.dev.brunorsch.ledger.orcamento.mensal.data.schema.LancamentosMensaisTable
-import br.dev.brunorsch.ledger.orcamento.mensal.data.schema.OrcamentosMensaisTable
-import br.dev.brunorsch.ledger.orcamento.mensal.data.schema.toLancamentoMensal
-import br.dev.brunorsch.ledger.orcamento.mensal.data.schema.toOrcamentoMensal
-import br.dev.brunorsch.ledger.orcamento.mensal.data.schema.toStatement
+import br.dev.brunorsch.ledger.orcamento.mensal.data.schema.*
+import br.dev.brunorsch.ledger.orcamento.mensal.domain.LancamentoMensal
 import br.dev.brunorsch.ledger.orcamento.mensal.domain.OrcamentoMensal
 import org.jetbrains.exposed.v1.core.JoinType.INNER
 import org.jetbrains.exposed.v1.core.eq
+import org.jetbrains.exposed.v1.jdbc.deleteWhere
 import org.jetbrains.exposed.v1.jdbc.insertAndGetId
+import org.jetbrains.exposed.v1.jdbc.select
 import org.jetbrains.exposed.v1.jdbc.selectAll
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
-import org.jetbrains.exposed.v1.jdbc.update
 
 class OrcamentosMensaisRepository {
     fun criar(orcamentoMensal: OrcamentoMensal): OrcamentoMensal = transaction {
@@ -22,9 +20,12 @@ class OrcamentosMensaisRepository {
         )
     }
 
-    fun buscarPorId(id: Long): OrcamentoMensal? = transaction {
+    fun buscarPorId(id: Long, idUsuario: Long): OrcamentoMensal? = transaction {
         val row = OrcamentosMensaisTable.selectAll()
-            .where(OrcamentosMensaisTable.id eq id)
+            .where {
+                OrcamentosMensaisTable.id eq id
+                OrcamentosMensaisTable.usuarioId eq idUsuario
+            }
             .singleOrNull()
 
         row?.toOrcamentoMensal(
@@ -32,7 +33,7 @@ class OrcamentosMensaisRepository {
         )
     }
 
-    fun buscarLancamentosPorId(orcamentoMensal: OrcamentoMensal): OrcamentoMensal = transaction {
+    fun buscarLancamentos(orcamentoMensal: OrcamentoMensal): OrcamentoMensal = transaction {
         OrcamentosMensaisTable.join(
             otherTable = LancamentosMensaisTable,
             joinType = INNER,
@@ -44,9 +45,24 @@ class OrcamentosMensaisRepository {
             .let { lancamentos -> orcamentoMensal.copy(lancamentos = lancamentos) }
     }
 
-    fun atualizar(orcamentoMensal: OrcamentoMensal) = transaction {
-        OrcamentosMensaisTable.update(where = { OrcamentosMensaisTable.id eq orcamentoMensal.id }) {
-            orcamentoMensal.toStatement(it)
+    fun buscarLancamentosPorId(id: Long, idUsuario: Long): List<LancamentoMensal> = transaction {
+        LancamentosMensaisTable.join(
+            otherTable = OrcamentosMensaisTable,
+            joinType = INNER,
+            onColumn = LancamentosMensaisTable.orcamentoId,
+            otherColumn = OrcamentosMensaisTable.id,
+        ).select(LancamentosMensaisTable.columns)
+            .where {
+                OrcamentosMensaisTable.id eq id
+                OrcamentosMensaisTable.usuarioId eq idUsuario
+            }
+            .map { it.toLancamentoMensal() }
+    }
+    
+    fun excluir(id: Long, idUsuario: Long) = transaction {
+        OrcamentosMensaisTable.deleteWhere {
+            OrcamentosMensaisTable.id eq id
+            OrcamentosMensaisTable.usuarioId eq idUsuario
         }
     }
 }

@@ -1,5 +1,6 @@
 package br.dev.brunorsch.config
 
+import br.dev.brunorsch.ledger.orcamento.mensal.data.repository.OrcamentosMensaisRepository
 import com.zaxxer.hikari.HikariDataSource
 import io.ktor.server.application.*
 import io.ktor.server.plugins.di.dependencies
