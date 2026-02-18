@@ -18,7 +18,8 @@ class OrcamentosMensaisController(
     }
 
     suspend fun buscarPorId(call: ApplicationCall) {
-        val id = call.parameters["id"]?.toLongOrNull() ?: return call.respond(HttpStatusCode.BadRequest)
+        val id = call.parameters["id"]?.toLongOrNull()
+            ?: return call.respond(HttpStatusCode.BadRequest)
 
         val orcamento = service.buscarPorId(id, idUsuario)
 
