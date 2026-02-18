@@ -1,8 +1,8 @@
-package br.dev.brunorsch.orcamento.familiar.mensal.data.schema
+package br.dev.brunorsch.ledger.orcamento.mensal.data.schema
 
-import br.dev.brunorsch.orcamento.familiar.mensal.domain.AnoMes
-import br.dev.brunorsch.orcamento.familiar.mensal.domain.LancamentoMensal
-import br.dev.brunorsch.orcamento.familiar.mensal.domain.OrcamentoMensal
+import br.dev.brunorsch.ledger.orcamento.mensal.domain.AnoMes
+import br.dev.brunorsch.ledger.orcamento.mensal.domain.LancamentoMensal
+import br.dev.brunorsch.ledger.orcamento.mensal.domain.OrcamentoMensal
 import kotlinx.datetime.number
 import org.jetbrains.exposed.v1.core.ResultRow
 import org.jetbrains.exposed.v1.core.dao.id.LongIdTable
