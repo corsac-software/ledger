@@ -1,8 +1,9 @@
-package br.dev.brunorsch.orcamento.familiar.mensal.data.schema
+package br.dev.brunorsch.ledger.orcamento.mensal.data.schema
 
-import br.dev.brunorsch.orcamento.familiar.mensal.domain.AnoMes
-import br.dev.brunorsch.orcamento.familiar.mensal.domain.LancamentoMensal
-import br.dev.brunorsch.orcamento.familiar.mensal.domain.OrcamentoMensal
+import br.dev.brunorsch.ledger.orcamento.mensal.api.OrcamentoMensalUpdateRequest
+import br.dev.brunorsch.ledger.orcamento.mensal.domain.AnoMes
+import br.dev.brunorsch.ledger.orcamento.mensal.domain.LancamentoMensal
+import br.dev.brunorsch.ledger.orcamento.mensal.domain.OrcamentoMensal
 import kotlinx.datetime.number
 import org.jetbrains.exposed.v1.core.ResultRow
 import org.jetbrains.exposed.v1.core.dao.id.LongIdTable
@@ -55,4 +56,14 @@ fun OrcamentoMensal.toStatement(stmt: UpdateBuilder<*>) {
     stmt[OrcamentosMensaisTable.slug] = this.slug
     stmt[OrcamentosMensaisTable.dataInicio] = this.dataInicio
     stmt[OrcamentosMensaisTable.dataFim] = this.dataFim
+}
+
+fun OrcamentoMensalUpdateRequest.toStatement(stmt: UpdateBuilder<*>) {
+    this.ano?.let { stmt[OrcamentosMensaisTable.ano] = it }
+    this.mes?.let { stmt[OrcamentosMensaisTable.mes] = it }
+
+
+
+    this.dataInicio?.let { stmt[OrcamentosMensaisTable.dataInicio] = it }
+    this.dataFim?.let { stmt[OrcamentosMensaisTable.dataFim] = it }
 }

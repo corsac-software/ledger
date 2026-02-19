@@ -1,10 +1,10 @@
 @file:OptIn(ExperimentalDatabaseMigrationApi::class)
 
-package br.dev.brunorsch.orcamento.familiar.mensal.data
+package br.dev.brunorsch.ledger.orcamento.mensal.data
 
 import br.dev.brunorsch.config.MIGRATIONS_DIR
-import br.dev.brunorsch.orcamento.familiar.mensal.data.schema.LancamentosMensaisTable
-import br.dev.brunorsch.orcamento.familiar.mensal.data.schema.OrcamentosMensaisTable
+import br.dev.brunorsch.ledger.orcamento.mensal.data.schema.LancamentosMensaisTable
+import br.dev.brunorsch.ledger.orcamento.mensal.data.schema.OrcamentosMensaisTable
 import org.jetbrains.exposed.v1.core.ExperimentalDatabaseMigrationApi
 import org.jetbrains.exposed.v1.jdbc.Database
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction

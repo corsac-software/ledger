@@ -1,8 +1,8 @@
-package br.dev.brunorsch.orcamento.familiar.mensal.data.schema
+package br.dev.brunorsch.ledger.orcamento.mensal.data.schema
 
-import br.dev.brunorsch.orcamento.familiar.mensal.domain.LancamentoMensal
-import br.dev.brunorsch.orcamento.familiar.mensal.domain.LancamentoMensal.StatusDespesa
-import br.dev.brunorsch.orcamento.familiar.mensal.domain.LancamentoMensal.Tipo
+import br.dev.brunorsch.ledger.orcamento.mensal.domain.LancamentoMensal
+import br.dev.brunorsch.ledger.orcamento.mensal.domain.LancamentoMensal.StatusDespesa
+import br.dev.brunorsch.ledger.orcamento.mensal.domain.LancamentoMensal.Tipo
 import org.jetbrains.exposed.v1.core.ResultRow
 import org.jetbrains.exposed.v1.core.dao.id.LongIdTable
 import org.jetbrains.exposed.v1.core.statements.UpdateBuilder

@@ -1,7 +1,7 @@
 package br.dev.brunorsch
 
 import br.dev.brunorsch.config.*
-import br.dev.brunorsch.orcamento.familiar.mensal.orcamentoMensalModule
+import br.dev.brunorsch.ledger.orcamento.mensal.orcamentoMensalModule
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*

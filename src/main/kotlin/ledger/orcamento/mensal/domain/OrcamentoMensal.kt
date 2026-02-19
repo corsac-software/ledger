@@ -1,4 +1,4 @@
-package br.dev.brunorsch.orcamento.familiar.mensal.domain
+package br.dev.brunorsch.ledger.orcamento.mensal.domain
 
 import kotlinx.datetime.LocalDate
 
