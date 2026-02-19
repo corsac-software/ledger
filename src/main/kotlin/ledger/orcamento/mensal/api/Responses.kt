@@ -1,6 +1,7 @@
 package br.dev.brunorsch.ledger.orcamento.mensal.api
 
 import br.dev.brunorsch.ledger.orcamento.mensal.domain.LancamentoMensal
+import br.dev.brunorsch.ledger.orcamento.mensal.domain.LancamentoMensal.StatusDespesa
 import br.dev.brunorsch.ledger.orcamento.mensal.domain.OrcamentoMensal
 import kotlinx.datetime.number
 import kotlinx.serialization.Serializable
@@ -12,7 +13,7 @@ data class LancamentoResponse(
     val descricao: String,
     val valor: Double,
     val tipo: String,
-    val statusDespesa: String?
+    val statusDespesa: StatusDespesa?
 )
 
 fun OrcamentoMensal.toResponse() = OrcamentoMensalResponse(
@@ -32,5 +33,5 @@ fun LancamentoMensal.toResponse() = LancamentoResponse(
     descricao = descricao,
     valor = valor.toDouble(),
     tipo = tipo.name,
-    statusDespesa = statusDespesa?.name
+    statusDespesa = statusDespesa
 )
