@@ -1,7 +1,5 @@
 package br.dev.brunorsch.ledger.orcamento.mensal.api
 
-import br.dev.brunorsch.ledger.orcamento.mensal.domain.LancamentoMensal
-import br.dev.brunorsch.ledger.orcamento.mensal.domain.LancamentoMensal.StatusDespesa
 import kotlinx.datetime.LocalDate
 import kotlinx.serialization.Serializable
 

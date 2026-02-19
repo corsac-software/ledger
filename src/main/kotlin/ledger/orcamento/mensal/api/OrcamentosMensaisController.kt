@@ -10,7 +10,8 @@ import io.ktor.server.response.*
 const val idUsuario: Long = 1
 
 class OrcamentosMensaisController(
-    private val service: OrcamentosMensaisService) {
+    private val service: OrcamentosMensaisService
+) {
     suspend fun criar(call: ApplicationCall) {
         val request = call.receive<OrcamentoMensalRequest>()
         val criado = service.criar(request)
