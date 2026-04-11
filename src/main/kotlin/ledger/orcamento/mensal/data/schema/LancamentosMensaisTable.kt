@@ -35,8 +35,8 @@ fun ResultRow.toLancamentoMensal() = LancamentoMensal(
         ?.let { StatusDespesa.valueOf(it) }
 )
 
-fun LancamentoMensal.toStatement(stmt: UpdateBuilder<LancamentosMensaisTable>) {
-    stmt[LancamentosMensaisTable.orcamentoId] = this.id
+fun LancamentoMensal.toStatement(stmt: UpdateBuilder<LancamentosMensaisTable>, orcamentoId: Long) {
+    stmt[LancamentosMensaisTable.orcamentoId] = orcamentoId
     stmt[LancamentosMensaisTable.slug] = this.slug
     stmt[LancamentosMensaisTable.descricao] = this.descricao
     stmt[LancamentosMensaisTable.valor] = this.valor

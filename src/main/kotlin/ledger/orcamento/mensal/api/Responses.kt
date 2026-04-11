@@ -24,6 +24,8 @@ fun OrcamentoMensal.toResponse() = OrcamentoMensalResponse(
     slug = slug,
     dataInicio = dataInicio,
     dataFim = dataFim,
+    seqReceita = seqReceita,
+    seqDespesa = seqDespesa,
     lancamentos = lancamentos?.map { it.toResponse() }
 )
 

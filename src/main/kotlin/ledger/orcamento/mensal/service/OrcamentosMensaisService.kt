@@ -1,12 +1,15 @@
 package br.dev.brunorsch.ledger.orcamento.mensal.service
 
+import br.dev.brunorsch.ledger.orcamento.mensal.api.LancamentoRequest
+import br.dev.brunorsch.ledger.orcamento.mensal.api.LancamentoUpdateRequest
 import br.dev.brunorsch.ledger.orcamento.mensal.api.OrcamentoMensalRequest
 import br.dev.brunorsch.ledger.orcamento.mensal.data.repository.OrcamentosMensaisRepository
 import br.dev.brunorsch.ledger.orcamento.mensal.domain.AnoMes
 import br.dev.brunorsch.ledger.orcamento.mensal.domain.LancamentoMensal
 import br.dev.brunorsch.ledger.orcamento.mensal.domain.OrcamentoMensal
-import br.dev.brunorsch.utils.idNaoInserido
-import br.dev.brunorsch.utils.slf4j
+import br.dev.brunorsch.ledger.utils.idNaoInserido
+import br.dev.brunorsch.ledger.utils.slf4j
+import java.math.BigDecimal
 
 class OrcamentosMensaisService(
     private val repository: OrcamentosMensaisRepository,
@@ -34,6 +37,84 @@ class OrcamentosMensaisService(
 
     fun buscarLancamentosPorId(id: Long, idUsuario: Long): List<LancamentoMensal> {
         return repository.buscarLancamentosPorId(id, idUsuario)
+    }
+
+    fun criarLancamento(orcamentoId: Long, idUsuario: Long, request: LancamentoRequest): LancamentoMensal {
+        log.info("Criando lançamento no orçamento ID [$orcamentoId]: ${request.tipo} - ${request.descricao}")
+
+        val orcamento = repository.buscarPorId(orcamentoId, idUsuario)
+            ?: throw IllegalArgumentException("Orçamento não encontrado")
+
+        val tipo = LancamentoMensal.Tipo.valueOf(request.tipo.uppercase())
+        val statusDespesa = request.statusDespesa?.let {
+            LancamentoMensal.StatusDespesa.valueOf(it.uppercase())
+        }
+
+        if (tipo == LancamentoMensal.Tipo.DESPESA && statusDespesa == null) {
+            throw IllegalArgumentException("Despesa precisa de status")
+        }
+        if (tipo == LancamentoMensal.Tipo.RECEITA && statusDespesa != null) {
+            throw IllegalArgumentException("Receita não pode ter status")
+        }
+
+        val seq = when (tipo) {
+            LancamentoMensal.Tipo.RECEITA -> repository.incrementarSeqReceita(orcamentoId)
+            LancamentoMensal.Tipo.DESPESA -> repository.incrementarSeqDespesa(orcamentoId)
+        }
+        val slug = "${tipo.prefixoSlug}-${orcamento.anoMes.anoAsString()}-${orcamento.anoMes.mesAsString()}-$seq"
+
+        val lancamento = if (tipo == LancamentoMensal.Tipo.RECEITA) {
+            LancamentoMensal.criarReceita(
+                id = idNaoInserido,
+                slug = slug,
+                descricao = request.descricao,
+                valor = request.valor
+            )
+        } else {
+            LancamentoMensal.criarDespesa(
+                id = idNaoInserido,
+                slug = slug,
+                descricao = request.descricao,
+                valor = request.valor,
+                statusDespesa = statusDespesa!!
+            )
+        }
+
+        return repository.criarLancamento(orcamentoId, lancamento)
+    }
+
+    fun atualizarLancamento(
+        orcamentoId: Long,
+        lancamentoId: Long,
+        idUsuario: Long,
+        request: LancamentoUpdateRequest
+    ): LancamentoMensal {
+        log.info("Atualizando lançamento ID [$lancamentoId] no orçamento ID [$orcamentoId]")
+
+        val existente = repository.buscarLancamentoPorId(lancamentoId, orcamentoId, idUsuario)
+            ?: throw IllegalArgumentException("Lançamento não encontrado")
+
+        if (request.descricao != null && request.descricao.length > 32) {
+            throw IllegalArgumentException("Descrição deve ter no máximo 32 caracteres")
+        }
+
+        repository.atualizarLancamento(
+            id = lancamentoId,
+            descricao = request.descricao,
+            valor = request.valor,
+            statusDespesa = request.statusDespesa
+        )
+
+        return repository.buscarLancamentoPorId(lancamentoId, orcamentoId, idUsuario)!!
+    }
+
+    fun excluirLancamento(orcamentoId: Long, lancamentoId: Long, idUsuario: Long) {
+        log.info("Excluindo lançamento ID [$lancamentoId] do orçamento ID [$orcamentoId]")
+
+        val existente = repository.buscarLancamentoPorId(lancamentoId, orcamentoId, idUsuario)
+            ?: throw IllegalArgumentException("Lançamento não encontrado")
+
+        repository.excluirLancamento(lancamentoId, orcamentoId)
     }
 
     fun excluir(id: Long, idUsuario: Long) {

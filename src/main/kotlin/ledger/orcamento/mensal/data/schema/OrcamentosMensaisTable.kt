@@ -16,10 +16,13 @@ object OrcamentosMensaisTable : LongIdTable("orcamentos_mensais") {
     val ano = integer("ano")
     val mes = integer("mes")
 
-    val slug = varchar("slug", 7)
+    val slug = varchar("slug", 8)
 
     val dataInicio = date("data_inicio")
     val dataFim = date("data_fim")
+
+    val seqReceita = integer("seq_receita").default(0)
+    val seqDespesa = integer("seq_despesa").default(0)
 
     init {
         uniqueIndex(
@@ -46,6 +49,8 @@ fun ResultRow.toOrcamentoMensal(
     anoMes = this.toAnoMes(),
     dataInicio = this[OrcamentosMensaisTable.dataInicio],
     dataFim = this[OrcamentosMensaisTable.dataFim],
+    seqReceita = this[OrcamentosMensaisTable.seqReceita],
+    seqDespesa = this[OrcamentosMensaisTable.seqDespesa],
     lancamentos = lancamentos
 )
 
@@ -56,6 +61,8 @@ fun OrcamentoMensal.toStatement(stmt: UpdateBuilder<*>) {
     stmt[OrcamentosMensaisTable.slug] = this.slug
     stmt[OrcamentosMensaisTable.dataInicio] = this.dataInicio
     stmt[OrcamentosMensaisTable.dataFim] = this.dataFim
+    stmt[OrcamentosMensaisTable.seqReceita] = this.seqReceita
+    stmt[OrcamentosMensaisTable.seqDespesa] = this.seqDespesa
 }
 
 fun OrcamentoMensalUpdateRequest.toStatement(stmt: UpdateBuilder<*>) {

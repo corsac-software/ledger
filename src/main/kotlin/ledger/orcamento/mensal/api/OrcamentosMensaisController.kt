@@ -49,4 +49,34 @@ class OrcamentosMensaisController(
 
         call.respond(HttpStatusCode.NoContent)
     }
+
+    suspend fun criarLancamento(call: ApplicationCall) {
+        val orcamentoId = call.parameters["id"]?.toLongOrNull()
+            ?: return call.respond(HttpStatusCode.BadRequest)
+
+        val request = call.receive<LancamentoRequest>()
+        val criado = service.criarLancamento(orcamentoId, idUsuario, request)
+        call.respond(HttpStatusCode.Created, criado.toResponse())
+    }
+
+    suspend fun atualizarLancamento(call: ApplicationCall) {
+        val orcamentoId = call.parameters["id"]?.toLongOrNull()
+            ?: return call.respond(HttpStatusCode.BadRequest)
+        val lancamentoId = call.parameters["lancamentoId"]?.toLongOrNull()
+            ?: return call.respond(HttpStatusCode.BadRequest)
+
+        val request = call.receive<LancamentoUpdateRequest>()
+        val atualizado = service.atualizarLancamento(orcamentoId, lancamentoId, idUsuario, request)
+        call.respond(atualizado.toResponse())
+    }
+
+    suspend fun excluirLancamento(call: ApplicationCall) {
+        val orcamentoId = call.parameters["id"]?.toLongOrNull()
+            ?: return call.respond(HttpStatusCode.BadRequest)
+        val lancamentoId = call.parameters["lancamentoId"]?.toLongOrNull()
+            ?: return call.respond(HttpStatusCode.BadRequest)
+
+        service.excluirLancamento(orcamentoId, lancamentoId, idUsuario)
+        call.respond(HttpStatusCode.NoContent)
+    }
 }

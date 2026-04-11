@@ -9,7 +9,9 @@ import org.jetbrains.exposed.v1.jdbc.deleteWhere
 import org.jetbrains.exposed.v1.jdbc.insertAndGetId
 import org.jetbrains.exposed.v1.jdbc.select
 import org.jetbrains.exposed.v1.jdbc.selectAll
+import org.jetbrains.exposed.v1.jdbc.update
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
+import java.math.BigDecimal
 
 class OrcamentosMensaisRepository {
     fun criar(orcamentoMensal: OrcamentoMensal): OrcamentoMensal = transaction {
@@ -64,5 +66,70 @@ class OrcamentosMensaisRepository {
             OrcamentosMensaisTable.id eq id
             OrcamentosMensaisTable.usuarioId eq idUsuario
         }
+    }
+
+    fun buscarLancamentoPorId(id: Long, orcamentoId: Long, idUsuario: Long): LancamentoMensal? = transaction {
+        LancamentosMensaisTable.join(
+            otherTable = OrcamentosMensaisTable,
+            joinType = INNER,
+            onColumn = LancamentosMensaisTable.orcamentoId,
+            otherColumn = OrcamentosMensaisTable.id,
+        ).select(LancamentosMensaisTable.columns)
+            .where {
+                LancamentosMensaisTable.id eq id
+                LancamentosMensaisTable.orcamentoId eq orcamentoId
+                OrcamentosMensaisTable.usuarioId eq idUsuario
+            }
+            .map { it.toLancamentoMensal() }
+            .singleOrNull()
+    }
+
+    fun criarLancamento(orcamentoId: Long, lancamento: LancamentoMensal): LancamentoMensal = transaction {
+        val id = LancamentosMensaisTable.insertAndGetId { stmt ->
+            stmt[LancamentosMensaisTable.orcamentoId] = orcamentoId
+            stmt[LancamentosMensaisTable.slug] = lancamento.slug
+            stmt[LancamentosMensaisTable.descricao] = lancamento.descricao
+            stmt[LancamentosMensaisTable.valor] = lancamento.valor
+            stmt[LancamentosMensaisTable.tipo] = lancamento.tipo.name
+            stmt[LancamentosMensaisTable.statusDespesa] = lancamento.statusDespesa?.name
+        }
+        return@transaction lancamento.copy(id = id.value)
+    }
+
+    fun atualizarLancamento(id: Long, descricao: String?, valor: BigDecimal?, statusDespesa: String?) = transaction {
+        LancamentosMensaisTable.update({ LancamentosMensaisTable.id eq id }) { stmt ->
+            descricao?.let { stmt[LancamentosMensaisTable.descricao] = it }
+            valor?.let { stmt[LancamentosMensaisTable.valor] = it }
+            statusDespesa?.let { stmt[LancamentosMensaisTable.statusDespesa] = it }
+        }
+    }
+
+    fun excluirLancamento(id: Long, orcamentoId: Long) = transaction {
+        LancamentosMensaisTable.deleteWhere {
+            LancamentosMensaisTable.id eq id
+            LancamentosMensaisTable.orcamentoId eq orcamentoId
+        }
+    }
+
+    fun incrementarSeqReceita(orcamentoId: Long): Int = transaction {
+        val orcamento = OrcamentosMensaisTable.selectAll()
+            .where { OrcamentosMensaisTable.id eq orcamentoId }
+            .single()
+        val novoSeq = orcamento[OrcamentosMensaisTable.seqReceita] + 1
+        OrcamentosMensaisTable.update({ OrcamentosMensaisTable.id eq orcamentoId }) { stmt ->
+            stmt[OrcamentosMensaisTable.seqReceita] = novoSeq
+        }
+        novoSeq
+    }
+
+    fun incrementarSeqDespesa(orcamentoId: Long): Int = transaction {
+        val orcamento = OrcamentosMensaisTable.selectAll()
+            .where { OrcamentosMensaisTable.id eq orcamentoId }
+            .single()
+        val novoSeq = orcamento[OrcamentosMensaisTable.seqDespesa] + 1
+        OrcamentosMensaisTable.update({ OrcamentosMensaisTable.id eq orcamentoId }) { stmt ->
+            stmt[OrcamentosMensaisTable.seqDespesa] = novoSeq
+        }
+        novoSeq
     }
 }

@@ -1,5 +1,6 @@
 package br.dev.brunorsch.ledger.orcamento.mensal.api
 
+import br.dev.brunorsch.ledger.utils.BigDecimalJson
 import kotlinx.datetime.LocalDate
 import kotlinx.serialization.Serializable
 
@@ -29,5 +30,22 @@ data class OrcamentoMensalResponse(
     val slug: String,
     val dataInicio: LocalDate,
     val dataFim: LocalDate,
+    val seqReceita: Int = 0,
+    val seqDespesa: Int = 0,
     val lancamentos: List<LancamentoResponse>? = null
+)
+
+@Serializable
+data class LancamentoRequest(
+    val descricao: String,
+    val valor: BigDecimalJson,
+    val tipo: String,
+    val statusDespesa: String? = null
+)
+
+@Serializable
+data class LancamentoUpdateRequest(
+    val descricao: String? = null,
+    val valor: BigDecimalJson? = null,
+    val statusDespesa: String? = null
 )

@@ -1,4 +1,4 @@
-package br.dev.brunorsch.utils
+package br.dev.brunorsch.ledger.utils
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
