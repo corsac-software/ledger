@@ -40,10 +40,17 @@
 ## Commits
 
 ```
-type: short subject
+type(scope): short subject
 ```
 
-Types: `feat`, `fix`, `refactor`, `test`, `docs`, `chore`
+Types: `feat`, `fix`, `refactor`, `test`, `docs`, `chore`, `ai`
+> `ai` type for changes on instructions, memory files, or other agent-related files
+
+Scopes: `prefix-module`
+Prefix: `web`, `api` (Omit if on both)
+Module: Based on the project structure, usually module names are from packages under `ledger` package.
+Scope may be omitted if the change is huge, across multiple modules or if the module is not clear, and on both web and
+api.
 
 Example:
 
