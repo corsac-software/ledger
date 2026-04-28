@@ -14,6 +14,16 @@ import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 import java.math.BigDecimal
 
 class OrcamentosMensaisRepository {
+    fun buscarTodos(idUsuario: Long): List<OrcamentoMensal> = transaction {
+        OrcamentosMensaisTable.selectAll()
+            .where { OrcamentosMensaisTable.usuarioId eq idUsuario }
+            .map { row ->
+                row.toOrcamentoMensal(
+                    lancamentos = null
+                )
+            }
+    }
+
     fun criar(orcamentoMensal: OrcamentoMensal): OrcamentoMensal = transaction {
         val id = OrcamentosMensaisTable.insertAndGetId { orcamentoMensal.toStatement(it) }
 

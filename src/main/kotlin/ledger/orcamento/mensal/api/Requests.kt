@@ -7,10 +7,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class OrcamentoMensalRequest(
     val idUsuario: Long,
-    val ano: Int,
-    val mes: Int,
-    val dataInicio: LocalDate,
-    val dataFim: LocalDate
+    val anoMes: String,
 )
 
 @Serializable

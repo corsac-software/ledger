@@ -64,6 +64,16 @@ migrations/        # Flyway SQL migrations
 - **Objetivo** - tipo (Despesa/Objetivo) + percentual
 - **Vínculo** (n,n) - Conta ↔ Despesa/Objetivo
 
+## Frontend (web-app)
+- **Stack:** React + TanStack Router + Zustand + shadcn/tailwind v4
+- **Comando shadcn:** `npx shadcn@latest add <componente>`
+- **API Base URL:** `http://localhost:8080`
+
+## Frontend (web-app)
+- **Stack:** React + TanStack Router + Zustand + shadcn/tailwind v4
+- **Comando shadcn:** `npx shadcn@latest add <componente>`
+- **API Base URL:** `http://localhost:8080`
+
 ## Regras de Negócio
 - Lançamentos não existem sem Orçamento Mensal
 - ID de apresentação é `tipo-ano-mês-seq` (ex: `R-2026-02-1`)

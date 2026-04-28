@@ -7,9 +7,13 @@ import br.dev.brunorsch.ledger.orcamento.mensal.data.repository.OrcamentosMensai
 import br.dev.brunorsch.ledger.orcamento.mensal.domain.AnoMes
 import br.dev.brunorsch.ledger.orcamento.mensal.domain.LancamentoMensal
 import br.dev.brunorsch.ledger.orcamento.mensal.domain.OrcamentoMensal
+import br.dev.brunorsch.ledger.orcamento.mensal.domain.toAnoMes
 import br.dev.brunorsch.ledger.utils.idNaoInserido
 import br.dev.brunorsch.ledger.utils.slf4j
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.number
 import java.math.BigDecimal
+import java.time.YearMonth
 
 class OrcamentosMensaisService(
     private val repository: OrcamentosMensaisRepository,
@@ -17,18 +21,28 @@ class OrcamentosMensaisService(
     private val log = slf4j()
 
     fun criar(request: OrcamentoMensalRequest): OrcamentoMensal {
+        val anoMes = request.anoMes.toAnoMes()
+        val ano = anoMes.ano.value
+        val mes = anoMes.mes.number
+        val dataInicio = LocalDate(ano, mes, 1)
+        val dataFim = LocalDate(ano, mes, YearMonth.of(ano, mes).lengthOfMonth())
+
         log.info("Criando novo orçamento mensal para usuario ID " +
-                "[${request.idUsuario}]: ${request.ano}-${request.mes}")
+                "[${request.idUsuario}]: $ano-$mes")
 
         val orcamento = OrcamentoMensal(
             id = idNaoInserido,
             idUsuario = request.idUsuario,
-            anoMes = AnoMes(request.ano, request.mes),
-            dataInicio = request.dataInicio,
-            dataFim = request.dataFim
+            anoMes = anoMes,
+            dataInicio = dataInicio,
+            dataFim = dataFim
         )
 
         return repository.criar(orcamento)
+    }
+
+    fun buscarTodos(idUsuario: Long): List<OrcamentoMensal> {
+        return repository.buscarTodos(idUsuario)
     }
 
     fun buscarPorId(id: Long, idUsuario: Long): OrcamentoMensal? {

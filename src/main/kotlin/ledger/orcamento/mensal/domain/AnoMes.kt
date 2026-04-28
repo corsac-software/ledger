@@ -36,3 +36,11 @@ data class AnoMes(
 
     fun toFormatoSlug() = "${anoAsString()}${mesAsString()}"
 }
+
+fun String.toAnoMes(): AnoMes {
+    require(matches(Regex("^\\d{6}$"))) { "anoMes deve estar no formato AAAAMM" }
+    val ano = substring(0, 4).toInt()
+    val mes = substring(4, 6).toInt()
+    require(mes in 1..12) { "anoMes possui mês inválido" }
+    return AnoMes(ano, mes)
+}

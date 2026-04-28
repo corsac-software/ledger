@@ -2,20 +2,23 @@
 
 package br.dev.brunorsch.ledger.orcamento.mensal.data
 
-import br.dev.brunorsch.config.MIGRATIONS_DIR
+import br.dev.brunorsch.config.GENERATED_MIGRATIONS_DIR
 import br.dev.brunorsch.ledger.orcamento.mensal.data.schema.LancamentosMensaisTable
 import br.dev.brunorsch.ledger.orcamento.mensal.data.schema.OrcamentosMensaisTable
+import br.dev.brunorsch.ledger.utils.resolveMigrationDb
+import io.ktor.server.application.*
 import org.jetbrains.exposed.v1.core.ExperimentalDatabaseMigrationApi
-import org.jetbrains.exposed.v1.jdbc.Database
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 import org.jetbrains.exposed.v1.migration.jdbc.MigrationUtils
 
-fun gerarOrcamentoMensalMigrationScripts(database: Database) {
-    transaction(database) {
+fun Application.gerarOrcamentoMensalMigrationScripts() {
+    val migrationDb = resolveMigrationDb()
+
+    transaction(migrationDb) {
         MigrationUtils.generateMigrationScript(
             OrcamentosMensaisTable, LancamentosMensaisTable,
-            scriptDirectory = MIGRATIONS_DIR,
-            scriptName = "V1__Add_tabelas_orcamentos_mensais",
+            scriptDirectory = GENERATED_MIGRATIONS_DIR,
+            scriptName = "migration_orcamentos_mensais",
         )
     }
 }

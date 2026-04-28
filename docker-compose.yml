@@ -1,0 +1,9 @@
+services:
+  postgres-migration:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: migration
+      POSTGRES_USER: sa
+      POSTGRES_PASSWORD: sa
+    ports:
+      - "5433:5432"

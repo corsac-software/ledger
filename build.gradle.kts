@@ -39,6 +39,7 @@ dependencies {
     implementation("io.ktor:ktor-server-status-pages")
     implementation("io.ktor:ktor-server-call-logging")
     implementation("io.ktor:ktor-server-content-negotiation")
+    implementation("io.ktor:ktor-server-cors")
     implementation("io.ktor:ktor-serialization-kotlinx-json")
 
     implementation("org.jetbrains.exposed:exposed-core:$exposed_version")
@@ -50,6 +51,7 @@ dependencies {
     implementation("com.h2database:h2:$h2_version")
     implementation("org.postgresql:postgresql:$postgres_version")
     implementation("org.flywaydb:flyway-core:$flyway_version")
+    implementation("org.flywaydb:flyway-database-postgresql:$flyway_version")
     implementation("com.zaxxer:HikariCP:$hikari_version")
 
     implementation("io.ktor:ktor-server-netty")

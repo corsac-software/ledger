@@ -1,34 +1,22 @@
 package br.dev.brunorsch.ledger.orcamento.mensal
 
-import br.dev.brunorsch.ledger.orcamento.mensal.api.LancamentoResponse
-import br.dev.brunorsch.ledger.orcamento.mensal.api.LancamentoRequest
-import br.dev.brunorsch.ledger.orcamento.mensal.api.LancamentoUpdateRequest
-import br.dev.brunorsch.ledger.orcamento.mensal.api.OrcamentoMensalRequest
-import br.dev.brunorsch.ledger.orcamento.mensal.api.OrcamentoMensalResponse
-import br.dev.brunorsch.ledger.orcamento.mensal.api.OrcamentosMensaisController
+import br.dev.brunorsch.ledger.utils.withMigrationGenerationEnabled
+import br.dev.brunorsch.ledger.orcamento.mensal.api.*
 import br.dev.brunorsch.ledger.orcamento.mensal.data.gerarOrcamentoMensalMigrationScripts
 import br.dev.brunorsch.ledger.orcamento.mensal.data.repository.OrcamentosMensaisRepository
 import br.dev.brunorsch.ledger.orcamento.mensal.service.OrcamentosMensaisService
-import io.ktor.http.HttpStatusCode
-import io.ktor.openapi.jsonSchema
+import io.ktor.http.*
+import io.ktor.openapi.*
 import io.ktor.server.application.*
 import io.ktor.server.plugins.di.*
 import io.ktor.server.routing.*
-import io.ktor.server.routing.openapi.describe
-import io.ktor.utils.io.ExperimentalKtorApi
-import org.flywaydb.core.Flyway
-import org.jetbrains.exposed.v1.jdbc.Database
-import org.jetbrains.exposed.v1.jdbc.transactions.transaction
+import io.ktor.server.routing.openapi.*
+import io.ktor.utils.io.*
 
 @OptIn(ExperimentalKtorApi::class)
 fun Application.orcamentoMensalModule() {
-    val database: Database by dependencies
-    val flyway: Flyway by dependencies
-
-    gerarOrcamentoMensalMigrationScripts(database)
-
-    transaction(database) {
-        flyway.migrate()
+    withMigrationGenerationEnabled {
+        gerarOrcamentoMensalMigrationScripts()
     }
 
     dependencies {
@@ -41,6 +29,17 @@ fun Application.orcamentoMensalModule() {
 
     routing {
         route("/api/orcamentos-mensais") {
+            get { controller.buscarTodos(call) }
+                .describe {
+                    summary = "Listar orçamentos mensais"
+                    description = "Lista os orçamentos mensais do usuário."
+                    responses {
+                        HttpStatusCode.OK {
+                            schema = jsonSchema<List<OrcamentoMensalResponse>>()
+                        }
+                    }
+                }
+
             get("/{id}") { controller.buscarPorId(call) }
                 .describe {
                     summary = "Consultar orçamento mensal por ID"

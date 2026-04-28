@@ -12,6 +12,11 @@ const val idUsuario: Long = 1
 class OrcamentosMensaisController(
     private val service: OrcamentosMensaisService
 ) {
+    suspend fun buscarTodos(call: ApplicationCall) {
+        val orcamentos = service.buscarTodos(idUsuario).map { it.toResponse() }
+        call.respond(orcamentos)
+    }
+
     suspend fun criar(call: ApplicationCall) {
         val request = call.receive<OrcamentoMensalRequest>()
         val criado = service.criar(request)

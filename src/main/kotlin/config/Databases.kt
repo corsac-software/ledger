@@ -3,22 +3,24 @@ package br.dev.brunorsch.config
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import io.ktor.server.application.*
+import io.ktor.server.plugins.di.dependencies
 import org.jetbrains.exposed.v1.jdbc.Database
 
-const val EMBEDDED_URL = "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;MODE=PostgreSQL"
-const val EMBEDDED_USER = "root"
-const val EMBEDDED_PASSWORD = ""
+
+data class DatabaseConfig(
+    val h2DbPath: String,
+)
 
 fun Application.setupHikari(embedded: Boolean): HikariDataSource {
-
+    val dbConfig: DatabaseConfig by dependencies
     val config = HikariConfig().apply {
         if(embedded) {
-            log.info("Using embedded H2 database for testing; replace this flag to use postgres")
+            val dbPath = dbConfig.h2DbPath
+            val embeddedUrl = "jdbc:h2:file:$dbPath;AUTO_SERVER=TRUE;MODE=PostgreSQL"
+            log.info("Usando H2 database do arquivo: $dbPath")
 
             driverClassName = "org.h2.Driver"
-            jdbcUrl = EMBEDDED_URL
-            username = EMBEDDED_USER
-            password = EMBEDDED_PASSWORD
+            jdbcUrl = embeddedUrl
         } else {
             Class.forName("org.postgresql.Driver")
 

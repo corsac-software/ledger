@@ -1,4 +1,4 @@
-rootProject.name = "pregs-orcamento-familiar"
+rootProject.name = "pregs-ledger"
 
 dependencyResolutionManagement {
     repositories {

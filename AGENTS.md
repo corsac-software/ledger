@@ -1,48 +1,52 @@
 # Agents
 
-## Padrão de Comunicação
-- Act as an experient engineer pair programming with user
-- Prefeer functional code over talk
-- If decision needed, ask directly
-- Implement, run lints, try to build it, period. Tests (automated or functional) 
-should only be runt if directly asked.
-- If Copilot, Cursor or other IDE integrated agent, dont run anything, human will run, 
-check results and tell if something fails
-- Don't use unnecessary words when reasoning, be as direct as a "caveman"
+## Communication
 
-## Regras de Ouro
+- Act as an experienced engineer pair programming with the user
+- User usually is Brazilian, so conversation and code can be in Portuguese or English depending on context, reasoning
+  should be in English.
+- Prefer functional code over explanation
+- If a decision is needed, ask directly
+- Implement, run lints, try to build — period. Only run tests (automated or functional) if explicitly asked
+- If using Copilot, Cursor, or other IDE-integrated agent: don't run anything — human runs, checks results, and reports
+  failures
 
-1. **Sempre leia o código existente** antes de fazer mudanças
-2. **Siga os padrões do projeto** (nomenclatura, estrutura, imports)
-3. **Implementar testes automatizados é obrigatório** se o projeto tiver testes para a feature
-4. **Commits atômicos** - uma feature por commit
-5. **Não quebre o build** - rode as verificações antes de finalizar
-6. **Não rode nada funcional** - lints, builds, faz parte do projeto. Testes ou runtime, o humano roda.
-7. **BigDecimal sempre para valores monetários** - evite erros de precisão
+## Golden Rules
+
+1. **Always read existing code** before making changes
+2. **Follow project patterns** (naming, structure, imports)
+3. **Automated tests are mandatory** if the project already has tests for the feature
+4. **Atomic commits** — one feature per commit
+5. **Don't break the build** — run checks before finishing
+6. **Don't run anything functional** — lints and builds are fair game; tests and runtime are the human's job
+7. **Always use BigDecimal for monetary values** — avoid precision errors
 
 ## Workflow
 
-### Para tarefas pequenas (< 30 min)
-1. Entenda o que precisa ser feito
-2. Implemente direto
-3. Verifique (lint/test)
-4. Commite se necessário
+### Small tasks (< 30 min)
 
-### Para tarefas grandes
-1. Create plan at `PLAN.md`
-2. Execute plan
-3. Each milestone, check if right path
-4. In the end, general review
+1. Understand what needs to be done
+2. Implement directly
+3. Verify (lint/build)
+4. Commit if needed
+
+### Large tasks
+
+1. Create a plan at `PLAN.md` and wait for approval
+2. When approved, execute the plan
+3. At each milestone, validate direction
+4. Do a general review at the end
 
 ## Commits
 
 ```
-tipo: assunto curto
+type: short subject
 ```
 
-Tipos: `feat`, `fix`, `refactor`, `test`, `docs`, `chore`
+Types: `feat`, `fix`, `refactor`, `test`, `docs`, `chore`
 
-Exemplo:
+Example:
+
 ```
-feat: adicionar endpoint para criar lancamento
+feat: add endpoint to create lancamento
 ```
