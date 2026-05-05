@@ -1,0 +1,89 @@
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--layout-gap);
+  margin-bottom: var(--layout-gap-section);
+}
+
+.metrics--triplet {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.metrics--doublet {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.mcard {
+  background: var(--color-background-primary);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  padding: 14px 16px;
+  min-width: 0;
+}
+
+.mcard-label {
+  font-size: 9px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  margin-bottom: 4px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.mcard-val {
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.mcard-sub {
+  font-size: 10px;
+  color: var(--color-text-secondary);
+  margin-top: 4px;
+  overflow-wrap: anywhere;
+}
+
+.bill-metrics {
+  /* allow the bill cards to flow responsively: aim for 3-4 cards per row depending on viewport */
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: var(--layout-gap);
+}
+
+.bill-pay-btn {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 4px 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background: var(--color-background-primary);
+  color: var(--color-text-primary);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.bill-pay-btn:hover {
+  filter: brightness(0.95);
+}
+
+.bill-pay-btn.paid {
+  background: #e6f9e6;
+  color: #2d8a2d;
+  border-color: #b3e6b3;
+}
+
+.bill-pay-btn.paid:hover {
+  background: #d9f2d9;
+}
+
+.bill-pay-btn.unpaid {
+  background: #fff3e6;
+  color: #cc7a00;
+  border-color: #ffe0b3;
+}
+
+.bill-pay-btn.unpaid:hover {
+  background: #ffecd1;
+}
