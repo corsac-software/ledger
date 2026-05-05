@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { CardBillItem } from '../domain/types';
 import { detectBankColor } from '../lib/bankColors';
+import { useI18n } from '../lib/i18n';
 import { applyMoneyMask, formatMoneyInput, parseMoneyInput } from '../lib/moneyInput';
 import { EmptyBillsState } from './EmptyBillsState';
-import { ConfirmModal } from './modals';
+import { ConfirmModal, RuleModal } from './modals';
 
 interface MonthNavProps {
   label: string;
@@ -20,6 +21,7 @@ interface MonthNavProps {
 
 function BillCard({
   card,
+  displayName,
   value,
   onChange,
   onDelete,
@@ -27,6 +29,7 @@ function BillCard({
   deleteReason,
 }: {
   card: CardBillItem;
+  displayName: string;
   value: string;
   onChange: (value: string) => void;
   onDelete: () => void;
@@ -71,19 +74,19 @@ function BillCard({
   };
 
   const getCardStyle = (): React.CSSProperties => {
-    if (isEditing) {
-      return {
-        background: 'var(--color-background-primary)',
-        border: '2px solid var(--color-accent)',
-      };
-    }
     if (card.color) {
-      return {
-        background: `color-mix(in srgb, ${card.color} 18%, transparent)`,
-        border: `1px solid ${card.color}`,
+      const style: React.CSSProperties & Record<string, string | undefined> = {
+        border: `1px solid color-mix(in srgb, ${card.color} 75%, #0b2b57 20%)`,
+        boxShadow: isEditing
+          ? `0 0 0 2px color-mix(in srgb, ${card.color} 55%, white 35%)`
+          : undefined,
       };
+      style['--bill-card-color'] = card.color;
+      return style;
     }
-    return {};
+    return {
+      boxShadow: isEditing ? '0 0 0 2px color-mix(in srgb, var(--color-accent) 55%, white 35%)' : undefined,
+    };
   };
 
   return (
@@ -94,25 +97,36 @@ function BillCard({
         if (!isEditing && hasValue) setIsEditing(true);
       }}
     >
-      <div className="bill-card-ident">
-        <span className="bill-card-icon">{card.icon || '💳'}</span>
-        <span className="bill-card-name">{card.name}</span>
-        <button
-          type="button"
-          className="bill-card-delete"
-          onClick={(e) => {
-            e.stopPropagation();
-            onDelete();
-          }}
-          title={
-            deleteReason ? `Não é possível apagar: ${deleteReason}` : `Apagar cartão ${card.name}`
-          }
-          disabled={!!deleteReason}
-          aria-label={deleteReason ? `Cartão ${card.name} em uso` : `Apagar cartão ${card.name}`}
-        >
-          {deleteReason ? 'Em uso' : 'Apagar'}
-        </button>
+      <div className="bill-card-top">
+        <span className="bill-card-label">NOME CARTAO</span>
+        {deleteReason ? (
+          <span className="bill-card-status">EM USO</span>
+        ) : (
+          <button
+            type="button"
+            className="bill-card-delete"
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete();
+            }}
+            aria-label={`Apagar cartão ${displayName}`}
+            title={`Apagar cartão ${displayName}`}
+          >
+            Excluir
+          </button>
+        )}
       </div>
+
+      <p className="bill-card-name" title={displayName}>
+        {displayName}
+      </p>
+
+      <div className="bill-card-divider" />
+
+      <div className="bill-card-bottom">
+        <span className="bill-card-label">FATURA</span>
+      </div>
+
       {isEditing ? (
         <div className="bill-input-shell" onClick={(e) => e.stopPropagation()}>
           <span className="bill-currency">R$</span>
@@ -168,6 +182,7 @@ export default function MonthNav({
   onSetCardList,
   cardDeleteReasons,
 }: MonthNavProps) {
+  const { normalizeCardName } = useI18n();
   const isDarkTheme = theme === 'premium';
   const nextThemeIcon = isDarkTheme ? '☀' : '🌙';
   const nextThemeLabel = isDarkTheme ? 'Claro' : 'Escuro';
@@ -200,42 +215,89 @@ export default function MonthNav({
     onSetCardBill(cardId, parseMoneyInput(masked, { allowZero: false }));
   };
 
-  const [isAdding, setIsAdding] = useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [newCardName, setNewCardName] = useState('');
   const [newCardIcon, setNewCardIcon] = useState('💳');
-  const [newCardColor, setNewCardColor] = useState('#000000');
   const [deleteTarget, setDeleteTarget] = useState<CardBillItem | null>(null);
+  const [canScrollIconSelector, setCanScrollIconSelector] = useState(false);
+  const iconSelectorRef = useRef<HTMLDivElement>(null);
 
-  const iconOptions = ['💳', '🔴', '💙', '💚', '💜', '🖤', '🏦', '🏠', '💰', '🪙'];
+  const iconOptions = [
+    '💳',
+    '🔴',
+    '🟠',
+    '🟡',
+    '🟢',
+    '🔵',
+    '🟣',
+    '⚪',
+    '⚫',
+    '🟤',
+    '🩷',
+    '🩵',
+    '🩶',
+    '❤️',
+    '💛',
+    '💚',
+    '💙',
+    '💜',
+    '🖤',
+    '🏦',
+    '🏠',
+    '💰',
+    '🪙',
+  ];
+
+  const resetAddCardForm = () => {
+    setNewCardName('');
+    setNewCardIcon('💳');
+  };
+
+  const openAddCardModal = () => {
+    resetAddCardForm();
+    setIsAddModalOpen(true);
+  };
+
+  const closeAddCardModal = () => {
+    setIsAddModalOpen(false);
+    resetAddCardForm();
+  };
+
+  const updateIconSelectorScrollState = () => {
+    const element = iconSelectorRef.current;
+    if (!element) {
+      setCanScrollIconSelector(false);
+      return;
+    }
+
+    const hasOverflow = element.scrollWidth > element.clientWidth + 1;
+    const isAtEnd = element.scrollLeft + element.clientWidth >= element.scrollWidth - 1;
+    setCanScrollIconSelector(hasOverflow && !isAtEnd);
+  };
+
+  const handleIconSelect = (icon: string, event: React.MouseEvent<HTMLButtonElement>) => {
+    setNewCardIcon(icon);
+    event.currentTarget.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+  };
 
   const handleAddCard = () => {
     if (!onSetCardList) return;
     const id = newCardName.trim().toLowerCase().replace(/\s+/g, '-');
     if (!id) return;
 
-    // Auto-detect bank color if not manually chosen
-    let cardColor = newCardColor;
-    if (newCardColor === '#000000') {
-      const detectedColor = detectBankColor(newCardName);
-      if (detectedColor) {
-        cardColor = detectedColor;
-      }
-    }
+    const cardColor = detectBankColor(newCardName);
 
     const newCard: CardBillItem = {
       id,
       name: newCardName.trim(),
       icon: newCardIcon,
     };
-    if (cardColor !== '#000000') {
+    if (cardColor) {
       newCard.color = cardColor;
     }
     const next = [...(cardList || []), newCard];
     onSetCardList(next);
-    setNewCardName('');
-    setNewCardIcon('💳');
-    setNewCardColor('#000000');
-    setIsAdding(false);
+    closeAddCardModal();
   };
 
   const handleDeleteCard = (cardId: string) => {
@@ -246,8 +308,27 @@ export default function MonthNav({
   };
 
   useEffect(() => {
-    if (!hasCards) setIsAdding(false);
+    if (!hasCards) {
+      setIsAddModalOpen(false);
+      setNewCardName('');
+      setNewCardIcon('💳');
+    }
   }, [hasCards]);
+
+  useEffect(() => {
+    if (!isAddModalOpen) {
+      setCanScrollIconSelector(false);
+      return;
+    }
+
+    const frame = window.requestAnimationFrame(updateIconSelectorScrollState);
+    window.addEventListener('resize', updateIconSelectorScrollState);
+
+    return () => {
+      window.cancelAnimationFrame(frame);
+      window.removeEventListener('resize', updateIconSelectorScrollState);
+    };
+  }, [isAddModalOpen]);
 
   return (
     <div className="month-nav">
@@ -280,7 +361,6 @@ export default function MonthNav({
           <span aria-hidden="true" className="theme-btn-icon">
             {nextThemeIcon}
           </span>
-          <span className="theme-btn-label">{nextThemeLabel}</span>
         </button>
       </div>
       <div className="card-bill-panel">
@@ -290,72 +370,12 @@ export default function MonthNav({
             <button
               type="button"
               className="card-bill-add-btn"
-              onClick={() => setIsAdding((prev) => !prev)}
+              onClick={openAddCardModal}
             >
-              {isAdding ? 'Fechar' : '+ Novo cartão'}
+              + Novo cartão
             </button>
           ) : null}
         </div>
-
-        {isAdding ? (
-          <div className="card-bill-add-form">
-            <input
-              className="card-bill-add-input"
-              type="text"
-              placeholder="Nome do cartão"
-              value={newCardName}
-              onChange={(e) => setNewCardName(e.target.value)}
-            />
-            <div className="icon-selector">
-              {iconOptions.map((icon) => (
-                <button
-                  key={icon}
-                  type="button"
-                  className={`icon-option ${newCardIcon === icon ? 'selected' : ''}`}
-                  onClick={() => setNewCardIcon(icon)}
-                >
-                  {icon}
-                </button>
-              ))}
-            </div>
-            <div className="color-picker-section">
-              {newCardName && detectBankColor(newCardName) && newCardColor === '#000000' ? (
-                <div className="color-detection-info">
-                  <p className="color-detection-label">
-                    🎨 Cor detectada automaticamente: <strong>{newCardName}</strong>
-                  </p>
-                  <div
-                    className="color-preview"
-                    style={{
-                      background: `color-mix(in srgb, ${detectBankColor(newCardName)} 18%, transparent)`,
-                      border: `2px solid ${detectBankColor(newCardName)}`,
-                    }}
-                    title="Cor do cartão"
-                  >
-                    <span style={{ fontSize: '20px' }}>{newCardIcon}</span>
-                  </div>
-                </div>
-              ) : null}
-              <div className="color-picker-wrapper">
-                <label htmlFor="card-color-picker">Cor do cartão:</label>
-                <input
-                  id="card-color-picker"
-                  type="color"
-                  className="color-picker"
-                  value={newCardColor}
-                  onChange={(e) => setNewCardColor(e.target.value)}
-                  title="Clique para escolher uma cor personalizada"
-                />
-                {newCardColor !== '#000000' ? (
-                  <span className="color-custom-label">(Personalizado)</span>
-                ) : null}
-              </div>
-            </div>
-            <button type="button" className="card-bill-add-confirm" onClick={handleAddCard}>
-              Adicionar
-            </button>
-          </div>
-        ) : null}
 
         {hasCards ? (
           <div className="card-bill-grid">
@@ -363,6 +383,7 @@ export default function MonthNav({
               <BillCard
                 key={c.id}
                 card={c}
+                displayName={normalizeCardName(c.name)}
                 value={billInputs?.[c.id] || ''}
                 onChange={(v) => handleBillInputChange(c.id, v)}
                 onDelete={() => handleDeleteCard(c.id)}
@@ -372,9 +393,65 @@ export default function MonthNav({
             ))}
           </div>
         ) : (
-          <EmptyBillsState canAdd={!!onSetCardList} onAddCard={() => setIsAdding(true)} />
+          <EmptyBillsState canAdd={!!onSetCardList} onAddCard={openAddCardModal} />
         )}
       </div>
+
+      <RuleModal
+        open={isAddModalOpen}
+        title="Adicionar cartão"
+        submitLabel="Adicionar"
+        onClose={closeAddCardModal}
+        onSubmit={(event) => {
+          event.preventDefault();
+          handleAddCard();
+        }}
+      >
+        <div className="card-bill-add-form">
+          <input
+            className="card-bill-add-input"
+            type="text"
+            placeholder="Nome do cartão"
+            value={newCardName}
+            onChange={(e) => setNewCardName(e.target.value)}
+          />
+          <div className="icon-selector-shell">
+            <div
+              ref={iconSelectorRef}
+              className={`icon-selector ${canScrollIconSelector ? 'icon-selector--glow' : ''}`}
+              onScroll={updateIconSelectorScrollState}
+            >
+              {iconOptions.map((icon) => (
+                <button
+                  key={icon}
+                  type="button"
+                  className={`icon-option ${newCardIcon === icon ? 'selected' : ''}`}
+                  onClick={(event) => handleIconSelect(icon, event)}
+                >
+                  {icon}
+                </button>
+              ))}
+            </div>
+          </div>
+          {newCardName && detectBankColor(newCardName) ? (
+            <div className="color-detection-info">
+              <p className="color-detection-label">
+                🎨 Cor fixa detectada automaticamente para <strong>{newCardName}</strong>
+              </p>
+              <div
+                className="color-preview"
+                style={{
+                  background: `color-mix(in srgb, ${detectBankColor(newCardName)} 18%, transparent)`,
+                  border: `2px solid ${detectBankColor(newCardName)}`,
+                }}
+                title="Cor do cartão"
+              >
+                <span style={{ fontSize: '20px' }}>{newCardIcon}</span>
+              </div>
+            </div>
+          ) : null}
+        </div>
+      </RuleModal>
 
       <ConfirmModal
         open={!!deleteTarget}

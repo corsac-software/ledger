@@ -1,7 +1,8 @@
 import type { ChangeEvent, Dispatch, SetStateAction } from 'react';
-import { CARD_ICONS, CATEGORIES, ICONS } from '../../../ui/constants';
 import type { CardBillItem } from '../../../domain/types';
+import { useI18n } from '../../../lib/i18n';
 import { applyMoneyMask } from '../../../lib/moneyInput';
+import { CARD_ICONS, CATEGORIES, ICONS } from '../../../ui/constants';
 import { Input, SelectWithIcon } from '../../inputs';
 
 export type FixedExpenseFormState = {
@@ -20,11 +21,15 @@ interface FixedExpenseFormProps {
   cards: CardBillItem[];
 }
 
-function buildPaymentOptions(cards: CardBillItem[], selectedPaymentMethod: string) {
+function buildPaymentOptions(
+  cards: CardBillItem[],
+  selectedPaymentMethod: string,
+  normalizeCardName: (name: string) => string
+) {
   const options = [
     { value: 'boleto', label: 'Boleto' },
     { value: 'pix', label: 'Pix' },
-    ...cards.map((card) => ({ value: card.id, label: card.name })),
+    ...cards.map((card) => ({ value: card.id, label: normalizeCardName(card.name) })),
   ];
 
   if (selectedPaymentMethod && !options.some((option) => option.value === selectedPaymentMethod)) {
@@ -47,8 +52,12 @@ function buildCardIconMap(cards: CardBillItem[]): Record<string, string> {
   });
   return map;
 }
-function buildCardOptions(cards: CardBillItem[], selectedCard: string) {
-  const options = cards.map((card) => ({ value: card.id, label: card.name }));
+function buildCardOptions(
+  cards: CardBillItem[],
+  selectedCard: string,
+  normalizeCardName: (name: string) => string
+) {
+  const options = cards.map((card) => ({ value: card.id, label: normalizeCardName(card.name) }));
 
   if (selectedCard && !options.some((option) => option.value === selectedCard)) {
     options.unshift({ value: selectedCard, label: `${selectedCard} (removido)` });
@@ -57,9 +66,10 @@ function buildCardOptions(cards: CardBillItem[], selectedCard: string) {
   return options;
 }
 export function FixedExpenseForm({ form, setForm, cards }: FixedExpenseFormProps) {
-  const paymentOptions = buildPaymentOptions(cards, form.paymentMethod);
+  const { normalizeCardName } = useI18n();
+  const paymentOptions = buildPaymentOptions(cards, form.paymentMethod, normalizeCardName);
   const cardIconMap = buildCardIconMap(cards);
-  const cardOptions = buildCardOptions(cards, form.card);
+  const cardOptions = buildCardOptions(cards, form.card, normalizeCardName);
 
   return (
     <>

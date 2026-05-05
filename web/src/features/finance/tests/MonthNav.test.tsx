@@ -120,6 +120,7 @@ describe('MonthNav.tsx', () => {
     );
 
     fireEvent.click(screen.getByText('+ Novo cartão'));
+    expect(screen.getByText('Adicionar cartão')).toBeInTheDocument();
     fireEvent.change(screen.getByPlaceholderText('Nome do cartão'), {
       target: { value: 'Cartao novo' },
     });
@@ -129,6 +130,16 @@ describe('MonthNav.tsx', () => {
       { id: 'nubank', name: 'Nubank', icon: '💜' },
       { id: 'cartao-novo', name: 'Cartao novo', icon: '💳' },
     ]);
+  });
+
+  it('does not render a manual color picker for new cards', () => {
+    render(<MonthNav {...defaultProps} cardList={DEFAULT_CARD_BILLS} onSetCardList={vi.fn()} />);
+
+    fireEvent.click(screen.getByText('+ Novo cartão'));
+
+    expect(screen.getByText('Adicionar cartão')).toBeInTheDocument();
+    expect(screen.queryByLabelText('Cor do cartão:')).not.toBeInTheDocument();
+    expect(screen.queryByTitle('Clique para escolher uma cor personalizada')).not.toBeInTheDocument();
   });
 
   it('asks for confirmation before deleting a card', () => {

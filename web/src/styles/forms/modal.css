@@ -24,7 +24,7 @@
   border: 0.5px solid var(--color-border-tertiary);
   border-radius: var(--border-radius-lg);
   padding: 1.5rem;
-  width: 420px;
+  width: min(520px, 95vw);
   max-width: 95vw;
 }
 

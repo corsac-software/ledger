@@ -23,7 +23,7 @@ import { monthLabel } from './lib/utils';
 import { TABS } from './ui/constants';
 
 export default function FinanceApp() {
-  const { t } = useI18n();
+  const { t, normalizeCardName } = useI18n();
   const finance = useFinance();
   const { monthView, currentKey, currentDate } = finance;
   const { fixedExpenses, revenues, monthOverrides } = finance;
@@ -50,7 +50,10 @@ export default function FinanceApp() {
   };
 
   const cardBillsList = settings.cardBills;
-  const cardListMapped = settings.cardBills?.map((cb) => ({ key: cb.id, label: cb.name }));
+  const cardListMapped = settings.cardBills?.map((cb) => ({
+    key: cb.id,
+    label: normalizeCardName(cb.name),
+  }));
 
   const cardDeleteReasons = useCardDeleteReasons({
     cardBills: settings.cardBills || [],
