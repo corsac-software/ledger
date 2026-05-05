@@ -42,9 +42,11 @@ function BillCard({
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    setInputValue(value);
+    if (!isEditing) {
+      setInputValue(value);
+    }
     setHasValue(!!value && value !== 'R$ 0,00');
-  }, [value]);
+  }, [isEditing, value]);
 
   useEffect(() => {
     if (isEditing && inputRef.current) {
@@ -56,7 +58,9 @@ function BillCard({
     setIsEditing(false);
     const parsed = parseMoneyInput(inputValue, { allowZero: true });
     if (parsed !== null && parsed > 0) {
-      onChange(inputValue);
+      const formatted = formatMoneyInput(parsed);
+      onChange(formatted);
+      setInputValue(formatted);
       setHasValue(true);
     } else {
       onChange('');
@@ -77,28 +81,19 @@ function BillCard({
     if (card.color) {
       const style: React.CSSProperties & Record<string, string | undefined> = {
         border: `1px solid color-mix(in srgb, ${card.color} 75%, #0b2b57 20%)`,
-        boxShadow: isEditing
-          ? `0 0 0 2px color-mix(in srgb, ${card.color} 55%, white 35%)`
-          : undefined,
       };
       style['--bill-card-color'] = card.color;
       return style;
     }
-    return {
-      boxShadow: isEditing ? '0 0 0 2px color-mix(in srgb, var(--color-accent) 55%, white 35%)' : undefined,
-    };
+    return {};
   };
 
   return (
-    <div
-      className="bill-card"
-      style={getCardStyle()}
-      onClick={() => {
-        if (!isEditing && hasValue) setIsEditing(true);
-      }}
-    >
+    <div className="bill-card" style={getCardStyle()}>
       <div className="bill-card-top">
-        <span className="bill-card-label">NOME CARTAO</span>
+        <span className="bill-card-name" title={displayName}>
+          {displayName}
+        </span>
         {deleteReason ? (
           <span className="bill-card-status">EM USO</span>
         ) : (
@@ -117,55 +112,56 @@ function BillCard({
         )}
       </div>
 
-      <p className="bill-card-name" title={displayName}>
-        {displayName}
-      </p>
-
       <div className="bill-card-divider" />
 
       <div className="bill-card-bottom">
         <span className="bill-card-label">FATURA</span>
       </div>
 
-      {isEditing ? (
-        <div className="bill-input-shell" onClick={(e) => e.stopPropagation()}>
-          <span className="bill-currency">R$</span>
+      <div className={`bill-display${isEditing ? ' editing' : ''}`}>
+        <span className="bill-currency">R$</span>
+        <p
+          className="bill-card-value"
+          onClick={(e) => {
+            e.stopPropagation();
+            if (!isEditing && hasValue) setIsEditing(true);
+          }}
+          style={{ cursor: hasValue && !isEditing ? 'pointer' : 'default' }}
+        >
+          {value}
+        </p>
+        {!hasValue && !isEditing && (
+          <button
+            type="button"
+            className="bill-card-add-value"
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsEditing(true);
+            }}
+          >
+            + Incluir fatura
+          </button>
+        )}
+        <div
+          className={`bill-input-shell${isEditing ? ' visible' : ''}`}
+          onMouseDown={(e) => e.stopPropagation()}
+          onClick={(e) => e.stopPropagation()}
+        >
           <input
             ref={inputRef}
             className="bill-card-input"
             type="text"
             value={inputValue}
-            onChange={(e) => setInputValue(applyMoneyMask(e.target.value))}
+            onChange={(e) => setInputValue(e.target.value)}
             onBlur={handleBlur}
             onKeyDown={handleKeyDown}
-            inputMode="numeric"
+            inputMode="decimal"
             autoComplete="off"
+            aria-label={`Valor da fatura ${displayName}`}
             placeholder="0,00"
           />
         </div>
-      ) : hasValue ? (
-        <p
-          className="bill-card-value"
-          onClick={(e) => {
-            e.stopPropagation();
-            setIsEditing(true);
-          }}
-          style={{ cursor: 'pointer' }}
-        >
-          {value}
-        </p>
-      ) : (
-        <button
-          type="button"
-          className="bill-card-add-value"
-          onClick={(e) => {
-            e.stopPropagation();
-            setIsEditing(true);
-          }}
-        >
-          + Incluir fatura
-        </button>
-      )}
+      </div>
     </div>
   );
 }
@@ -367,11 +363,7 @@ export default function MonthNav({
         <div className="card-bill-panel-head">
           <p className="card-bill-title">Faturas do mês</p>
           {hasCards && onSetCardList ? (
-            <button
-              type="button"
-              className="card-bill-add-btn"
-              onClick={openAddCardModal}
-            >
+            <button type="button" className="card-bill-add-btn" onClick={openAddCardModal}>
               + Novo cartão
             </button>
           ) : null}

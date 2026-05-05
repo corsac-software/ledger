@@ -236,44 +236,44 @@
 .bill-card {
   --bill-card-color: #1c66c7;
   display: grid;
-  gap: 10px;
-  min-width: 210px;
-  min-height: 132px;
-  padding: 16px;
+  gap: 7px;
+  min-width: 145px;
+  max-height: 110px;
+  padding: 11px;
   border: 1px solid color-mix(in srgb, var(--bill-card-color) 75%, #0b2b57 20%);
-  border-radius: 12px;
+  border-radius: 8px;
   background: linear-gradient(175deg,
       color-mix(in srgb, var(--bill-card-color) 72%, #ffffff 8%) 8%,
       color-mix(in srgb, var(--bill-card-color) 94%, #0a2b58 10%) 120%);
   color: #ffffff;
-  cursor: pointer;
-  flex: 1 1 250px;
-  max-width: 350px;
-  box-shadow: 0 10px 22px -16px color-mix(in srgb, var(--bill-card-color) 55%, #000000 45%);
+  cursor: default;
+  flex: 0 1 174px;
+  box-shadow: 0 7px 15px -11px color-mix(in srgb, var(--bill-card-color) 55%, #000000 45%);
+  overflow: hidden;
 }
 
 .bill-card-top {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
+  gap: 6px;
 }
 
 .bill-card-name {
   margin: 0;
-  font-size: 17px;
+  font-size: 12px;
   font-weight: 600;
   color: #ffffff;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.014em;
 }
 
 .bill-card-label {
-  font-size: 10px;
+  font-size: 7px;
   font-weight: 600;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.056em;
   text-transform: uppercase;
   color: color-mix(in srgb, #ffffff 82%, transparent);
 }
@@ -284,9 +284,9 @@
   justify-content: center;
   padding: 3px 8px;
   border-radius: 999px;
-  font-size: 9px;
+  font-size: 7px;
   font-weight: 700;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.035em;
   color: #ffffff;
   background: color-mix(in srgb, #7f1d1d 60%, #ffffff 10%);
   border: 1px solid color-mix(in srgb, #7f1d1d 68%, #ffffff 20%);
@@ -305,18 +305,26 @@
 
 .bill-card-value {
   margin: 0;
-  font-size: 30px;
+  font-size: 18px;
   font-weight: 700;
   line-height: 1;
   color: #ffffff;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.014em;
+  transition: opacity 0.3s ease;
+  width: 100%;
+  min-width: 0;
 }
 
 .bill-card-add-value {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 6px 10px;
+  box-sizing: border-box;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  padding: 4px 7px;
   border: 1px solid color-mix(in srgb, #ffffff 50%, transparent);
   border-radius: var(--border-radius-md);
   background: color-mix(in srgb, #ffffff 12%, transparent);
@@ -324,6 +332,8 @@
   font-size: 10px;
   font-weight: 600;
   cursor: pointer;
+  transition: opacity 0.3s ease;
+  pointer-events: auto;
 }
 
 .bill-card-add-value:hover {
@@ -333,11 +343,13 @@
 
 .bill-card-input {
   width: 100%;
-  font-size: 30px;
+  min-width: 0;
+  box-sizing: border-box;
+  font-size: 18px;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
   text-align: left;
-  padding: 2px 4px 2px 0;
+  padding: 1px 3px 1px 0;
   border: 0;
   background: transparent;
   color: #ffffff;
@@ -351,6 +363,182 @@
   color: color-mix(in srgb, #ffffff 70%, transparent);
   font-weight: 400;
 }
+
+.bill-display {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-width: 0;
+  height: 28px;
+  position: relative;
+  overflow: hidden;
+}
+
+.bill-currency {
+  width: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: width 0.3s ease, opacity 0.3s ease, margin-right 0.3s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #ffffff;
+  letter-spacing: 0.03em;
+}
+
+.bill-display.editing .bill-card-value {
+  opacity: 0;
+}
+
+.bill-display.editing .bill-card-add-value {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.bill-input-shell {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  white-space: nowrap;
+}
+
+.bill-display.editing .bill-input-shell {
+  opacity: 1;
+  visibility: visible;
+  width: 100%;
+}
+
+.bill-display.editing .bill-card-value {
+  opacity: 0;
+}
+
+.bill-display.editing .bill-card-add-value {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.bill-input-shell {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  white-space: nowrap;
+}
+
+.bill-display.editing .bill-input-shell {
+  opacity: 1;
+  visibility: visible;
+  position: relative;
+  left: auto;
+  top: auto;
+  transform: none;
+  width: 100%;
+}
+
+.bill-display.editing .bill-currency {
+  width: 25px;
+  opacity: 1;
+  margin-right: 0px;
+}
+
+.bill-card-value,
+.bill-card-add-value {
+  transition: opacity 0.3s ease;
+}
+
+.bill-display.editing .bill-card-value,
+.bill-display.editing .bill-card-add-value {
+  opacity: 0;
+  visibility: hidden;
+  position: absolute;
+}
+
+.bill-input-shell {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.bill-display.editing .bill-input-shell {
+  opacity: 1;
+  visibility: visible;
+  position: relative;
+  left: auto;
+  top: auto;
+  transform: none;
+  width: 100%;
+}
+
+.bill-card-static,
+.bill-input-shell {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.bill-card-static {
+  transform: translate(0, -50%);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.bill-card-static.hidden {
+  transform: translate(-100%, -50%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.bill-input-shell {
+  transform: translate(-100%, -50%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.bill-input-shell.visible {
+  transform: translate(0, -50%);
+  opacity: 1;
+  pointer-events: auto;
+  width: 100%;
+}
+
+.bill-display.editing .bill-card-value,
+.bill-display.editing .bill-card-add-value {
+  pointer-events: none;
+}
+
+.bill-display.editing .bill-input-shell {
+  pointer-events: auto;
+}
+
+.bill-card-value {
+  transition: none;
+}
+
+
 
 .card-bill-add-input {
   width: 100%;
@@ -493,13 +681,6 @@
   box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-accent) 16%, transparent);
 }
 
-.bill-currency {
-  font-size: 18px;
-  font-weight: 600;
-  color: #ffffff;
-  letter-spacing: 0.03em;
-}
-
 .bill-input::placeholder {
   color: var(--color-text-tertiary);
 }
@@ -515,7 +696,7 @@
   border-radius: var(--border-radius-md);
   background: color-mix(in srgb, #ffffff 10%, transparent);
   color: #ffffff;
-  font-size: 10px;
+  font-size: 8px;
   font-weight: 600;
   cursor: pointer;
 }
@@ -523,7 +704,7 @@
 .bill-card .bill-input-shell {
   display: inline-flex;
   align-items: baseline;
-  gap: 6px;
+  gap: 4px;
   padding: 0;
   border: 0;
   border-radius: 0;

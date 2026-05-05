@@ -37,10 +37,12 @@ export default function FinanceApp() {
     monthCardBills,
     monthRevenueAmounts,
     setMonthCardBill,
+    setMonthFixedExpenseAmount,
     setMonthRevenueAmount,
     toggleMonthPaid,
   } = useMonthOverridesActions({
     monthOverrides,
+    monthView,
     currentKey,
     ...actions,
   });
@@ -103,6 +105,7 @@ export default function FinanceApp() {
             actions.updateFixedExpense(id, rest as any);
           }}
           onDelete={actions.removeFixedExpense}
+          onMonthFixedExpenseAmount={setMonthFixedExpenseAmount}
           onTogglePaid={(itemId, paid) =>
             toggleMonthPaid(OVERRIDE_TYPES.FIXED_EXPENSE_PAYMENT, itemId, paid)
           }

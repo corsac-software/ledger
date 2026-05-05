@@ -4,10 +4,15 @@ import {
   getMonthCardBills,
   getMonthRevenueAmounts,
 } from '../domain/overrides/facade.js';
-import type { MonthOverride, OverrideType } from '../domain/types.js';
+import type { MonthOverride, MonthView, OverrideType } from '../domain/types.js';
+import {
+  buildTrackedCardBills,
+  mergeCardBillsWithTrackedExpenses,
+} from '../selectors/summarySelectors.js';
 
 interface UseMonthOverridesActionsParams {
   monthOverrides: MonthOverride[];
+  monthView: MonthView;
   currentKey: string;
   upsertMonthOverride: (params: {
     type: OverrideType;
@@ -21,6 +26,7 @@ interface UseMonthOverridesActionsParams {
 
 export function useMonthOverridesActions({
   monthOverrides,
+  monthView,
   currentKey,
   upsertMonthOverride,
   clearMonthOverride,
@@ -33,6 +39,12 @@ export function useMonthOverridesActions({
     };
   }, [currentKey, monthOverrides]);
 
+  const trackedCardBills = useMemo(() => buildTrackedCardBills(monthView), [monthView]);
+  const effectiveMonthCardBills = useMemo(
+    () => mergeCardBillsWithTrackedExpenses(monthCardBills, trackedCardBills),
+    [monthCardBills, trackedCardBills]
+  );
+
   const overrideMutations = useMemo(
     () => createOverrideMutations(currentKey, { upsertMonthOverride, clearMonthOverride }),
     [currentKey, upsertMonthOverride, clearMonthOverride]
@@ -41,6 +53,13 @@ export function useMonthOverridesActions({
   const setMonthCardBill = useCallback(
     (card: string, amount: number | null) => {
       overrideMutations.setCardBill(card, amount);
+    },
+    [overrideMutations]
+  );
+
+  const setMonthFixedExpenseAmount = useCallback(
+    (fixedExpenseId: string, amount: number | null) => {
+      overrideMutations.setFixedExpenseAmount(fixedExpenseId, amount);
     },
     [overrideMutations]
   );
@@ -60,9 +79,10 @@ export function useMonthOverridesActions({
   );
 
   return {
-    monthCardBills,
+    monthCardBills: effectiveMonthCardBills,
     monthRevenueAmounts,
     setMonthCardBill,
+    setMonthFixedExpenseAmount,
     setMonthRevenueAmount,
     toggleMonthPaid,
   };

@@ -27,6 +27,38 @@ export function getExpenseCard(item: {
   return null;
 }
 
+export function buildTrackedCardBills(monthView: MonthView): CardBills {
+  const trackedCardBills: CardBills = {};
+
+  monthView.fixedExpenses.forEach((item) => {
+    const card = getExpenseCard(item as MonthViewFixedExpense);
+    if (!card) return;
+    trackedCardBills[card] = (trackedCardBills[card] || 0) + Number(item.amount || 0);
+  });
+
+  monthView.installments.forEach((item) => {
+    const card = (item.card || 'outro') as BillCard;
+    trackedCardBills[card] = (trackedCardBills[card] || 0) + Number(item.installmentValue || 0);
+  });
+
+  return trackedCardBills;
+}
+
+export function mergeCardBillsWithTrackedExpenses(
+  cardBills: CardBills | null | undefined,
+  trackedCardBills: CardBills
+): CardBills {
+  const merged: CardBills = { ...(cardBills || {}) };
+  Object.entries(trackedCardBills).forEach(([card, trackedAmount]) => {
+    const currentBill = readCardBill(merged, card);
+    const parsedTrackedAmount = Number(trackedAmount || 0);
+    if (Number.isFinite(parsedTrackedAmount) && parsedTrackedAmount > currentBill) {
+      merged[card] = parsedTrackedAmount;
+    }
+  });
+  return merged;
+}
+
 export function buildBillPaymentMap(
   monthOverrides: MonthOverride[],
   currentMonthKey: string

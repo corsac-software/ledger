@@ -1,9 +1,9 @@
 node_modules/
 dist/
 *.log
-ARCHITECTURE.md
 CHANGELOG.md
-*package-lock.json
+*package-lock*
+*roadmap*
 
 
 # Local environment secrets

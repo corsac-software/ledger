@@ -2,6 +2,8 @@ import { describe, it, expect } from 'vitest';
 import {
   readCardBill,
   getExpenseCard,
+  buildTrackedCardBills,
+  mergeCardBillsWithTrackedExpenses,
   buildBillPaymentMap,
   buildSummaryData,
 } from '../selectors/summarySelectors';
@@ -79,6 +81,70 @@ describe('summarySelectors.ts', () => {
       const result = buildBillPaymentMap(overrides, '2026-04');
       expect(result.nubank).toBe(true);
       expect(result.santander).toBe(false);
+    });
+  });
+
+  describe('card bill tracking', () => {
+    const monthView: MonthView = {
+      fixedExpenses: [
+        {
+          id: 'fixed-1',
+          name: 'Internet',
+          amount: 60,
+          dueDay: 10,
+          category: 'telefone',
+          paymentMethod: 'cartao',
+          card: 'nubank',
+          active: true,
+          startMonth: '2026-01',
+          endMonth: null,
+          notes: '',
+          paid: false,
+        },
+      ],
+      installments: [
+        {
+          id: 'inst-1',
+          name: 'Notebook',
+          totalInstallments: 10,
+          currentInstallment: 1,
+          installmentValue: 60,
+          card: 'nubank',
+          category: 'eletronicos',
+          startMonth: '2026-01',
+          active: true,
+          closedAt: null,
+          paid: false,
+        },
+      ],
+      revenues: [],
+      totals: { despesasFixas: 60, receitas: 0, installments: 60 },
+    };
+
+    it('sums fixed expenses and installments by card', () => {
+      expect(buildTrackedCardBills(monthView)).toEqual({ nubank: 120 });
+    });
+
+    it('raises the bill when tracked card expenses are greater', () => {
+      expect(mergeCardBillsWithTrackedExpenses({ nubank: 100 }, { nubank: 120 })).toEqual({
+        nubank: 120,
+      });
+    });
+
+    it('uses tracked expenses as the bill when there is no manual bill', () => {
+      expect(mergeCardBillsWithTrackedExpenses({}, { nubank: 120 })).toEqual({
+        nubank: 120,
+      });
+    });
+
+    it('keeps the bill when it is already greater than tracked expenses', () => {
+      expect(mergeCardBillsWithTrackedExpenses({ nubank: 150 }, { nubank: 120 })).toEqual({
+        nubank: 150,
+      });
+    });
+
+    it('does not keep a derived bill when tracked expenses are removed', () => {
+      expect(mergeCardBillsWithTrackedExpenses({}, {})).toEqual({});
     });
   });
 
