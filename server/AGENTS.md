@@ -1,5 +1,26 @@
 # Agents
 
+# Tech details
+
+## Stack
+
+- Java 21
+- Ktor + Exposed + Flyway
+- PostgreSQL
+- Auth with Firebase (Future)
+
+## Architecture
+
+- Modular monolith with layered architecture
+- Modules are organized by feature/domain (e.g., `lancamento`, `conta`, `usuario`)
+- Each module has its own package and contains all related code (models, services, controllers)
+- Shared code (e.g., utils, common models) goes in a `common` module
+- API layer (controllers) is separate from service layer (business logic) and data access layer (repositories)
+- Use of Ktor dependency injection to manage dependencies between layers and modules
+- Base package is `br.dev.brunorsch.ledger` for all code, with subpackages for each module and layer
+- Project implementations under `src/main/kotlin/ledger` (Package prefix not included), configs under 
+`src/main/kotlin/config`
+
 ## Communication
 
 - Act as an experienced engineer pair programming with the user

@@ -4,6 +4,7 @@ package br.dev.brunorsch.ledger.orcamento.mensal.data
 
 import br.dev.brunorsch.config.GENERATED_MIGRATIONS_DIR
 import br.dev.brunorsch.ledger.orcamento.mensal.data.schema.CategoriasTable
+import br.dev.brunorsch.ledger.orcamento.mensal.data.schema.LancamentosFixosTable
 import br.dev.brunorsch.ledger.orcamento.mensal.data.schema.LancamentosMensaisTable
 import br.dev.brunorsch.ledger.orcamento.mensal.data.schema.OrcamentosMensaisTable
 import br.dev.brunorsch.ledger.utils.resolveMigrationDb
@@ -17,7 +18,7 @@ fun Application.gerarOrcamentoMensalMigrationScripts() {
 
     transaction(migrationDb) {
         MigrationUtils.generateMigrationScript(
-            OrcamentosMensaisTable, LancamentosMensaisTable, CategoriasTable,
+            OrcamentosMensaisTable, LancamentosMensaisTable, CategoriasTable, LancamentosFixosTable,
             scriptDirectory = GENERATED_MIGRATIONS_DIR,
             scriptName = "migration_orcamentos_mensais",
         )

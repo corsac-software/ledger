@@ -4,11 +4,13 @@ import br.dev.brunorsch.ledger.orcamento.mensal.api.CategoriaRequest
 import br.dev.brunorsch.ledger.orcamento.mensal.api.CategoriaResponse
 import br.dev.brunorsch.ledger.orcamento.mensal.api.CategoriaUpdateRequest
 import br.dev.brunorsch.ledger.orcamento.mensal.api.CategoriasController
+import br.dev.brunorsch.ledger.utils.describeOrphan
 import io.ktor.http.HttpStatusCode
 import io.ktor.openapi.jsonSchema
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.delete
 import io.ktor.server.routing.get
+import io.ktor.server.routing.openapi.OperationDescribeAttributeKey
 import io.ktor.server.routing.openapi.describe
 import io.ktor.server.routing.post
 import io.ktor.server.routing.put
@@ -100,5 +102,5 @@ fun Route.categoriasRoutes(categoriasController: CategoriasController) {
                     }
                 }
             }
-    }.describe { tag("Categorias") }
+    }.describeOrphan { tag("Categorias") }
 }
