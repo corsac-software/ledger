@@ -9,7 +9,7 @@ import io.ktor.utils.io.*
 fun Application.configureReact() {
     routing {
         singlePageApplication {
-            react("../web/dist")
+            react("web/dist")
         }
     }
 }
