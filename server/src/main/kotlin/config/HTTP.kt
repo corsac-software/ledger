@@ -39,7 +39,7 @@ fun Application.configureHTTP() {
     }
     routing {
         swaggerUI(path = "docs") {
-            info = OpenApiInfo(title = "PregsLedger", version = "1.0.0")
+            info = OpenApiInfo(title = "Ledger", version = "1.0.0")
         }
     }
 }

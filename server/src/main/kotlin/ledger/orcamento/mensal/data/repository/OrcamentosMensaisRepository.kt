@@ -70,6 +70,15 @@ class OrcamentosMensaisRepository {
             }
             .map { it.toLancamentoMensal() }
     }
+
+    fun existe(id: Long, idULong: Long): Boolean = transaction {
+        OrcamentosMensaisTable.selectAll()
+            .where {
+                OrcamentosMensaisTable.id eq id
+                OrcamentosMensaisTable.usuarioId eq idULong
+            }
+            .empty().not()
+    }
     
     fun excluir(id: Long, idUsuario: Long) = transaction {
         OrcamentosMensaisTable.deleteWhere {
@@ -141,5 +150,20 @@ class OrcamentosMensaisRepository {
             stmt[OrcamentosMensaisTable.seqDespesa] = novoSeq
         }
         novoSeq
+    }
+
+    fun existeLancamentoPorId(id: Long, orcamentoId: Long, idUsuario: Long): Boolean = transaction {
+        LancamentosMensaisTable.join(
+            otherTable = OrcamentosMensaisTable,
+            joinType = INNER,
+            onColumn = LancamentosMensaisTable.orcamentoId,
+            otherColumn = OrcamentosMensaisTable.id,
+        ).select(LancamentosMensaisTable.columns)
+            .where {
+                LancamentosMensaisTable.id eq id
+                LancamentosMensaisTable.orcamentoId eq orcamentoId
+                OrcamentosMensaisTable.usuarioId eq idUsuario
+            }
+            .empty().not()
     }
 }
