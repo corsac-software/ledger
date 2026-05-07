@@ -3,13 +3,9 @@ package br.dev.brunorsch.ledger.orcamento.mensal.service
 import br.dev.brunorsch.ledger.orcamento.mensal.api.LancamentoRequest
 import br.dev.brunorsch.ledger.orcamento.mensal.api.LancamentoUpdateRequest
 import br.dev.brunorsch.ledger.orcamento.mensal.api.OrcamentoMensalRequest
-import br.dev.brunorsch.ledger.orcamento.mensal.api.idUsuario
 import br.dev.brunorsch.ledger.orcamento.mensal.data.repository.OrcamentosMensaisRepository
-import br.dev.brunorsch.ledger.orcamento.mensal.data.schema.LancamentosMensaisTable.orcamentoId
-import br.dev.brunorsch.ledger.orcamento.mensal.domain.AnoMes
 import br.dev.brunorsch.ledger.orcamento.mensal.domain.LancamentoMensal
 import br.dev.brunorsch.ledger.orcamento.mensal.domain.OrcamentoMensal
-import br.dev.brunorsch.ledger.orcamento.mensal.domain.TipoLancamento
 import br.dev.brunorsch.ledger.orcamento.mensal.domain.TipoLancamento.DESPESA
 import br.dev.brunorsch.ledger.orcamento.mensal.domain.TipoLancamento.RECEITA
 import br.dev.brunorsch.ledger.orcamento.mensal.domain.TipoLancamento.valueOf
@@ -18,7 +14,6 @@ import br.dev.brunorsch.ledger.utils.idNaoInserido
 import br.dev.brunorsch.ledger.utils.slf4j
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.number
-import java.math.BigDecimal
 import java.time.YearMonth
 
 class OrcamentosMensaisService(
@@ -44,7 +39,10 @@ class OrcamentosMensaisService(
             dataFim = dataFim
         )
 
-        return repository.criar(orcamento)
+        val criado = repository.criar(orcamento)
+        importarLancamentosFixos(criado)
+
+        return criado
     }
 
     fun buscarTodos(idUsuario: Long): List<OrcamentoMensal> {
@@ -57,6 +55,50 @@ class OrcamentosMensaisService(
 
     fun buscarLancamentosPorId(id: Long, idUsuario: Long): List<LancamentoMensal> {
         return repository.buscarLancamentosPorId(id, idUsuario)
+    }
+
+    fun importarLancamentosFixos(orcamentoId: Long, idUsuario: Long): List<LancamentoMensal> {
+        val orcamento = repository.buscarPorId(orcamentoId, idUsuario)
+            ?: throw IllegalArgumentException("Orçamento não encontrado")
+        return importarLancamentosFixos(orcamento)
+    }
+
+    private fun importarLancamentosFixos(orcamento: OrcamentoMensal): List<LancamentoMensal> {
+        val lancamentosFixos = repository.buscarLancamentosFixosParaImportacao(orcamento.idUsuario, orcamento.anoMes)
+
+        var seqReceita = orcamento.seqReceita
+        var seqDespesa = orcamento.seqDespesa
+        val lancamentos = lancamentosFixos.map { lancamentoFixo ->
+            val seq = when (lancamentoFixo.tipo) {
+                RECEITA -> ++seqReceita
+                DESPESA -> ++seqDespesa
+            }
+            val slug = "${lancamentoFixo.tipo.prefixoSlug}-${orcamento.anoMes.anoAsString()}-${orcamento.anoMes.mesAsString()}-$seq"
+
+            if (lancamentoFixo.tipo == RECEITA) {
+                LancamentoMensal.criarReceita(
+                    id = idNaoInserido,
+                    slug = slug,
+                    descricao = lancamentoFixo.descricao,
+                    valor = lancamentoFixo.valor
+                )
+            } else {
+                LancamentoMensal.criarDespesa(
+                    id = idNaoInserido,
+                    slug = slug,
+                    descricao = lancamentoFixo.descricao,
+                    valor = lancamentoFixo.valor,
+                    statusDespesa = LancamentoMensal.StatusDespesa.ABERTO
+                )
+            }
+        }
+
+        val criados = repository.criarLancamentosBatch(orcamento.id, lancamentos)
+        if (criados.isNotEmpty()) {
+            repository.atualizarSequencias(orcamento.id, seqReceita, seqDespesa)
+        }
+
+        return criados
     }
 
     fun excluir(id: Long, idUsuario: Long) {

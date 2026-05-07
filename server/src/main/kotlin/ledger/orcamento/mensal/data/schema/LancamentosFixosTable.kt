@@ -13,6 +13,8 @@ import org.jetbrains.exposed.v1.datetime.timestamp
 object LancamentosFixosTable : LongIdTable("lancamentos_fixos") {
     val usuarioId = long("usuario_id")
     val tipo = varchar("tipo", 16)
+    val descricao = varchar("descricao", 32)
+    val valor = decimal("valor", 10, 2)
     val diaVencimento = integer("dia_vencimento")
     val mesInicio = varchar("mes_inicio", 6)
     val formaPagamento = varchar("forma_pagamento", 16)
@@ -29,6 +31,8 @@ fun ResultRow.toLancamentoFixo() = LancamentoFixo(
     id = this[LancamentosFixosTable.id].value,
     idUsuario = this[LancamentosFixosTable.usuarioId],
     tipo = valueOf(this[LancamentosFixosTable.tipo]),
+    descricao = this[LancamentosFixosTable.descricao],
+    valor = this[LancamentosFixosTable.valor],
     diaVencimento = this[LancamentosFixosTable.diaVencimento],
     mesInicio = this[LancamentosFixosTable.mesInicio].toAnoMes(),
     formaPagamento = LancamentoFixo.FormaPagamento.valueOf(this[LancamentosFixosTable.formaPagamento]),
@@ -43,6 +47,8 @@ fun ResultRow.toLancamentoFixo() = LancamentoFixo(
 fun LancamentoFixo.toStatement(stmt: UpdateBuilder<*>) {
     stmt[LancamentosFixosTable.usuarioId] = this.idUsuario
     stmt[LancamentosFixosTable.tipo] = this.tipo.name
+    stmt[LancamentosFixosTable.descricao] = this.descricao
+    stmt[LancamentosFixosTable.valor] = this.valor
     stmt[LancamentosFixosTable.diaVencimento] = this.diaVencimento
     stmt[LancamentosFixosTable.mesInicio] = this.mesInicio.toFormatoSlug()
     stmt[LancamentosFixosTable.formaPagamento] = this.formaPagamento.name

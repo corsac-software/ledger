@@ -123,6 +123,23 @@ fun Route.orcamentosMensaisRoutes(controller: OrcamentosMensaisController) {
                 }
             }
 
+        post("/{id}/lancamentos-fixos/importar") { controller.importarLancamentosFixos(call) }
+            .describe {
+                summary = "Importar lançamentos fixos"
+                description = "Cria lançamentos mensais a partir dos lançamentos fixos válidos para o mês do orçamento."
+                responses {
+                    HttpStatusCode.Created {
+                        schema = jsonSchema<List<LancamentoResponse>>()
+                    }
+                    HttpStatusCode.BadRequest {
+                        description = "A requisição possui parâmetros inválidos."
+                    }
+                    HttpStatusCode.NotFound {
+                        description = "Nenhum orçamento mensal foi encontrado para o ID informado."
+                    }
+                }
+            }
+
         put("/{id}/lancamentos/{lancamentoId}") { controller.atualizarLancamento(call) }
             .describe {
                 summary = "Atualizar lançamento em orçamento mensal"

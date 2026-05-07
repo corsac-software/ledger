@@ -46,6 +46,16 @@ class OrcamentosMensaisController(
         call.respond(lancamentos)
     }
 
+    suspend fun importarLancamentosFixos(call: ApplicationCall) {
+        val id = call.parameters["id"]?.toLongOrNull()
+            ?: return call.respond(HttpStatusCode.BadRequest)
+
+        val lancamentos = service.importarLancamentosFixos(id, idUsuario)
+            .map { it.toResponse() }
+
+        call.respond(HttpStatusCode.Created, lancamentos)
+    }
+
     suspend fun excluir(call: ApplicationCall) {
         val id = call.parameters["id"]?.toLongOrNull()
             ?: return call.respond(HttpStatusCode.BadRequest)

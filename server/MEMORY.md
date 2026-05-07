@@ -54,6 +54,7 @@ migrations/        # Flyway SQL migrations
 - **Migrations:** Flyway
 - **Auth:** Firebase (configurado, mas `idUsuario` está hardcoded como `1`)
 - **Serialização:** Kotlinx Serialization
+- Valores monetários em DTOs devem usar `BigDecimalJson` de `utils/Serialization.kt`, inclusive em responses. Não converter para `Double`.
 
 ### Bugs conhecidos
 - Migration V2 usa sintaxe PostgreSQL (IF NOT EXISTS) - pode falhar com H2
