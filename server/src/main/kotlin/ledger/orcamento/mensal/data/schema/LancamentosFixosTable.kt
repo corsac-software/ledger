@@ -8,7 +8,7 @@ import br.dev.brunorsch.ledger.orcamento.mensal.domain.toAnoMes
 import org.jetbrains.exposed.v1.core.ResultRow
 import org.jetbrains.exposed.v1.core.dao.id.LongIdTable
 import org.jetbrains.exposed.v1.core.statements.UpdateBuilder
-import org.jetbrains.exposed.v1.datetime.timestamp
+import org.jetbrains.exposed.v1.datetime.datetime
 
 object LancamentosFixosTable : LongIdTable("lancamentos_fixos") {
     val usuarioId = long("usuario_id")
@@ -22,8 +22,8 @@ object LancamentosFixosTable : LongIdTable("lancamentos_fixos") {
     val categoriaId = long("categoria_id")
         .references(CategoriasTable.id)
     val ativo = bool("ativo").default(true)
-    val criadoEm = timestamp("criado_em")
-    val atualizadoEm = timestamp("atualizado_em")
+    val criadoEm = datetime("criado_em")
+    val atualizadoEm = datetime("atualizado_em")
     val excluidoEm = varchar("excluido_em", 6).nullable()
 }
 

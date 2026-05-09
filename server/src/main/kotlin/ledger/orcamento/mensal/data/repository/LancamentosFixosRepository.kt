@@ -12,7 +12,7 @@ import org.jetbrains.exposed.v1.jdbc.insertAndGetId
 import org.jetbrains.exposed.v1.jdbc.selectAll
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 import org.jetbrains.exposed.v1.jdbc.update
-import kotlin.time.Instant
+import kotlinx.datetime.LocalDateTime
 
 class LancamentosFixosRepository {
     fun buscarTodos(idUsuario: Long): List<LancamentoFixo> = transaction {
@@ -68,7 +68,7 @@ class LancamentosFixosRepository {
             ?.toLancamentoFixo()
     }
 
-    fun deletar(id: Long, idUsuario: Long, excluidoEm: AnoMes, atualizadoEm: Instant): Result<Unit> = transaction {
+    fun deletar(id: Long, idUsuario: Long, excluidoEm: AnoMes, atualizadoEm: LocalDateTime): Result<Unit> = transaction {
         val linhasAfetadas = LancamentosFixosTable.update({
             (LancamentosFixosTable.id eq id) and
                 (LancamentosFixosTable.usuarioId eq idUsuario) and

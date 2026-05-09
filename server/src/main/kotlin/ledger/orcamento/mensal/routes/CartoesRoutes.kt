@@ -1,0 +1,108 @@
+package br.dev.brunorsch.ledger.orcamento.mensal.routes
+
+import br.dev.brunorsch.ledger.orcamento.mensal.api.CartaoRequest
+import br.dev.brunorsch.ledger.orcamento.mensal.api.CartaoResponse
+import br.dev.brunorsch.ledger.orcamento.mensal.api.CartaoUpdateRequest
+import br.dev.brunorsch.ledger.orcamento.mensal.api.CartoesController
+import br.dev.brunorsch.ledger.utils.describeOrphan
+import io.ktor.http.HttpStatusCode
+import io.ktor.openapi.jsonSchema
+import io.ktor.server.routing.Route
+import io.ktor.server.routing.delete
+import io.ktor.server.routing.get
+import io.ktor.server.routing.openapi.describe
+import io.ktor.server.routing.post
+import io.ktor.server.routing.put
+import io.ktor.server.routing.route
+import io.ktor.utils.io.ExperimentalKtorApi
+
+@OptIn(ExperimentalKtorApi::class)
+fun Route.cartoesRoutes(controller: CartoesController) {
+    route("/api/orcamentos-mensais/cartoes") {
+        get { controller.buscarTodos(call) }
+            .describe {
+                summary = "Listar cartões"
+                description = "Lista os cartões ativos do usuário."
+                responses {
+                    HttpStatusCode.OK {
+                        schema = jsonSchema<List<CartaoResponse>>()
+                    }
+                }
+            }
+
+        get("/{cartaoId}") { controller.buscarPorId(call) }
+            .describe {
+                summary = "Consultar cartão por ID"
+                description = "Consulta um cartão por ID."
+                responses {
+                    HttpStatusCode.OK {
+                        schema = jsonSchema<CartaoResponse>()
+                    }
+                    HttpStatusCode.BadRequest {
+                        description = "A requisição possui parâmetros inválidos."
+                    }
+                    HttpStatusCode.NotFound {
+                        description = "Nenhum cartão foi encontrado para o ID informado."
+                    }
+                }
+            }
+
+        post { controller.criar(call) }
+            .describe {
+                summary = "Criar cartão"
+                description = "Cria um cartão para o usuário."
+                requestBody {
+                    content {
+                        schema = jsonSchema<CartaoRequest>()
+                    }
+                }
+                responses {
+                    HttpStatusCode.Created {
+                        schema = jsonSchema<CartaoResponse>()
+                    }
+                    HttpStatusCode.BadRequest {
+                        description = "A requisição possui corpo inválido."
+                    }
+                }
+            }
+
+        put("/{cartaoId}") { controller.atualizar(call) }
+            .describe {
+                summary = "Atualizar cartão"
+                description = "Atualiza um cartão por ID."
+                requestBody {
+                    content {
+                        schema = jsonSchema<CartaoUpdateRequest>()
+                    }
+                }
+                responses {
+                    HttpStatusCode.OK {
+                        schema = jsonSchema<CartaoResponse>()
+                    }
+                    HttpStatusCode.BadRequest {
+                        description = "A requisição possui corpo ou parâmetros inválidos."
+                    }
+                    HttpStatusCode.NotFound {
+                        description = "Nenhum cartão foi encontrado para o ID informado."
+                    }
+                }
+            }
+
+        delete("/{cartaoId}") { controller.deletar(call) }
+            .describe {
+                summary = "Deletar cartão"
+                description = "Deleta logicamente um cartão por ID."
+                responses {
+                    HttpStatusCode.NoContent {
+                        description = "O cartão foi deletado."
+                    }
+                    HttpStatusCode.BadRequest {
+                        description = "A requisição possui parâmetros inválidos."
+                    }
+                    HttpStatusCode.NotFound {
+                        description = "Nenhum cartão foi encontrado para o ID informado."
+                    }
+                }
+            }
+    }.describeOrphan { tag("Cartões") }
+}
