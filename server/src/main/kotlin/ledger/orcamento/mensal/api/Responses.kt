@@ -3,6 +3,7 @@ package br.dev.brunorsch.ledger.orcamento.mensal.api
 import br.dev.brunorsch.ledger.orcamento.mensal.domain.LancamentoMensal
 import br.dev.brunorsch.ledger.orcamento.mensal.domain.LancamentoMensal.StatusDespesa
 import br.dev.brunorsch.ledger.orcamento.mensal.domain.OrcamentoMensal
+import br.dev.brunorsch.ledger.utils.BigDecimalJson
 import kotlinx.datetime.number
 import kotlinx.serialization.Serializable
 
@@ -11,7 +12,7 @@ data class LancamentoResponse(
     val id: Long,
     val slug: String,
     val descricao: String,
-    val valor: Double,
+    val valor: BigDecimalJson,
     val tipo: String,
     val statusDespesa: StatusDespesa?
 )
@@ -33,7 +34,7 @@ fun LancamentoMensal.toResponse() = LancamentoResponse(
     id = id,
     slug = slug,
     descricao = descricao,
-    valor = valor.toDouble(),
+    valor = valor,
     tipo = tipo.name,
     statusDespesa = statusDespesa
 )

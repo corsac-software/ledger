@@ -29,6 +29,7 @@ class LancamentosFixosService(
         val tipo = parseTipo(request.tipo)
         val mesInicio = parseAnoMes(request.mesInicio)
         val formaPagamento = parseFormaPagamento(request.formaPagamento)
+        validarDescricao(request.descricao)
         validarDiaVencimento(request.diaVencimento)
         validarFormaPagamento(formaPagamento, request.idCartao)
         validarCategoria(request.idCategoria, idUsuario)
@@ -39,6 +40,8 @@ class LancamentosFixosService(
                 id = idNaoInserido,
                 idUsuario = idUsuario,
                 tipo = tipo,
+                descricao = request.descricao,
+                valor = request.valor,
                 diaVencimento = request.diaVencimento,
                 mesInicio = mesInicio,
                 formaPagamento = formaPagamento,
@@ -66,6 +69,7 @@ class LancamentosFixosService(
         }
         val idCategoria = request.idCategoria ?: existente.idCategoria
 
+        request.descricao?.let { validarDescricao(it) }
         request.diaVencimento?.let { validarDiaVencimento(it) }
         validarFormaPagamento(formaPagamento, idCartao)
         if (request.idCategoria != null) validarCategoria(idCategoria, idUsuario)
@@ -73,6 +77,8 @@ class LancamentosFixosService(
         return repository.atualizar(
             existente.copy(
                 tipo = request.tipo?.let { parseTipo(it) } ?: existente.tipo,
+                descricao = request.descricao ?: existente.descricao,
+                valor = request.valor ?: existente.valor,
                 diaVencimento = request.diaVencimento ?: existente.diaVencimento,
                 mesInicio = request.mesInicio?.let { parseAnoMes(it) } ?: existente.mesInicio,
                 formaPagamento = formaPagamento,
@@ -93,6 +99,10 @@ class LancamentosFixosService(
             excluidoEm = YearMonth.now().toAnoMes(),
             atualizadoEm = agora
         )
+    }
+
+    private fun validarDescricao(descricao: String) {
+        require(descricao.length <= 32) { "Descrição deve ter no máximo 32 caracteres" }
     }
 
     private fun validarDiaVencimento(diaVencimento: Int) {

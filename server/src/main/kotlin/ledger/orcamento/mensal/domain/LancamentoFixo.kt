@@ -1,11 +1,14 @@
 package br.dev.brunorsch.ledger.orcamento.mensal.domain
 
 import kotlin.time.Instant
+import java.math.BigDecimal
 
 data class LancamentoFixo(
     val id: Long,
     val idUsuario: Long,
     val tipo: TipoLancamento,
+    val descricao: String,
+    val valor: BigDecimal,
     val diaVencimento: Int,
     val mesInicio: AnoMes,
     val formaPagamento: FormaPagamento,
