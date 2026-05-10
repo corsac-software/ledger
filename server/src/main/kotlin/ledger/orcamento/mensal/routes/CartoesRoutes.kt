@@ -4,6 +4,7 @@ import br.dev.brunorsch.ledger.orcamento.mensal.api.CartaoRequest
 import br.dev.brunorsch.ledger.orcamento.mensal.api.CartaoResponse
 import br.dev.brunorsch.ledger.orcamento.mensal.api.CartaoUpdateRequest
 import br.dev.brunorsch.ledger.orcamento.mensal.api.CartoesController
+import br.dev.brunorsch.ledger.orcamento.mensal.api.ParcelamentosController
 import br.dev.brunorsch.ledger.utils.describeOrphan
 import io.ktor.http.HttpStatusCode
 import io.ktor.openapi.jsonSchema
@@ -17,7 +18,10 @@ import io.ktor.server.routing.route
 import io.ktor.utils.io.ExperimentalKtorApi
 
 @OptIn(ExperimentalKtorApi::class)
-fun Route.cartoesRoutes(controller: CartoesController) {
+fun Route.cartoesRoutes(
+    controller: CartoesController,
+    parcelamentosController: ParcelamentosController
+) {
     route("/api/orcamentos-mensais/cartoes") {
         get { controller.buscarTodos(call) }
             .describe {
@@ -104,5 +108,7 @@ fun Route.cartoesRoutes(controller: CartoesController) {
                     }
                 }
             }
+
+        parcelamentosRoutes(parcelamentosController)
     }.describeOrphan { tag("Cartões") }
 }

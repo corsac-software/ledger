@@ -35,6 +35,14 @@ data class AnoMes(
     override fun toString() = "${anoAsString()}-${mesAsString()}"
 
     fun toFormatoSlug() = "${anoAsString()}${mesAsString()}"
+
+    companion object {
+        fun parse(anoMes: String): AnoMes {
+            require(anoMes.matches(Regex("^\\d{4}-\\d{2}$"))) { "anoMes deve estar no formato AAAA-MM" }
+            val (ano, mes) = anoMes.split("-").map { it.toInt() }
+            return AnoMes(ano, mes)
+        }
+    }
 }
 
 fun String.toAnoMes(): AnoMes {

@@ -26,7 +26,7 @@ class LancamentosFixosService(
 
     fun criar(idUsuario: Long, request: LancamentoFixoRequest): LancamentoFixo {
         val tipo = parseTipo(request.tipo)
-        val mesInicio = parseAnoMes(request.mesInicio)
+        val mesInicio = AnoMes.parse(request.mesInicio)
         val formaPagamento = parseFormaPagamento(request.formaPagamento)
         validarDescricao(request.descricao)
         validarDiaVencimento(request.diaVencimento)
@@ -79,7 +79,7 @@ class LancamentosFixosService(
                 descricao = request.descricao ?: existente.descricao,
                 valor = request.valor ?: existente.valor,
                 diaVencimento = request.diaVencimento ?: existente.diaVencimento,
-                mesInicio = request.mesInicio?.let { parseAnoMes(it) } ?: existente.mesInicio,
+                mesInicio = request.mesInicio?.let { AnoMes.parse(it) } ?: existente.mesInicio,
                 formaPagamento = formaPagamento,
                 idCartao = idCartao,
                 idCategoria = idCategoria,
@@ -126,10 +126,6 @@ class LancamentosFixosService(
 
     private fun parseFormaPagamento(formaPagamento: String): LancamentoFixo.FormaPagamento {
         return LancamentoFixo.FormaPagamento.valueOf(formaPagamento.uppercase())
-    }
-
-    private fun parseAnoMes(anoMes: String): AnoMes {
-        return anoMes.replace("-", "").toAnoMes()
     }
 
     private fun YearMonth.toAnoMes() = AnoMes(year, monthValue)
