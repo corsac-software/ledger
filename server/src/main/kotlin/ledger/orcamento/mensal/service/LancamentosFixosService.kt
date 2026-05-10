@@ -9,11 +9,10 @@ import br.dev.brunorsch.ledger.orcamento.mensal.domain.TipoLancamento
 import br.dev.brunorsch.ledger.orcamento.mensal.domain.TipoLancamento.valueOf
 import br.dev.brunorsch.ledger.orcamento.mensal.domain.toAnoMes
 import br.dev.brunorsch.ledger.utils.idNaoInserido
+import br.dev.brunorsch.ledger.utils.now
+import kotlinx.datetime.LocalDateTime
 import java.time.YearMonth
-import kotlin.time.Clock
-import kotlin.time.ExperimentalTime
 
-@OptIn(ExperimentalTime::class)
 class LancamentosFixosService(
     private val repository: LancamentosFixosRepository
 ) {
@@ -34,7 +33,7 @@ class LancamentosFixosService(
         validarFormaPagamento(formaPagamento, request.idCartao)
         validarCategoria(request.idCategoria, idUsuario)
 
-        val agora = Clock.System.now()
+        val agora = LocalDateTime.now()
         return repository.criar(
             LancamentoFixo(
                 id = idNaoInserido,
@@ -85,14 +84,14 @@ class LancamentosFixosService(
                 idCartao = idCartao,
                 idCategoria = idCategoria,
                 ativo = request.ativo ?: existente.ativo,
-                atualizadoEm = Clock.System.now(),
+                atualizadoEm = LocalDateTime.now(),
                 excluidoEm = if (request.ativo == true) null else existente.excluidoEm
             )
         )
     }
 
     fun deletar(id: Long, idUsuario: Long): Result<Unit> {
-        val agora = Clock.System.now()
+        val agora = LocalDateTime.now()
         return repository.deletar(
             id = id,
             idUsuario = idUsuario,

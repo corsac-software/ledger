@@ -1,6 +1,6 @@
 package br.dev.brunorsch.ledger.orcamento.mensal.domain
 
-import kotlin.time.Instant
+import kotlinx.datetime.LocalDateTime
 import java.math.BigDecimal
 
 data class LancamentoFixo(
@@ -15,8 +15,8 @@ data class LancamentoFixo(
     val idCartao: Long?,
     val idCategoria: Long,
     val ativo: Boolean,
-    val criadoEm: Instant,
-    val atualizadoEm: Instant,
+    val criadoEm: LocalDateTime,
+    val atualizadoEm: LocalDateTime,
     val excluidoEm: AnoMes?
 ) {
     enum class FormaPagamento {
