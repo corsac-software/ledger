@@ -144,3 +144,13 @@ Data: 2026-05-12
 - Higiene pos-ressalvas validada:
   - `npm test`: 22 test files passed, 219 tests passed, sem stack traces esperados do ErrorBoundary no output.
   - `npm run build`: build concluido com sucesso.
+- Husky/pre-commit corrigido:
+  - `git config core.hooksPath` configurado no repositorio raiz para `web/.husky`.
+  - `web/.husky/pre-commit` agora possui shebang, entra em `web` e roda `npm run lint && npm run test`.
+  - Script `prepare` de `package.json` agora reconfigura `core.hooksPath` para `web/.husky`, adequado ao repo raiz `ledger` com app em subpasta.
+  - Validado com `npm run prepare` e `git hook run pre-commit`: lint passou e 219 testes passaram.
+- Limpeza de package/test setup:
+  - Removido `lint-staged` e `.lintstagedrc.json`, pois o pre-commit atual roda lint/test do projeto web diretamente.
+  - Consolidado `jest-dom` em `vitest.setup.ts` usando `@testing-library/jest-dom/vitest`.
+  - Removido `src/features/finance/tests/setupTests.ts` e simplificado `setupFiles` em `vitest.config.ts`.
+  - Validado com `npm run lint`, `npm test` (219 testes) e `npm run build`.
