@@ -1,12 +1,19 @@
 import { CARD_ICONS, CATEGORIES, ICONS } from '../../../ui/constants';
 import type { FixedExpense } from '../../../domain/types';
+import { formatMoneyInput } from '../../../lib/moneyInput';
 import { formatStartMonth } from '../../../lib/utils';
 import { RowActions } from '../shared/RowActions';
 
 interface FixedExpenseRowProps {
   item: FixedExpense;
   money: (value: number) => string;
+  displayAmount: number;
+  tempValue?: string;
+  hasOverride: boolean;
   isPaid: boolean;
+  onMonthAmountInput: (itemId: string, value: string) => void;
+  onMonthAmountBlur: (item: Pick<FixedExpense, 'id' | 'amount'>) => void;
+  onMonthAmountChange: (itemId: string, amount: string | null) => void;
   onTogglePaid: (itemId: string, paid: boolean) => void;
   onEdit: () => void;
   onDelete: () => void;
@@ -21,7 +28,13 @@ function resolvePaymentMethod(item: FixedExpense) {
 export function FixedExpenseRow({
   item,
   money,
+  displayAmount,
+  tempValue,
+  hasOverride,
   isPaid,
+  onMonthAmountInput,
+  onMonthAmountBlur,
+  onMonthAmountChange,
   onTogglePaid,
   onEdit,
   onDelete,
@@ -30,7 +43,30 @@ export function FixedExpenseRow({
   return (
     <tr>
       <td>{item.name}</td>
-      <td>{money(item.amount)}</td>
+      <td>
+        <div className="month-amount-cell">
+          <input
+            type="text"
+            className={`month-amount-input ${hasOverride ? 'has-override' : ''}`}
+            value={tempValue !== undefined ? tempValue : formatMoneyInput(displayAmount)}
+            onChange={(e) => onMonthAmountInput(item.id, e.target.value)}
+            onBlur={() => onMonthAmountBlur(item)}
+            inputMode="numeric"
+            autoComplete="off"
+            placeholder={money(item.amount)}
+          />
+          {hasOverride && (
+            <button
+              type="button"
+              className="clear-override"
+              onClick={() => onMonthAmountChange(item.id, null)}
+              title="Restaurar valor original"
+            >
+              ×
+            </button>
+          )}
+        </div>
+      </td>
       <td>
         {(() => {
           const methodOrCard = resolvePaymentMethod(item);

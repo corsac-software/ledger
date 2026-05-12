@@ -13,7 +13,9 @@ import { useFixedExpenseCrudState } from './fixed-expenses/useFixedExpenseCrudSt
 import type { CrudSectionCommonProps, MonthPaidSectionProps } from './shared/types';
 import { useCrudFormFlow } from './shared/useCrudFormFlow';
 import { useCrudModalState } from './shared/useCrudModalState';
+import { useMonthAmountInput } from './shared/useMonthAmountInput';
 import { useMonthPaymentMap } from '../../hooks/useMonthPaymentMap';
+import { selectMonthFixedExpenseAmounts } from '../../selectors/monthOverrideSelectors';
 
 type FixedExpensePayload = {
   name: string;
@@ -28,6 +30,7 @@ type FixedExpensePayload = {
 type FixedExpensesSectionProps = CrudSectionCommonProps<FixedExpense, FixedExpensePayload> &
   MonthPaidSectionProps & {
     cardList?: CardBillItem[];
+    onMonthFixedExpenseAmount?: (itemId: string, amount: number | null) => void;
   };
 
 export function FixedExpensesSection({
@@ -38,6 +41,7 @@ export function FixedExpensesSection({
   onEdit,
   onDelete,
   onTogglePaid,
+  onMonthFixedExpenseAmount,
   cardList,
 }: FixedExpensesSectionProps) {
   const cards = useMemo(() => cardList ?? [], [cardList]);
@@ -74,6 +78,10 @@ export function FixedExpensesSection({
     currentMonthKey,
     OVERRIDE_TYPES.FIXED_EXPENSE_PAYMENT
   );
+  const monthFixedExpenseAmounts = useMemo(
+    () => selectMonthFixedExpenseAmounts(monthOverrides, currentMonthKey),
+    [currentMonthKey, monthOverrides]
+  );
 
   const buildPayload = (currentForm: any) => buildFixedExpensePayload(currentForm, cards);
 
@@ -93,6 +101,13 @@ export function FixedExpensesSection({
     openCreateBase();
   };
 
+  const {
+    tempInputValues,
+    handleMonthAmountChange,
+    handleMonthAmountInput,
+    handleMonthAmountBlur,
+  } = useMonthAmountInput(onMonthFixedExpenseAmount);
+
   return (
     <>
       <RuleSection
@@ -104,21 +119,32 @@ export function FixedExpensesSection({
         emptyText={FIXED_EXPENSE_LABELS.emptyText}
         sortBy="value-desc"
         columns={FIXED_EXPENSE_LABELS.columns as unknown as string[]}
-        renderItem={(item: any, money: (value: number) => string) => (
-          <FixedExpenseRow
-            key={item.id}
-            item={item}
-            money={money}
-            isPaid={monthPaymentMap.get(item.id)?.paid === true}
-            cardIconMap={cardIconMap}
-            onTogglePaid={onTogglePaid}
-            onEdit={() => {
-              openEditForm(item);
-              openEditBase(item.id);
-            }}
-            onDelete={() => openDeleteConfirm(item)}
-          />
-        )}
+        renderItem={(item: any, money: (value: number) => string) => {
+          const hasOverride =
+            monthFixedExpenseAmounts && monthFixedExpenseAmounts[item.id] !== undefined;
+
+          return (
+            <FixedExpenseRow
+              key={item.id}
+              item={item}
+              money={money}
+              displayAmount={hasOverride ? monthFixedExpenseAmounts[item.id] : item.amount}
+              tempValue={tempInputValues[item.id]}
+              hasOverride={hasOverride}
+              isPaid={monthPaymentMap.get(item.id)?.paid === true}
+              cardIconMap={cardIconMap}
+              onMonthAmountInput={handleMonthAmountInput}
+              onMonthAmountBlur={handleMonthAmountBlur}
+              onMonthAmountChange={handleMonthAmountChange}
+              onTogglePaid={onTogglePaid}
+              onEdit={() => {
+                openEditForm(item);
+                openEditBase(item.id);
+              }}
+              onDelete={() => openDeleteConfirm(item)}
+            />
+          );
+        }}
       />
 
       <ConfirmModal

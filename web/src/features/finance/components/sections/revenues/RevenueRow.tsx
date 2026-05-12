@@ -36,7 +36,7 @@ export function RevenueRow({
           <input
             type="text"
             className={`month-amount-input ${hasOverride ? 'has-override' : ''}`}
-            value={tempValue || formatMoneyInput(displayAmount)}
+            value={tempValue !== undefined ? tempValue : formatMoneyInput(displayAmount)}
             onChange={(e) => onMonthAmountInput(item.id, e.target.value)}
             onBlur={() => onMonthAmountBlur(item)}
             inputMode="numeric"

@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, within } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import MonthNav from '../components/MonthNav';
 import { DEFAULT_CARD_BILLS } from '../lib/schema';
@@ -42,13 +42,12 @@ describe('MonthNav.tsx', () => {
 
   it('renders theme button', () => {
     render(<MonthNav {...defaultProps} />);
-    expect(screen.getByLabelText(/Mudar para tema/)).toBeInTheDocument();
-    expect(screen.getByText('Escuro')).toBeInTheDocument();
+    expect(screen.getByLabelText(/Mudar para tema Escuro/)).toBeInTheDocument();
   });
 
   it('shows "Claro" when theme is premium', () => {
     render(<MonthNav {...defaultProps} theme="premium" />);
-    expect(screen.getByText('Claro')).toBeInTheDocument();
+    expect(screen.getByLabelText(/Mudar para tema Claro/)).toBeInTheDocument();
   });
 
   it('calls onToggleTheme when theme button clicked', () => {
@@ -84,6 +83,48 @@ describe('MonthNav.tsx', () => {
     expect(screen.getByText(/500,00/)).toBeInTheDocument();
   });
 
+  it('does not edit the bill value when the card body is clicked', () => {
+    render(
+      <MonthNav
+        {...defaultProps}
+        cardList={[{ id: 'nubank', name: 'Nubank', icon: '💙' }]}
+        cardBills={{ nubank: 500 }}
+      />
+    );
+
+    const input = screen.getByLabelText('Valor da fatura Nubank');
+    const card = screen.getByText('Nubank').closest('.bill-card');
+
+    expect(card).not.toBeNull();
+    fireEvent.click(card as Element);
+
+    expect(document.activeElement).not.toBe(input);
+  });
+
+  it('edits the bill value only after the value itself is clicked', () => {
+    const onSetCardBill = vi.fn();
+    render(
+      <MonthNav
+        {...defaultProps}
+        onSetCardBill={onSetCardBill}
+        cardList={[{ id: 'nubank', name: 'Nubank', icon: '💙' }]}
+        cardBills={{ nubank: 500 }}
+      />
+    );
+
+    fireEvent.click(screen.getByText(/500,00/));
+
+    const input = screen.getByLabelText('Valor da fatura Nubank') as HTMLInputElement;
+    expect(document.activeElement).toBe(input);
+
+    fireEvent.change(input, { target: { value: '1.999,00' } });
+    expect(input.value).toBe('1.999,00');
+    expect(onSetCardBill).not.toHaveBeenCalled();
+
+    fireEvent.blur(input);
+    expect(onSetCardBill).toHaveBeenCalledWith('nubank', 1999);
+  });
+
   it('renders card bill panel title', () => {
     render(<MonthNav {...defaultProps} />);
     expect(screen.getByText('Faturas do mês')).toBeInTheDocument();
@@ -103,10 +144,10 @@ describe('MonthNav.tsx', () => {
     const card = screen.getByText('Nubank').closest('.bill-card');
     expect(card).not.toBeNull();
 
-    const head = card?.querySelector('.bill-card-ident');
-    expect(head).not.toBeNull();
-    expect(head?.firstElementChild).toHaveTextContent('💜');
-    expect(head?.lastElementChild).toHaveTextContent('Apagar');
+    const top = card?.querySelector('.bill-card-top');
+    expect(top).not.toBeNull();
+    expect(top?.querySelector('.bill-card-name')).toHaveTextContent('Nubank');
+    expect(top?.querySelector('.bill-card-delete')).toHaveTextContent('Excluir');
   });
 
   it('adds a new card to the list', () => {
@@ -120,6 +161,7 @@ describe('MonthNav.tsx', () => {
     );
 
     fireEvent.click(screen.getByText('+ Novo cartão'));
+    expect(screen.getByText('Adicionar cartão')).toBeInTheDocument();
     fireEvent.change(screen.getByPlaceholderText('Nome do cartão'), {
       target: { value: 'Cartao novo' },
     });
@@ -129,6 +171,24 @@ describe('MonthNav.tsx', () => {
       { id: 'nubank', name: 'Nubank', icon: '💜' },
       { id: 'cartao-novo', name: 'Cartao novo', icon: '💳' },
     ]);
+  });
+
+  it('does not render a manual color picker for new cards', () => {
+    render(
+      <MonthNav
+        {...defaultProps}
+        cardList={[{ id: 'nubank', name: 'Nubank', icon: '💜' }]}
+        onSetCardList={vi.fn()}
+      />
+    );
+
+    fireEvent.click(screen.getByText('+ Novo cartão'));
+
+    expect(screen.getByText('Adicionar cartão')).toBeInTheDocument();
+    expect(screen.queryByLabelText('Cor do cartão:')).not.toBeInTheDocument();
+    expect(
+      screen.queryByTitle('Clique para escolher uma cor personalizada')
+    ).not.toBeInTheDocument();
   });
 
   it('asks for confirmation before deleting a card', () => {
@@ -162,8 +222,8 @@ describe('MonthNav.tsx', () => {
       />
     );
 
-    const deleteButton = screen.getByRole('button', { name: /Cartão Nubank em uso/ });
-    expect(deleteButton).toBeDisabled();
-    expect(within(deleteButton).getByText('Em uso')).toBeInTheDocument();
+    const status = screen.getByText('EM USO');
+    expect(status).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Apagar cartão Nubank' })).not.toBeInTheDocument();
   });
 });

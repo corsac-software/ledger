@@ -14,6 +14,17 @@ const translations = {
     'card.bills': 'Faturas do mês',
     'card.santander': 'Santander',
     'card.nubank': 'Nubank',
+    'card.itau': 'Itaú',
+    'card.bradesco': 'Bradesco',
+    'card.caixa': 'CAIXA',
+    'card.bb': 'Banco do Brasil',
+    'card.banrisul': 'Banrisul',
+    'card.sicredi': 'Sicredi',
+    'card.inter': 'Inter',
+    'card.c6': 'C6 Bank',
+    'card.votorantim': 'BV',
+    'card.safra': 'Safra',
+    'card.hsbc': 'HSBC',
     'summary.balance': 'Saldo previsto',
     'summary.income': 'Receitas',
     'summary.expenses': 'Despesas',
@@ -82,6 +93,17 @@ const translations = {
     'card.bills': 'Card bills',
     'card.santander': 'Santander',
     'card.nubank': 'Nubank',
+    'card.itau': 'Itaú',
+    'card.bradesco': 'Bradesco',
+    'card.caixa': 'CAIXA',
+    'card.bb': 'Banco do Brasil',
+    'card.banrisul': 'Banrisul',
+    'card.sicredi': 'Sicredi',
+    'card.inter': 'Inter',
+    'card.c6': 'C6 Bank',
+    'card.votorantim': 'BV',
+    'card.safra': 'Safra',
+    'card.hsbc': 'HSBC',
     'summary.balance': 'Projected balance',
     'summary.income': 'Income',
     'summary.expenses': 'Expenses',
@@ -139,9 +161,58 @@ const translations = {
   },
 };
 
+const CARD_NAME_ALIASES: Record<string, string> = {
+  nubank: 'card.nubank',
+  'nubank credito': 'card.nubank',
+  'nubank crédito': 'card.nubank',
+  'nu cartao': 'card.nubank',
+  'nu cartão': 'card.nubank',
+  santander: 'card.santander',
+  'banco santander': 'card.santander',
+  bradesco: 'card.bradesco',
+  'banco bradesco': 'card.bradesco',
+  itau: 'card.itau',
+  itaú: 'card.itau',
+  'itau unibanco': 'card.itau',
+  'itaú unibanco': 'card.itau',
+  'banco itau': 'card.itau',
+  'banco itaú': 'card.itau',
+  caixa: 'card.caixa',
+  'caixa economica': 'card.caixa',
+  'caixa econômica': 'card.caixa',
+  'banco do brasil': 'card.bb',
+  'bb cartao': 'card.bb',
+  'bb cartão': 'card.bb',
+  banrisul: 'card.banrisul',
+  'banco banrisul': 'card.banrisul',
+  sicredi: 'card.sicredi',
+  'banco sicredi': 'card.sicredi',
+  inter: 'card.inter',
+  'banco inter': 'card.inter',
+  c6: 'card.c6',
+  'c6 bank': 'card.c6',
+  votorantim: 'card.votorantim',
+  bv: 'card.votorantim',
+  'banco votorantim': 'card.votorantim',
+  'banco bv': 'card.votorantim',
+  safra: 'card.safra',
+  'banco safra': 'card.safra',
+  hsbc: 'card.hsbc',
+  'banco hsbc': 'card.hsbc',
+};
+
+function normalizeText(value: string): string {
+  return value
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .trim()
+    .toLowerCase();
+}
+
 interface I18nContextType {
   locale: string;
   t: (key: string) => string;
+  normalizeCardName: (name: string) => string;
   changeLocale: (newLocale: string) => void;
   availableLocales: string[];
 }
@@ -170,13 +241,29 @@ export function I18nProvider({
     [locale]
   );
 
+  const normalizeCardName = useCallback(
+    (name: string) => {
+      const normalized = normalizeText(name || '');
+      const translationKey = CARD_NAME_ALIASES[normalized];
+      if (!translationKey) return name;
+      return t(translationKey);
+    },
+    [t]
+  );
+
   const changeLocale = useCallback((newLocale: string) => {
     if (translations[newLocale as keyof typeof translations]) {
       setLocale(newLocale);
     }
   }, []);
 
-  const value = { locale, t, changeLocale, availableLocales: Object.keys(translations) } as const;
+  const value = {
+    locale,
+    t,
+    normalizeCardName,
+    changeLocale,
+    availableLocales: Object.keys(translations),
+  } as const;
 
   return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>;
 }
@@ -187,7 +274,8 @@ export function useI18n() {
     return {
       locale: 'pt-BR',
       t: (key: string) => key,
-      changeLocale: () => {},
+      normalizeCardName: (name: string) => name,
+      changeLocale: () => { },
       availableLocales: ['pt-BR', 'en-US'],
     };
   }

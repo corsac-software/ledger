@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import {
+  selectMonthFixedExpenseAmounts,
   selectMonthCardBills,
   selectMonthRevenueAmounts,
 } from '../selectors/monthOverrideSelectors';
@@ -7,6 +8,57 @@ import { OVERRIDE_TYPES } from '../domain/constants';
 import type { MonthOverride } from '../domain/types';
 
 describe('monthOverrideSelectors.ts', () => {
+  describe('selectMonthFixedExpenseAmounts', () => {
+    it('filters FIXED_EXPENSE amount overrides for correct month', () => {
+      const overrides: MonthOverride[] = [
+        {
+          id: 'o1',
+          type: OVERRIDE_TYPES.FIXED_EXPENSE,
+          itemId: 'luz',
+          monthKey: '2026-04',
+          amount: 180,
+        },
+        {
+          id: 'o2',
+          type: OVERRIDE_TYPES.FIXED_EXPENSE,
+          itemId: 'luz',
+          monthKey: '2026-05',
+          amount: 220,
+        },
+        {
+          id: 'o3',
+          type: OVERRIDE_TYPES.FIXED_EXPENSE_PAYMENT,
+          itemId: 'luz',
+          monthKey: '2026-04',
+          paid: true,
+        },
+      ];
+
+      expect(selectMonthFixedExpenseAmounts(overrides, '2026-04')).toEqual({ luz: 180 });
+    });
+
+    it('allows zero and filters out negative fixed expense amounts', () => {
+      const overrides: MonthOverride[] = [
+        {
+          id: 'o1',
+          type: OVERRIDE_TYPES.FIXED_EXPENSE,
+          itemId: 'luz',
+          monthKey: '2026-04',
+          amount: 0,
+        },
+        {
+          id: 'o2',
+          type: OVERRIDE_TYPES.FIXED_EXPENSE,
+          itemId: 'agua',
+          monthKey: '2026-04',
+          amount: -10,
+        },
+      ];
+
+      expect(selectMonthFixedExpenseAmounts(overrides, '2026-04')).toEqual({ luz: 0 });
+    });
+  });
+
   describe('selectMonthCardBills', () => {
     it('returns empty object when no overrides', () => {
       expect(selectMonthCardBills([], '2026-04')).toEqual({});
