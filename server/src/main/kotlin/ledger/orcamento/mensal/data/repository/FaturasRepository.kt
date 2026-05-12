@@ -1,10 +1,6 @@
 package br.dev.brunorsch.ledger.orcamento.mensal.data.repository
 
-import br.dev.brunorsch.ledger.orcamento.mensal.data.schema.CartoesTable
-import br.dev.brunorsch.ledger.orcamento.mensal.data.schema.FaturasTable
-import br.dev.brunorsch.ledger.orcamento.mensal.data.schema.LancamentosMensaisTable
-import br.dev.brunorsch.ledger.orcamento.mensal.data.schema.toFatura
-import br.dev.brunorsch.ledger.orcamento.mensal.data.schema.toStatement
+import br.dev.brunorsch.ledger.orcamento.mensal.data.schema.*
 import br.dev.brunorsch.ledger.orcamento.mensal.domain.cartoes.Fatura
 import org.jetbrains.exposed.v1.core.and
 import org.jetbrains.exposed.v1.core.eq
@@ -21,8 +17,8 @@ class FaturasRepository {
             .selectAll()
             .where {
                 (FaturasTable.cartaoId eq idCartao) and
-                    (CartoesTable.usuarioId eq idUsuario) and
-                    (CartoesTable.ativo eq true)
+                        (CartoesTable.usuarioId eq idUsuario) and
+                        (CartoesTable.ativo eq true)
             }
             .map { it.toFatura() }
     }
@@ -33,9 +29,9 @@ class FaturasRepository {
             .selectAll()
             .where {
                 (FaturasTable.id eq id) and
-                    (FaturasTable.cartaoId eq idCartao) and
-                    (CartoesTable.usuarioId eq idUsuario) and
-                    (CartoesTable.ativo eq true)
+                        (FaturasTable.cartaoId eq idCartao) and
+                        (CartoesTable.usuarioId eq idUsuario) and
+                        (CartoesTable.ativo eq true)
             }
             .singleOrNull()
             ?.toFatura()
@@ -45,8 +41,8 @@ class FaturasRepository {
         CartoesTable.selectAll()
             .where {
                 (CartoesTable.id eq idCartao) and
-                    (CartoesTable.usuarioId eq idUsuario) and
-                    (CartoesTable.ativo eq true)
+                        (CartoesTable.usuarioId eq idUsuario) and
+                        (CartoesTable.ativo eq true)
             }
             .limit(1)
             .any()
@@ -63,16 +59,16 @@ class FaturasRepository {
             .selectAll()
             .where {
                 (FaturasTable.id eq fatura.id) and
-                    (FaturasTable.cartaoId eq fatura.idCartao) and
-                    (CartoesTable.usuarioId eq idUsuario) and
-                    (CartoesTable.ativo eq true)
+                        (FaturasTable.cartaoId eq fatura.idCartao) and
+                        (CartoesTable.usuarioId eq idUsuario) and
+                        (CartoesTable.ativo eq true)
             }
             .singleOrNull()
             ?: return@transaction null
 
         FaturasTable.update({
             (FaturasTable.id eq fatura.id) and
-                (FaturasTable.cartaoId eq fatura.idCartao)
+                    (FaturasTable.cartaoId eq fatura.idCartao)
         }) { stmt ->
             fatura.toStatement(stmt)
         }
@@ -80,7 +76,7 @@ class FaturasRepository {
         FaturasTable.selectAll()
             .where {
                 (FaturasTable.id eq fatura.id) and
-                    (FaturasTable.cartaoId eq fatura.idCartao)
+                        (FaturasTable.cartaoId eq fatura.idCartao)
             }
             .singleOrNull()
             ?.toFatura()
@@ -92,16 +88,16 @@ class FaturasRepository {
             .selectAll()
             .where {
                 (FaturasTable.id eq id) and
-                    (FaturasTable.cartaoId eq idCartao) and
-                    (CartoesTable.usuarioId eq idUsuario) and
-                    (CartoesTable.ativo eq true)
+                        (FaturasTable.cartaoId eq idCartao) and
+                        (CartoesTable.usuarioId eq idUsuario) and
+                        (CartoesTable.ativo eq true)
             }
             .singleOrNull()
             ?: return@transaction Result.failure(NoSuchElementException("Fatura não encontrada"))
 
         FaturasTable.deleteWhere {
             (FaturasTable.id eq id) and
-                (FaturasTable.cartaoId eq idCartao)
+                    (FaturasTable.cartaoId eq idCartao)
         }
 
         Result.success(Unit)

@@ -3,7 +3,7 @@ package br.dev.brunorsch.config
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import io.ktor.server.application.*
-import io.ktor.server.plugins.di.dependencies
+import io.ktor.server.plugins.di.*
 import org.jetbrains.exposed.v1.jdbc.Database
 
 
@@ -14,7 +14,7 @@ data class DatabaseConfig(
 fun Application.setupHikari(embedded: Boolean): HikariDataSource {
     val dbConfig: DatabaseConfig by dependencies
     val config = HikariConfig().apply {
-        if(embedded) {
+        if (embedded) {
             val dbPath = dbConfig.h2DbPath
             val embeddedUrl = "jdbc:h2:file:$dbPath;AUTO_SERVER=TRUE;MODE=PostgreSQL"
             log.info("Usando H2 database do arquivo: $dbPath")

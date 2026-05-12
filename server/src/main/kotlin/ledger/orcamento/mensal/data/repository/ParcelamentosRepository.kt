@@ -6,7 +6,6 @@ import br.dev.brunorsch.ledger.orcamento.mensal.data.schema.toParcelamento
 import br.dev.brunorsch.ledger.orcamento.mensal.data.schema.toStatement
 import br.dev.brunorsch.ledger.orcamento.mensal.domain.cartoes.Parcelamento
 import br.dev.brunorsch.ledger.utils.now
-import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import org.jetbrains.exposed.v1.core.and
 import org.jetbrains.exposed.v1.core.eq
@@ -22,9 +21,9 @@ class ParcelamentosRepository {
             .selectAll()
             .where {
                 (ParcelamentosTable.cartaoId eq idCartao) and
-                    (CartoesTable.usuarioId eq idUsuario) and
-                    (CartoesTable.ativo eq true) and
-                    (ParcelamentosTable.ativo eq true)
+                        (CartoesTable.usuarioId eq idUsuario) and
+                        (CartoesTable.ativo eq true) and
+                        (ParcelamentosTable.ativo eq true)
             }
             .map { it.toParcelamento() }
     }
@@ -35,10 +34,10 @@ class ParcelamentosRepository {
             .selectAll()
             .where {
                 (ParcelamentosTable.id eq id) and
-                    (ParcelamentosTable.cartaoId eq idCartao) and
-                    (CartoesTable.usuarioId eq idUsuario) and
-                    (CartoesTable.ativo eq true) and
-                    (ParcelamentosTable.ativo eq true)
+                        (ParcelamentosTable.cartaoId eq idCartao) and
+                        (CartoesTable.usuarioId eq idUsuario) and
+                        (CartoesTable.ativo eq true) and
+                        (ParcelamentosTable.ativo eq true)
             }
             .singleOrNull()
             ?.toParcelamento()
@@ -48,8 +47,8 @@ class ParcelamentosRepository {
         CartoesTable.selectAll()
             .where {
                 (CartoesTable.id eq idCartao) and
-                    (CartoesTable.usuarioId eq idUsuario) and
-                    (CartoesTable.ativo eq true)
+                        (CartoesTable.usuarioId eq idUsuario) and
+                        (CartoesTable.ativo eq true)
             }
             .limit(1)
             .any()
@@ -66,16 +65,16 @@ class ParcelamentosRepository {
             .selectAll()
             .where {
                 (ParcelamentosTable.id eq parcelamento.id) and
-                    (ParcelamentosTable.cartaoId eq parcelamento.idCartao) and
-                    (CartoesTable.usuarioId eq idUsuario) and
-                    (CartoesTable.ativo eq true)
+                        (ParcelamentosTable.cartaoId eq parcelamento.idCartao) and
+                        (CartoesTable.usuarioId eq idUsuario) and
+                        (CartoesTable.ativo eq true)
             }
             .singleOrNull()
             ?: return@transaction null
 
         ParcelamentosTable.update({
             (ParcelamentosTable.id eq parcelamento.id) and
-                (ParcelamentosTable.cartaoId eq parcelamento.idCartao)
+                    (ParcelamentosTable.cartaoId eq parcelamento.idCartao)
         }) { stmt ->
             parcelamento.toStatement(stmt)
         }
@@ -83,7 +82,7 @@ class ParcelamentosRepository {
         ParcelamentosTable.selectAll()
             .where {
                 (ParcelamentosTable.id eq parcelamento.id) and
-                    (ParcelamentosTable.cartaoId eq parcelamento.idCartao)
+                        (ParcelamentosTable.cartaoId eq parcelamento.idCartao)
             }
             .singleOrNull()
             ?.toParcelamento()
@@ -96,18 +95,18 @@ class ParcelamentosRepository {
             .selectAll()
             .where {
                 (ParcelamentosTable.id eq id) and
-                    (ParcelamentosTable.cartaoId eq idCartao) and
-                    (CartoesTable.usuarioId eq idUsuario) and
-                    (CartoesTable.ativo eq true) and
-                    (ParcelamentosTable.ativo eq true)
+                        (ParcelamentosTable.cartaoId eq idCartao) and
+                        (CartoesTable.usuarioId eq idUsuario) and
+                        (CartoesTable.ativo eq true) and
+                        (ParcelamentosTable.ativo eq true)
             }
             .singleOrNull()
             ?: return@transaction Result.failure(NoSuchElementException("Parcelamento não encontrado"))
 
         val linhasAfetadas = ParcelamentosTable.update({
             (ParcelamentosTable.id eq id) and
-                (ParcelamentosTable.cartaoId eq idCartao) and
-                (ParcelamentosTable.ativo eq true)
+                    (ParcelamentosTable.cartaoId eq idCartao) and
+                    (ParcelamentosTable.ativo eq true)
         }) { stmt ->
             stmt[ParcelamentosTable.ativo] = false
             stmt[ParcelamentosTable.excluidoEm] = excluidoEm

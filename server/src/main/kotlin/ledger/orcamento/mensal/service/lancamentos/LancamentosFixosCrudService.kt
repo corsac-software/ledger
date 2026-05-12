@@ -23,7 +23,7 @@ class LancamentosFixosCrudService(
 
     fun criar(idUsuario: Long, request: LancamentoFixoRequest): LancamentoFixo {
         val tipo = parseTipo(request.tipo)
-        val mesInicio = AnoMes.Companion.parse(request.mesInicio)
+        val mesInicio = AnoMes.parse(request.mesInicio)
         val formaPagamento = parseFormaPagamento(request.formaPagamento)
         validarDescricao(request.descricao)
         validarDiaVencimento(request.diaVencimento)
@@ -72,17 +72,17 @@ class LancamentosFixosCrudService(
                 descricao = request.descricao ?: existente.descricao,
                 valor = request.valor ?: existente.valor,
                 diaVencimento = request.diaVencimento ?: existente.diaVencimento,
-                mesInicio = request.mesInicio?.let { AnoMes.Companion.parse(it) } ?: existente.mesInicio,
+                mesInicio = request.mesInicio?.let { AnoMes.parse(it) } ?: existente.mesInicio,
                 formaPagamento = formaPagamento,
                 idCartao = idCartao,
                 idCategoria = idCategoria,
-                atualizadoEm = LocalDateTime.Companion.now(),
+                atualizadoEm = LocalDateTime.now(),
             )
         )
     }
 
     fun deletar(id: Long, idUsuario: Long): Result<Unit> {
-        val agora = LocalDateTime.Companion.now()
+        val agora = LocalDateTime.now()
         return repository.deletar(
             id = id,
             idUsuario = idUsuario,

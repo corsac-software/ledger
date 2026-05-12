@@ -6,20 +6,20 @@ import br.dev.brunorsch.ledger.orcamento.mensal.data.schema.toLancamentoFixo
 import br.dev.brunorsch.ledger.orcamento.mensal.data.schema.toStatement
 import br.dev.brunorsch.ledger.orcamento.mensal.domain.AnoMes
 import br.dev.brunorsch.ledger.orcamento.mensal.domain.lancamentos.LancamentoFixo
+import kotlinx.datetime.LocalDateTime
 import org.jetbrains.exposed.v1.core.and
 import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.jdbc.insertAndGetId
 import org.jetbrains.exposed.v1.jdbc.selectAll
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 import org.jetbrains.exposed.v1.jdbc.update
-import kotlinx.datetime.LocalDateTime
 
 class LancamentosFixosRepository {
     fun buscarTodos(idUsuario: Long): List<LancamentoFixo> = transaction {
         LancamentosFixosTable.selectAll()
             .where {
                 (LancamentosFixosTable.usuarioId eq idUsuario) and
-                    (LancamentosFixosTable.ativo eq true)
+                        (LancamentosFixosTable.ativo eq true)
             }
             .map { it.toLancamentoFixo() }
     }
@@ -28,8 +28,8 @@ class LancamentosFixosRepository {
         LancamentosFixosTable.selectAll()
             .where {
                 (LancamentosFixosTable.id eq id) and
-                    (LancamentosFixosTable.usuarioId eq idUsuario) and
-                    (LancamentosFixosTable.ativo eq true)
+                        (LancamentosFixosTable.usuarioId eq idUsuario) and
+                        (LancamentosFixosTable.ativo eq true)
             }
             .singleOrNull()
             ?.toLancamentoFixo()
@@ -39,8 +39,8 @@ class LancamentosFixosRepository {
         CategoriasTable.selectAll()
             .where {
                 (CategoriasTable.id eq idCategoria) and
-                    (CategoriasTable.usuarioId eq idUsuario) and
-                    (CategoriasTable.ativo eq true)
+                        (CategoriasTable.usuarioId eq idUsuario) and
+                        (CategoriasTable.ativo eq true)
             }
             .limit(1)
             .any()
@@ -54,7 +54,7 @@ class LancamentosFixosRepository {
     fun atualizar(lancamentoFixo: LancamentoFixo): LancamentoFixo? = transaction {
         LancamentosFixosTable.update({
             (LancamentosFixosTable.id eq lancamentoFixo.id) and
-                (LancamentosFixosTable.usuarioId eq lancamentoFixo.idUsuario)
+                    (LancamentosFixosTable.usuarioId eq lancamentoFixo.idUsuario)
         }) { stmt ->
             lancamentoFixo.toStatement(stmt)
         }
@@ -62,27 +62,28 @@ class LancamentosFixosRepository {
         LancamentosFixosTable.selectAll()
             .where {
                 (LancamentosFixosTable.id eq lancamentoFixo.id) and
-                    (LancamentosFixosTable.usuarioId eq lancamentoFixo.idUsuario)
+                        (LancamentosFixosTable.usuarioId eq lancamentoFixo.idUsuario)
             }
             .singleOrNull()
             ?.toLancamentoFixo()
     }
 
-    fun deletar(id: Long, idUsuario: Long, excluidoEm: AnoMes, atualizadoEm: LocalDateTime): Result<Unit> = transaction {
-        val linhasAfetadas = LancamentosFixosTable.update({
-            (LancamentosFixosTable.id eq id) and
-                (LancamentosFixosTable.usuarioId eq idUsuario) and
-                (LancamentosFixosTable.ativo eq true)
-        }) { stmt ->
-            stmt[LancamentosFixosTable.ativo] = false
-            stmt[LancamentosFixosTable.excluidoEm] = excluidoEm.toFormatoSlug()
-            stmt[LancamentosFixosTable.atualizadoEm] = atualizadoEm
-        }
+    fun deletar(id: Long, idUsuario: Long, excluidoEm: AnoMes, atualizadoEm: LocalDateTime): Result<Unit> =
+        transaction {
+            val linhasAfetadas = LancamentosFixosTable.update({
+                (LancamentosFixosTable.id eq id) and
+                        (LancamentosFixosTable.usuarioId eq idUsuario) and
+                        (LancamentosFixosTable.ativo eq true)
+            }) { stmt ->
+                stmt[LancamentosFixosTable.ativo] = false
+                stmt[LancamentosFixosTable.excluidoEm] = excluidoEm.toFormatoSlug()
+                stmt[LancamentosFixosTable.atualizadoEm] = atualizadoEm
+            }
 
-        if (linhasAfetadas > 0) {
-            Result.success(Unit)
-        } else {
-            Result.failure(NoSuchElementException("Lançamento fixo não encontrado"))
+            if (linhasAfetadas > 0) {
+                Result.success(Unit)
+            } else {
+                Result.failure(NoSuchElementException("Lançamento fixo não encontrado"))
+            }
         }
-    }
 }

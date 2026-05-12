@@ -74,8 +74,8 @@ class FaturasCrudService(
         return repository.atualizar(
             existente.copy(
                 valor = request.valor ?: existente.valor,
-                mes = request.mes?.let { AnoMes.Companion.parse(it) } ?: existente.mes,
-                atualizadoEm = LocalDateTime.Companion.now()
+                mes = request.mes?.let { AnoMes.parse(it) } ?: existente.mes,
+                atualizadoEm = LocalDateTime.now()
             ),
             idUsuario
         )

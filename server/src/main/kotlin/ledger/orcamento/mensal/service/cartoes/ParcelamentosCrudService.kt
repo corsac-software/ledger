@@ -25,7 +25,7 @@ class ParcelamentosCrudService(
 
         validarNome(request.nome)
         validarParcelas(request.parcelas)
-        val mesInicio = AnoMes.Companion.parse(request.mesInicio)
+        val mesInicio = AnoMes.parse(request.mesInicio)
 
         return repository.criar(
             Parcelamento(
@@ -50,8 +50,8 @@ class ParcelamentosCrudService(
                 nome = request.nome ?: existente.nome,
                 valor = request.valor ?: existente.valor,
                 parcelas = request.parcelas ?: existente.parcelas,
-                mesInicio = request.mesInicio?.let { AnoMes.Companion.parse(it) } ?: existente.mesInicio,
-                atualizadoEm = LocalDateTime.Companion.now(),
+                mesInicio = request.mesInicio?.let { AnoMes.parse(it) } ?: existente.mesInicio,
+                atualizadoEm = LocalDateTime.now(),
             ),
             idUsuario
         )

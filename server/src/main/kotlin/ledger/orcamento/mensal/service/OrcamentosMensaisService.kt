@@ -4,8 +4,8 @@ import br.dev.brunorsch.ledger.orcamento.mensal.api.dtos.LancamentoRequest
 import br.dev.brunorsch.ledger.orcamento.mensal.api.dtos.LancamentoUpdateRequest
 import br.dev.brunorsch.ledger.orcamento.mensal.api.dtos.OrcamentoMensalRequest
 import br.dev.brunorsch.ledger.orcamento.mensal.data.repository.OrcamentosMensaisRepository
-import br.dev.brunorsch.ledger.orcamento.mensal.domain.lancamentos.LancamentoMensal
 import br.dev.brunorsch.ledger.orcamento.mensal.domain.OrcamentoMensal
+import br.dev.brunorsch.ledger.orcamento.mensal.domain.lancamentos.LancamentoMensal
 import br.dev.brunorsch.ledger.orcamento.mensal.domain.lancamentos.TipoLancamento.RECEITA
 import br.dev.brunorsch.ledger.orcamento.mensal.domain.lancamentos.TipoLancamento.valueOf
 import br.dev.brunorsch.ledger.orcamento.mensal.domain.toAnoMes
@@ -27,8 +27,10 @@ class OrcamentosMensaisService(
         val dataInicio = LocalDate(ano, mes, 1)
         val dataFim = LocalDate(ano, mes, YearMonth.of(ano, mes).lengthOfMonth())
 
-        log.info("Criando novo orçamento mensal para usuario ID " +
-                "[${request.idUsuario}]: $ano-$mes")
+        log.info(
+            "Criando novo orçamento mensal para usuario ID " +
+                    "[${request.idUsuario}]: $ano-$mes"
+        )
 
         val orcamento = OrcamentoMensal(
             id = idNaoInserido,
@@ -168,13 +170,13 @@ class OrcamentosMensaisService(
     }
 
     private fun validarOrcamentoExistente(id: Long, idUsuario: Long) {
-        if(!repository.existe(id, idUsuario)) {
+        if (!repository.existe(id, idUsuario)) {
             throw IllegalArgumentException("Orçamento mensal não encontrado")
         }
     }
 
     private fun validarLancamentoExistente(orcamentoId: Long, lancamentoId: Long, idUsuario: Long) {
-        if(!repository.existeLancamentoPorId(lancamentoId, orcamentoId, idUsuario)) {
+        if (!repository.existeLancamentoPorId(lancamentoId, orcamentoId, idUsuario)) {
             throw IllegalArgumentException("Lançamento não encontrado")
         }
     }

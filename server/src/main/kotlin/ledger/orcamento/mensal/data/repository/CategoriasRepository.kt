@@ -17,7 +17,7 @@ class CategoriasRepository {
         CategoriasTable.selectAll()
             .where {
                 (CategoriasTable.usuarioId eq idUsuario) and
-                    (CategoriasTable.ativo eq true)
+                        (CategoriasTable.ativo eq true)
             }
             .map { it.toCategoria() }
     }
@@ -44,8 +44,8 @@ class CategoriasRepository {
     fun atualizar(id: Long, idUsuario: Long, request: CategoriaUpdateRequest): Categoria? = transaction {
         CategoriasTable.update({
             (CategoriasTable.id eq id) and
-                (CategoriasTable.usuarioId eq idUsuario) and
-                (CategoriasTable.ativo eq true)
+                    (CategoriasTable.usuarioId eq idUsuario) and
+                    (CategoriasTable.ativo eq true)
         }) { stmt ->
             request.toStatement(stmt)
         }
@@ -53,8 +53,8 @@ class CategoriasRepository {
         CategoriasTable.selectAll()
             .where {
                 (CategoriasTable.id eq id) and
-                    (CategoriasTable.usuarioId eq idUsuario) and
-                    (CategoriasTable.ativo eq true)
+                        (CategoriasTable.usuarioId eq idUsuario) and
+                        (CategoriasTable.ativo eq true)
             }
             .singleOrNull()
             ?.toCategoria()
@@ -63,8 +63,8 @@ class CategoriasRepository {
     fun deletar(id: Long, idUsuario: Long): Result<Unit> = transaction {
         val linhasAfetadas = CategoriasTable.update({
             (CategoriasTable.id eq id) and
-                (CategoriasTable.usuarioId eq idUsuario) and
-                (CategoriasTable.ativo eq true)
+                    (CategoriasTable.usuarioId eq idUsuario) and
+                    (CategoriasTable.ativo eq true)
         }) { stmt ->
             stmt[CategoriasTable.ativo] = false
         }

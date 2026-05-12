@@ -16,7 +16,7 @@ class CartoesRepository {
         CartoesTable.selectAll()
             .where {
                 (CartoesTable.usuarioId eq idUsuario) and
-                    (CartoesTable.ativo eq true)
+                        (CartoesTable.ativo eq true)
             }
             .map { it.toCartao() }
     }
@@ -25,8 +25,8 @@ class CartoesRepository {
         CartoesTable.selectAll()
             .where {
                 (CartoesTable.id eq id) and
-                    (CartoesTable.usuarioId eq idUsuario) and
-                    (CartoesTable.ativo eq true)
+                        (CartoesTable.usuarioId eq idUsuario) and
+                        (CartoesTable.ativo eq true)
             }
             .singleOrNull()
             ?.toCartao()
@@ -40,7 +40,7 @@ class CartoesRepository {
     fun atualizar(cartao: Cartao): Cartao? = transaction {
         CartoesTable.update({
             (CartoesTable.id eq cartao.id) and
-                (CartoesTable.usuarioId eq cartao.idUsuario)
+                    (CartoesTable.usuarioId eq cartao.idUsuario)
         }) { stmt ->
             cartao.toStatement(stmt)
         }
@@ -48,7 +48,7 @@ class CartoesRepository {
         CartoesTable.selectAll()
             .where {
                 (CartoesTable.id eq cartao.id) and
-                    (CartoesTable.usuarioId eq cartao.idUsuario)
+                        (CartoesTable.usuarioId eq cartao.idUsuario)
             }
             .singleOrNull()
             ?.toCartao()
@@ -57,8 +57,8 @@ class CartoesRepository {
     fun deletar(id: Long, idUsuario: Long): Result<Unit> = transaction {
         val linhasAfetadas = CartoesTable.update({
             (CartoesTable.id eq id) and
-                (CartoesTable.usuarioId eq idUsuario) and
-                (CartoesTable.ativo eq true)
+                    (CartoesTable.usuarioId eq idUsuario) and
+                    (CartoesTable.ativo eq true)
         }) { stmt ->
             stmt[CartoesTable.ativo] = false
         }

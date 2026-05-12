@@ -46,7 +46,7 @@ class CartoesCrudService(
                 nome = request.nome ?: existente.nome,
                 icone = request.icone ?: existente.icone,
                 cor = request.cor ?: existente.cor,
-                atualizadoEm = LocalDateTime.Companion.now()
+                atualizadoEm = LocalDateTime.now()
             )
         )
     }

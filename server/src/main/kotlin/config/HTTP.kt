@@ -1,11 +1,11 @@
 package br.dev.brunorsch.config
 
-import io.ktor.openapi.*
 import io.ktor.http.*
+import io.ktor.openapi.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
-import io.ktor.server.plugins.cors.routing.*
 import io.ktor.server.plugins.contentnegotiation.*
+import io.ktor.server.plugins.cors.routing.*
 import io.ktor.server.plugins.forwardedheaders.*
 import io.ktor.server.plugins.hsts.*
 import io.ktor.server.plugins.swagger.*
