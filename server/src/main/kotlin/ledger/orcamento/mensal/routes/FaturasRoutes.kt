@@ -1,8 +1,8 @@
 package br.dev.brunorsch.ledger.orcamento.mensal.routes
 
-import br.dev.brunorsch.ledger.orcamento.mensal.api.FaturaRequest
-import br.dev.brunorsch.ledger.orcamento.mensal.api.FaturaResponse
-import br.dev.brunorsch.ledger.orcamento.mensal.api.FaturaUpdateRequest
+import br.dev.brunorsch.ledger.orcamento.mensal.api.dtos.FaturaRequest
+import br.dev.brunorsch.ledger.orcamento.mensal.api.dtos.FaturaResponse
+import br.dev.brunorsch.ledger.orcamento.mensal.api.dtos.FaturaUpdateRequest
 import br.dev.brunorsch.ledger.orcamento.mensal.api.FaturasController
 import br.dev.brunorsch.ledger.utils.describeOrphan
 import io.ktor.http.HttpStatusCode

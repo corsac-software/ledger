@@ -1,4 +1,4 @@
-package br.dev.brunorsch.ledger.orcamento.mensal.api
+package br.dev.brunorsch.ledger.orcamento.mensal.api.dtos
 
 import br.dev.brunorsch.ledger.orcamento.mensal.domain.LancamentoFixo
 import br.dev.brunorsch.ledger.utils.BigDecimalJson
@@ -26,7 +26,6 @@ data class LancamentoFixoUpdateRequest(
     val formaPagamento: String? = null,
     val idCartao: Long? = null,
     val idCategoria: Long? = null,
-    val ativo: Boolean? = null
 )
 
 @Serializable

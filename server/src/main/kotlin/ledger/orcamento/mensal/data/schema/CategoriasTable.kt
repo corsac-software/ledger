@@ -1,6 +1,6 @@
 package br.dev.brunorsch.ledger.orcamento.mensal.data.schema
 
-import br.dev.brunorsch.ledger.orcamento.mensal.api.CategoriaUpdateRequest
+import br.dev.brunorsch.ledger.orcamento.mensal.api.dtos.CategoriaUpdateRequest
 import br.dev.brunorsch.ledger.orcamento.mensal.domain.Categoria
 import org.jetbrains.exposed.v1.core.ResultRow
 import org.jetbrains.exposed.v1.core.dao.id.LongIdTable

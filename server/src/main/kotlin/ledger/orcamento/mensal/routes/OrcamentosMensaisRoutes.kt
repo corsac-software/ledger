@@ -1,10 +1,10 @@
 package br.dev.brunorsch.ledger.orcamento.mensal.routes
 
-import br.dev.brunorsch.ledger.orcamento.mensal.api.LancamentoRequest
-import br.dev.brunorsch.ledger.orcamento.mensal.api.LancamentoResponse
-import br.dev.brunorsch.ledger.orcamento.mensal.api.LancamentoUpdateRequest
-import br.dev.brunorsch.ledger.orcamento.mensal.api.OrcamentoMensalRequest
-import br.dev.brunorsch.ledger.orcamento.mensal.api.OrcamentoMensalResponse
+import br.dev.brunorsch.ledger.orcamento.mensal.api.dtos.LancamentoRequest
+import br.dev.brunorsch.ledger.orcamento.mensal.api.dtos.LancamentoResponse
+import br.dev.brunorsch.ledger.orcamento.mensal.api.dtos.LancamentoUpdateRequest
+import br.dev.brunorsch.ledger.orcamento.mensal.api.dtos.OrcamentoMensalRequest
+import br.dev.brunorsch.ledger.orcamento.mensal.api.dtos.OrcamentoMensalResponse
 import br.dev.brunorsch.ledger.orcamento.mensal.api.OrcamentosMensaisController
 import io.ktor.http.HttpStatusCode
 import io.ktor.openapi.jsonSchema

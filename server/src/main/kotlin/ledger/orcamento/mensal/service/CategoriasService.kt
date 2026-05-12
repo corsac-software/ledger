@@ -1,7 +1,7 @@
 package br.dev.brunorsch.ledger.orcamento.mensal.service
 
-import br.dev.brunorsch.ledger.orcamento.mensal.api.CategoriaRequest
-import br.dev.brunorsch.ledger.orcamento.mensal.api.CategoriaUpdateRequest
+import br.dev.brunorsch.ledger.orcamento.mensal.api.dtos.CategoriaRequest
+import br.dev.brunorsch.ledger.orcamento.mensal.api.dtos.CategoriaUpdateRequest
 import br.dev.brunorsch.ledger.orcamento.mensal.data.repository.CategoriasRepository
 import br.dev.brunorsch.ledger.orcamento.mensal.domain.Categoria
 import br.dev.brunorsch.ledger.utils.idNaoInserido

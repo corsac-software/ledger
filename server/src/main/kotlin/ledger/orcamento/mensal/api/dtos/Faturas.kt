@@ -1,4 +1,4 @@
-package br.dev.brunorsch.ledger.orcamento.mensal.api
+package br.dev.brunorsch.ledger.orcamento.mensal.api.dtos
 
 import br.dev.brunorsch.ledger.orcamento.mensal.domain.Fatura
 import br.dev.brunorsch.ledger.utils.BigDecimalJson

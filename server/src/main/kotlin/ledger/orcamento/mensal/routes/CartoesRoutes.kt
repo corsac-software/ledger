@@ -1,8 +1,8 @@
 package br.dev.brunorsch.ledger.orcamento.mensal.routes
 
-import br.dev.brunorsch.ledger.orcamento.mensal.api.CartaoRequest
-import br.dev.brunorsch.ledger.orcamento.mensal.api.CartaoResponse
-import br.dev.brunorsch.ledger.orcamento.mensal.api.CartaoUpdateRequest
+import br.dev.brunorsch.ledger.orcamento.mensal.api.dtos.CartaoRequest
+import br.dev.brunorsch.ledger.orcamento.mensal.api.dtos.CartaoResponse
+import br.dev.brunorsch.ledger.orcamento.mensal.api.dtos.CartaoUpdateRequest
 import br.dev.brunorsch.ledger.orcamento.mensal.api.CartoesController
 import br.dev.brunorsch.ledger.orcamento.mensal.api.FaturasController
 import br.dev.brunorsch.ledger.orcamento.mensal.api.ParcelamentosController

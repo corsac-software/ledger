@@ -1,10 +1,9 @@
 package br.dev.brunorsch.ledger.orcamento.mensal.service
 
-import br.dev.brunorsch.ledger.orcamento.mensal.api.CartaoRequest
-import br.dev.brunorsch.ledger.orcamento.mensal.api.CartaoUpdateRequest
+import br.dev.brunorsch.ledger.orcamento.mensal.api.dtos.CartaoRequest
+import br.dev.brunorsch.ledger.orcamento.mensal.api.dtos.CartaoUpdateRequest
 import br.dev.brunorsch.ledger.orcamento.mensal.data.repository.CartoesRepository
 import br.dev.brunorsch.ledger.orcamento.mensal.domain.Cartao
-import br.dev.brunorsch.ledger.utils.idNaoInserido
 import br.dev.brunorsch.ledger.utils.now
 import kotlinx.datetime.LocalDateTime
 
@@ -24,17 +23,12 @@ class CartoesService(
         validarIcone(request.icone)
         validarCor(request.cor)
 
-        val agora = LocalDateTime.now()
         return repository.criar(
             Cartao(
-                id = idNaoInserido,
                 idUsuario = idUsuario,
                 nome = request.nome,
                 icone = request.icone,
                 cor = request.cor,
-                ativo = true,
-                criadoEm = agora,
-                atualizadoEm = agora
             )
         )
     }
@@ -52,7 +46,6 @@ class CartoesService(
                 nome = request.nome ?: existente.nome,
                 icone = request.icone ?: existente.icone,
                 cor = request.cor ?: existente.cor,
-                ativo = request.ativo ?: existente.ativo,
                 atualizadoEm = LocalDateTime.now()
             )
         )

@@ -1,8 +1,8 @@
 package br.dev.brunorsch.ledger.orcamento.mensal.routes
 
-import br.dev.brunorsch.ledger.orcamento.mensal.api.ParcelamentoRequest
-import br.dev.brunorsch.ledger.orcamento.mensal.api.ParcelamentoResponse
-import br.dev.brunorsch.ledger.orcamento.mensal.api.ParcelamentoUpdateRequest
+import br.dev.brunorsch.ledger.orcamento.mensal.api.dtos.ParcelamentoRequest
+import br.dev.brunorsch.ledger.orcamento.mensal.api.dtos.ParcelamentoResponse
+import br.dev.brunorsch.ledger.orcamento.mensal.api.dtos.ParcelamentoUpdateRequest
 import br.dev.brunorsch.ledger.orcamento.mensal.api.ParcelamentosController
 import io.ktor.http.HttpStatusCode
 import io.ktor.openapi.jsonSchema

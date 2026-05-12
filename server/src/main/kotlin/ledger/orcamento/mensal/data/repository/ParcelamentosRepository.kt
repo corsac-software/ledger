@@ -5,6 +5,8 @@ import br.dev.brunorsch.ledger.orcamento.mensal.data.schema.ParcelamentosTable
 import br.dev.brunorsch.ledger.orcamento.mensal.data.schema.toParcelamento
 import br.dev.brunorsch.ledger.orcamento.mensal.data.schema.toStatement
 import br.dev.brunorsch.ledger.orcamento.mensal.domain.Parcelamento
+import br.dev.brunorsch.ledger.utils.now
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import org.jetbrains.exposed.v1.core.and
 import org.jetbrains.exposed.v1.core.eq
@@ -87,7 +89,8 @@ class ParcelamentosRepository {
             ?.toParcelamento()
     }
 
-    fun deletar(id: Long, idCartao: Long, idUsuario: Long, excluidoEm: LocalDateTime): Result<Unit> = transaction {
+    fun deletar(id: Long, idCartao: Long, idUsuario: Long): Result<Unit> = transaction {
+        val excluidoEm = LocalDateTime.now()
         ParcelamentosTable
             .innerJoin(CartoesTable)
             .selectAll()

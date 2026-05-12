@@ -163,7 +163,7 @@ class OrcamentosMensaisRepository {
         }
     }
 
-    fun atualizarLancamento(id: Long, descricao: String?, valor: BigDecimal?, statusDespesa: String?) = transaction {
+    fun atualizarLancamento(id: Long, descricao: String?, valor: BigDecimal?, statusDespesa: String? = null) = transaction {
         LancamentosMensaisTable.update({ LancamentosMensaisTable.id eq id }) { stmt ->
             descricao?.let { stmt[LancamentosMensaisTable.descricao] = it }
             valor?.let { stmt[LancamentosMensaisTable.valor] = it }

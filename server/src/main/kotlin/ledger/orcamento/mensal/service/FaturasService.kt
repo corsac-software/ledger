@@ -1,17 +1,14 @@
 package br.dev.brunorsch.ledger.orcamento.mensal.service
 
-import br.dev.brunorsch.ledger.orcamento.mensal.api.FaturaRequest
-import br.dev.brunorsch.ledger.orcamento.mensal.api.FaturaUpdateRequest
+import br.dev.brunorsch.ledger.orcamento.mensal.api.dtos.FaturaRequest
+import br.dev.brunorsch.ledger.orcamento.mensal.api.dtos.FaturaUpdateRequest
 import br.dev.brunorsch.ledger.orcamento.mensal.data.repository.FaturasRepository
 import br.dev.brunorsch.ledger.orcamento.mensal.data.repository.OrcamentosMensaisRepository
 import br.dev.brunorsch.ledger.orcamento.mensal.domain.AnoMes
 import br.dev.brunorsch.ledger.orcamento.mensal.domain.Fatura
 import br.dev.brunorsch.ledger.orcamento.mensal.domain.LancamentoMensal
-import br.dev.brunorsch.ledger.orcamento.mensal.domain.toAnoMes
-import br.dev.brunorsch.ledger.utils.idNaoInserido
 import br.dev.brunorsch.ledger.utils.now
 import kotlinx.datetime.LocalDateTime
-import java.math.BigDecimal
 
 class FaturasService(
     private val repository: FaturasRepository,
@@ -71,7 +68,6 @@ class FaturasService(
                 id = existente.idLancamento,
                 descricao = request.descricao,
                 valor = request.valor,
-                statusDespesa = null
             )
         }
 

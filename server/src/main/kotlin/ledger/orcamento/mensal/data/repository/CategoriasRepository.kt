@@ -1,6 +1,6 @@
 package br.dev.brunorsch.ledger.orcamento.mensal.data.repository
 
-import br.dev.brunorsch.ledger.orcamento.mensal.api.CategoriaUpdateRequest
+import br.dev.brunorsch.ledger.orcamento.mensal.api.dtos.CategoriaUpdateRequest
 import br.dev.brunorsch.ledger.orcamento.mensal.data.schema.CategoriasTable
 import br.dev.brunorsch.ledger.orcamento.mensal.data.schema.toCategoria
 import br.dev.brunorsch.ledger.orcamento.mensal.data.schema.toStatement

@@ -1,8 +1,8 @@
 package br.dev.brunorsch.ledger.orcamento.mensal.routes
 
-import br.dev.brunorsch.ledger.orcamento.mensal.api.LancamentoFixoRequest
-import br.dev.brunorsch.ledger.orcamento.mensal.api.LancamentoFixoResponse
-import br.dev.brunorsch.ledger.orcamento.mensal.api.LancamentoFixoUpdateRequest
+import br.dev.brunorsch.ledger.orcamento.mensal.api.dtos.LancamentoFixoRequest
+import br.dev.brunorsch.ledger.orcamento.mensal.api.dtos.LancamentoFixoResponse
+import br.dev.brunorsch.ledger.orcamento.mensal.api.dtos.LancamentoFixoUpdateRequest
 import br.dev.brunorsch.ledger.orcamento.mensal.api.LancamentosFixosController
 import br.dev.brunorsch.ledger.utils.describeOrphan
 import io.ktor.http.HttpStatusCode
