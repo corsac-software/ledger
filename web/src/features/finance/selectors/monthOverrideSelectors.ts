@@ -26,16 +26,6 @@ export function selectMonthFixedExpenseAmounts(
   );
 }
 
-export function selectMonthCardBills(
-  monthOverrides: MonthOverride[],
-  monthKey: string
-): Record<string, number> {
-  return toAmountRecord(
-    filterByMonthAndType(monthOverrides, monthKey, OVERRIDE_TYPES.CARD_BILL_AMOUNT),
-    false
-  );
-}
-
 export function selectMonthRevenueAmounts(
   monthOverrides: MonthOverride[],
   monthKey: string

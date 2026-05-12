@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { CardBillItem } from '../domain/types';
+import { useCardList } from '../hooks/useCardList';
 import { detectBankColor } from '../lib/bankColors';
 import { useI18n } from '../lib/i18n';
 import { applyMoneyMask, formatMoneyInput, parseMoneyInput } from '../lib/moneyInput';
@@ -182,7 +183,7 @@ export default function MonthNav({
   const isDarkTheme = theme === 'premium';
   const nextThemeIcon = isDarkTheme ? '☀' : '🌙';
   const nextThemeLabel = isDarkTheme ? 'Claro' : 'Escuro';
-  const cards = useMemo(() => cardList ?? [], [cardList]);
+  const cards = useCardList(cardList);
   const hasCards = cards.length > 0;
 
   // Memoize the computation of billInputs to avoid redundant calculations

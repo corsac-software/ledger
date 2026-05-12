@@ -1,6 +1,9 @@
 import { useMemo } from 'react';
 import { OVERRIDE_TYPES } from '../../domain/constants';
-import type { CardBillItem } from '../../domain/types';
+import type { CardBillItem, InstallmentItem } from '../../domain/types';
+import { useCardList } from '../../hooks/useCardList';
+import { useMonthPaymentMap } from '../../hooks/useMonthPaymentMap';
+import { buildCardIconMap } from '../../lib/cardIconMap';
 import RuleSection from '../RuleSection';
 import { ConfirmModal, RuleModal } from '../modals';
 import { InstallmentForm } from './installments/InstallmentForm';
@@ -11,17 +14,6 @@ import { useInstallmentCrudState } from './installments/useInstallmentCrudState'
 import type { CrudSectionCommonProps, MonthPaidSectionProps } from './shared/types';
 import { useCrudFormFlow } from './shared/useCrudFormFlow';
 import { useCrudModalState } from './shared/useCrudModalState';
-import { useMonthPaymentMap } from '../../hooks/useMonthPaymentMap';
-
-type InstallmentItem = {
-  id: string;
-  name: string;
-  installmentValue: number;
-  totalInstallments: number;
-  startMonth: string;
-  card: string;
-  currentInstallment: number;
-};
 
 type InstallmentPayload = {
   name: string;
@@ -46,16 +38,8 @@ export function InstallmentsSection({
   onTogglePaid,
   cardList,
 }: InstallmentsSectionProps) {
-  const cards = useMemo(() => cardList ?? [], [cardList]);
-  const cardIconMap = useMemo(() => {
-    const map: Record<string, string> = {};
-    cards.forEach((card) => {
-      if (card.icon) {
-        map[card.id] = card.icon;
-      }
-    });
-    return map;
-  }, [cards]);
+  const cards = useCardList(cardList);
+  const cardIconMap = useMemo(() => buildCardIconMap(cards, {}), [cards]);
 
   const { form, setForm, canSubmit, openCreateForm, openEditForm, resetForm } =
     useInstallmentCrudState({

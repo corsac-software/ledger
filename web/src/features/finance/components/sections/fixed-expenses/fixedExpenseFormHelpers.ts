@@ -1,16 +1,11 @@
+import { ALLOWED_PAYMENT_METHODS, DEFAULT_CARD_ID } from '../../../domain/constants';
 import type { CardBillItem, FixedExpense } from '../../../domain/types';
 import { parseMoneyInput } from '../../../lib/moneyInput';
+import { resolvePaymentMethod } from '../../../lib/utils';
 import type { FixedExpenseFormState } from './FixedExpenseForm';
 
-const SPECIAL_PAYMENT_METHODS = ['boleto', 'pix', 'debito', 'cartao'] as const;
-
-function resolvePaymentMethod(item: FixedExpense) {
-  if (item.paymentMethod === 'cartao' && item.card) return item.card;
-  return item.paymentMethod || 'boleto';
-}
-
 function isSpecialPaymentMethod(value: string) {
-  return SPECIAL_PAYMENT_METHODS.includes(value as (typeof SPECIAL_PAYMENT_METHODS)[number]);
+  return ALLOWED_PAYMENT_METHODS.includes(value as (typeof ALLOWED_PAYMENT_METHODS)[number]);
 }
 
 export function createFixedExpenseEmptyForm(
@@ -75,7 +70,7 @@ export function buildFixedExpensePayload(
       : legacyCard
         ? legacyCard
         : currentForm.paymentMethod === 'cartao'
-          ? currentForm.card || cards[0]?.id || 'outro'
+          ? currentForm.card || cards[0]?.id || DEFAULT_CARD_ID
           : null,
     category: currentForm.category,
   };

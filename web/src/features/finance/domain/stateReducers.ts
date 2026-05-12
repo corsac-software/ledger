@@ -1,6 +1,7 @@
 import { createFinanceId } from '../lib/ids';
 import { previousMonthKey } from '../lib/utils';
 import { OVERRIDE_TYPES } from './constants';
+import { matchOverride } from './overrides/repository';
 import type { FinanceState, FixedExpense, Installment, OverrideType, Revenue } from './types';
 
 export function changeMonth(state: FinanceState, step: number): FinanceState {
@@ -158,7 +159,7 @@ export function removeInstallment(state: FinanceState, id: string): FinanceState
     ),
     monthOverrides: state.monthOverrides.filter(
       (override) =>
-        !(override.type === OVERRIDE_TYPES.INSTALLMENT_PAYMENT && override.itemId === id)
+        !matchOverride(override, { type: OVERRIDE_TYPES.INSTALLMENT_PAYMENT, itemId: id })
     ),
   };
 }
@@ -179,9 +180,8 @@ export function upsertMonthOverride(
 ): FinanceState {
   const { type, itemId, monthKey: overrideMonthKey, amount, name, hidden, paid } = params;
 
-  const idx = state.monthOverrides.findIndex(
-    (override) =>
-      override.type === type && override.itemId === itemId && override.monthKey === overrideMonthKey
+  const idx = state.monthOverrides.findIndex((override) =>
+    matchOverride(override, { type, itemId, monthKey: overrideMonthKey })
   );
 
   const cleaned = {
@@ -220,12 +220,7 @@ export function clearMonthOverride(
   return {
     ...state,
     monthOverrides: state.monthOverrides.filter(
-      (override) =>
-        !(
-          override.type === type &&
-          override.itemId === itemId &&
-          override.monthKey === overrideMonthKey
-        )
+      (override) => !matchOverride(override, { type, itemId, monthKey: overrideMonthKey })
     ),
   };
 }

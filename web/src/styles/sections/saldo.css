@@ -12,11 +12,7 @@
 }
 
 .saldo-label {
-  font-size: 10px;
-  font-weight: 600;
-  color: var(--color-text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  --label-xs-size: 10px;
   margin-bottom: 2px;
 }
 
@@ -29,6 +25,14 @@
   font-size: 11px;
   color: var(--color-text-secondary);
   line-height: 1.6;
+}
+
+.saldo-detail-paid {
+  color: var(--color-summary-paid);
+}
+
+.saldo-detail-payable {
+  color: var(--color-summary-payable);
 }
 
 .receita-pill {

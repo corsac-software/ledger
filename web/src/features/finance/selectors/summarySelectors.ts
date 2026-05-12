@@ -1,15 +1,21 @@
-import { ALLOWED_PAYMENT_METHODS, OVERRIDE_TYPES, type BillCard } from '../domain/constants.js';
-import type { MonthOverride, MonthView, MonthViewFixedExpense, Revenue } from '../domain/types.js';
+import {
+  ALLOWED_PAYMENT_METHODS,
+  DEFAULT_CARD_ID,
+  OVERRIDE_TYPES,
+  type BillCard,
+} from '../domain/constants.js';
+import type {
+  MonthOverride,
+  MonthView,
+  MonthViewFixedExpense,
+  MonthViewInstallment,
+  Revenue,
+} from '../domain/types.js';
 
-interface CardBills {
-  [key: string]: number;
-}
-
-interface BillPaymentMap {
-  [key: string]: boolean;
-}
-
-export function readCardBill(cardBills: CardBills | null | undefined, card: string): number {
+export function readCardBill(
+  cardBills: Record<string, number> | null | undefined,
+  card: string
+): number {
   const parsed = Number(cardBills?.[card] || 0);
   return Number.isFinite(parsed) ? parsed : 0;
 }
@@ -20,15 +26,15 @@ export function getExpenseCard(item: {
 }): BillCard | null {
   // support legacy and direct card paymentMethod values — treat unknown paymentMethod strings as dynamic card ids
   if (!item.paymentMethod) return null;
-  if (item.paymentMethod === 'cartao') return (item.card || 'outro') as BillCard;
+  if (item.paymentMethod === 'cartao') return (item.card || DEFAULT_CARD_ID) as BillCard;
   if (!(ALLOWED_PAYMENT_METHODS as readonly string[]).includes(item.paymentMethod)) {
     return item.paymentMethod as BillCard;
   }
   return null;
 }
 
-export function buildTrackedCardBills(monthView: MonthView): CardBills {
-  const trackedCardBills: CardBills = {};
+export function buildTrackedCardBills(monthView: MonthView): Record<string, number> {
+  const trackedCardBills: Record<string, number> = {};
 
   monthView.fixedExpenses.forEach((item) => {
     const card = getExpenseCard(item as MonthViewFixedExpense);
@@ -37,7 +43,7 @@ export function buildTrackedCardBills(monthView: MonthView): CardBills {
   });
 
   monthView.installments.forEach((item) => {
-    const card = (item.card || 'outro') as BillCard;
+    const card = (item.card || DEFAULT_CARD_ID) as BillCard;
     trackedCardBills[card] = (trackedCardBills[card] || 0) + Number(item.installmentValue || 0);
   });
 
@@ -45,10 +51,10 @@ export function buildTrackedCardBills(monthView: MonthView): CardBills {
 }
 
 export function mergeCardBillsWithTrackedExpenses(
-  cardBills: CardBills | null | undefined,
-  trackedCardBills: CardBills
-): CardBills {
-  const merged: CardBills = { ...(cardBills || {}) };
+  cardBills: Record<string, number> | null | undefined,
+  trackedCardBills: Record<string, number>
+): Record<string, number> {
+  const merged: Record<string, number> = { ...(cardBills || {}) };
   Object.entries(trackedCardBills).forEach(([card, trackedAmount]) => {
     const currentBill = readCardBill(merged, card);
     const parsedTrackedAmount = Number(trackedAmount || 0);
@@ -62,16 +68,51 @@ export function mergeCardBillsWithTrackedExpenses(
 export function buildBillPaymentMap(
   monthOverrides: MonthOverride[],
   currentMonthKey: string
-): BillPaymentMap {
+): Record<string, boolean> {
   return (monthOverrides || [])
     .filter(
       (override) =>
         override.type === OVERRIDE_TYPES.CARD_BILL_PAYMENT && override.monthKey === currentMonthKey
     )
-    .reduce((acc, override) => {
-      acc[override.itemId] = override.paid === true;
-      return acc;
-    }, {} as BillPaymentMap);
+    .reduce(
+      (acc, override) => {
+        acc[override.itemId] = override.paid === true;
+        return acc;
+      },
+      {} as Record<string, boolean>
+    );
+}
+
+export function markBillAsPaid(
+  cardKey: string,
+  cardBills: Record<string, number> | null | undefined,
+  fixedExpenses: MonthViewFixedExpense[],
+  installments: MonthViewInstallment[],
+  billPaymentMap: Record<string, boolean>
+): void {
+  // Marcar gastos fixos como pagos
+  fixedExpenses.forEach((expense) => {
+    let card = getExpenseCard(expense);
+    // fallback: some test fixtures / legacy items may set `card` directly
+    if (!card && (expense as any).card) {
+      card = (expense as any).card as BillCard;
+    }
+    if (card === cardKey && !expense.paid) {
+      expense.paid = true;
+    }
+  });
+
+  // Marcar parcelas como pagas
+  installments.forEach((installment) => {
+    if (installment.card === cardKey && !installment.paid) {
+      installment.paid = true;
+    }
+  });
+
+  // Atualizar o mapa de pagamento da fatura
+  if (cardBills && cardBills[cardKey]) {
+    billPaymentMap[cardKey] = true;
+  }
 }
 
 interface SummaryData {
@@ -97,7 +138,7 @@ interface SummaryData {
 
 export function buildSummaryData(
   monthView: MonthView,
-  cardBills: CardBills | null | undefined,
+  cardBills: Record<string, number> | null | undefined,
   monthOverrides: MonthOverride[],
   currentMonthKey: string,
   cardList?: { key: string; label: string }[]
@@ -115,7 +156,7 @@ export function buildSummaryData(
 
   const installmentsByCard: Record<BillCard, number> = {} as Record<BillCard, number>;
   installments.forEach((item) => {
-    const card = (item.card || 'outro') as BillCard;
+    const card = (item.card || DEFAULT_CARD_ID) as BillCard;
     installmentsByCard[card] = (installmentsByCard[card] || 0) + Number(item.installmentValue || 0);
   });
 
@@ -132,7 +173,7 @@ export function buildSummaryData(
 
   const installmentsPaidByCard: Record<BillCard, number> = {} as Record<BillCard, number>;
   installments.forEach((item) => {
-    const card = (item.card || 'outro') as BillCard;
+    const card = (item.card || DEFAULT_CARD_ID) as BillCard;
     if (item.paid !== true) return;
     installmentsPaidByCard[card] =
       (installmentsPaidByCard[card] || 0) + Number(item.installmentValue || 0);

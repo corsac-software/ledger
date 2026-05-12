@@ -1,7 +1,7 @@
-import { CARD_ICONS, CATEGORIES, ICONS } from '../../../ui/constants';
 import type { FixedExpense } from '../../../domain/types';
 import { formatMoneyInput } from '../../../lib/moneyInput';
-import { formatStartMonth } from '../../../lib/utils';
+import { formatStartMonth, resolvePaymentMethod } from '../../../lib/utils';
+import { CARD_ICONS, CATEGORIES, ICONS } from '../../../ui/constants';
 import { RowActions } from '../shared/RowActions';
 
 interface FixedExpenseRowProps {
@@ -18,11 +18,6 @@ interface FixedExpenseRowProps {
   onEdit: () => void;
   onDelete: () => void;
   cardIconMap?: Record<string, string>;
-}
-
-function resolvePaymentMethod(item: FixedExpense) {
-  if (item.paymentMethod === 'cartao' && item.card) return item.card;
-  return item.paymentMethod || 'boleto';
 }
 
 export function FixedExpenseRow({

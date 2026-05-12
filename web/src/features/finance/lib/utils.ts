@@ -1,11 +1,18 @@
 export const clone = <T>(value: T): T => JSON.parse(JSON.stringify(value));
 
+import type { FixedExpense } from '../domain/types';
+
 import { currencyFormatter, formatCurrency } from './currency';
 
 export const currency = currencyFormatter;
 
 export function formatMoney(value: unknown): string {
   return formatCurrency(value);
+}
+
+export function resolvePaymentMethod(item: Pick<FixedExpense, 'paymentMethod' | 'card'>) {
+  if (item.paymentMethod === 'cartao' && item.card) return item.card;
+  return item.paymentMethod || 'boleto';
 }
 
 export function monthKey(date?: Date | null): string {

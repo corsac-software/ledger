@@ -1,0 +1,95 @@
+HANDOFF - CONTROLE FINANCEIRO (12/05/2026)
+
+1) CONTEXTO GERAL
+- Projeto: controle-financeiro-react
+- Stack atual: React 18, Vite 8, Vitest, ESLint/Prettier
+- Estado atual do projeto (validado):
+  - Testes: 219 passing
+  - TypeScript: npx tsc --noEmit sem erros
+  - Lint/Format: OK
+
+2) MUDANCAS IMPLEMENTADAS NESTA SESSAO
+
+2.1) Pagamento de fatura propagando para itens vinculados
+- Problema: ao marcar fatura de cartao como paga, despesas fixas e parcelas vinculadas nao estavam sendo marcadas automaticamente.
+- Solucao aplicada:
+  - Implementado helper propagateCardBillPaid(...) em hooks de overrides por mes.
+  - Integracao em toggleMonthPaid quando type = CARD_BILL_PAYMENT.
+  - Efeito: ao alternar fatura para paga, itens relacionados ao cartao tambem recebem paid=true.
+
+2.2) Override mensal para receitas (igual ao padrao de gastos fixos)
+- Problema: receitas nao estavam com comportamento mensal equivalente ao de fixed expenses.
+- Solucao aplicada em buildMonth:
+  - Aplicacao de OVERRIDE_TYPES.REVENUE com applyOverride.
+  - Suporte a hidden por mes para receitas.
+  - Totais ajustados considerando receitas ocultas no mes.
+
+2.3) Compatibilidade com fixtures legados
+- Ajuste em markBillAsPaid/getExpenseCard para cenarios onde existe card sem paymentMethod (fixtures antigas).
+- Resultado: evita falha de logica em testes/estados legados.
+
+2.4) Correcoes de tipagem em testes
+- actions.test: fixtures simplificadas para markBillAsPaid receberam cast para MonthViewFixedExpense[] e MonthViewInstallment[] onde necessario.
+- Remove erro TS2345 em linhas citadas pelo usuario.
+
+2.5) types.d.ts
+- Problema reportado: "Ambient module declaration cannot specify relative module name".
+- Ajuste realizado: removidos nomes de modulo relativos e substituidos por nomes nao-relativos no arquivo de declaracoes.
+- Resultado: tsc sem erro apos ajuste.
+
+2.6) vite.config.ts
+- Mantido plugin @vitejs/plugin-react.
+- manualChunks com cast para evitar erro de tipagem com combinacao de definicoes de rollup/vite.
+- Tentativa de migrar para plugin-react-oxc foi bloqueada por conflito de peer deps com vite atual.
+
+3) WARNINGS DE VITE (STATUS)
+- Warnings observados ao rodar testes/dev:
+  - esbuild option deprecated / usar oxc
+  - optimizeDeps.rollupOptions deprecated / usar rolldownOptions
+  - sugestao de migrar para @vitejs/plugin-react-oxc
+- Causa: combinacao atual de versoes (plugin-react vs vite instalado).
+- Situacao: warnings nao bloqueantes; build/test seguem funcionais.
+
+4) EVENTO IMPORTANTE APOS APAGAR node_modules + lock
+- npm install falhou inicialmente por ERESOLVE (conflitos de peer deps).
+- Instalacao restaurada com:
+  - npm install --legacy-peer-deps
+- Falha de testes posterior por dependencia ausente:
+  - Module not found: @testing-library/dom
+- Correcao aplicada:
+  - npm install --save-dev @testing-library/dom --legacy-peer-deps
+- Resultado final apos isso:
+  - npm test: 219 passing
+
+5) COMANDOS QUE FICARAM VALIDOS NO FINAL
+- npm test
+- npx tsc --noEmit
+- npm run format
+- npm run lint
+
+6) ARQUIVOS PRINCIPAIS ENVOLVIDOS NESTA SESSAO
+- src/features/finance/hooks/useMonthOverridesActions.ts
+- src/features/finance/selectors/buildMonth.ts
+- src/features/finance/selectors/summarySelectors.ts
+- src/features/finance/tests/actions.test.ts
+- src/features/finance/tests/buildMonth.test.ts
+- src/features/finance/tests/propagateCardBillPaid.test.ts
+- src/features/finance/types.d.ts
+- vite.config.ts
+- package.json (dependencia de teste adicionada: @testing-library/dom)
+
+7) CONTEXTO PARA PROXIMA SESSAO (MIGRACAO DEXIE -> BACKEND)
+- Usuario informou que o projeto vai migrar de persistencia local (Dexie) para backend.
+- Ponto de entrada natural para adaptacao:
+  - lib/financeRepository.ts (abstracao de dados)
+  - context/financeContextInternals.ts (hydrate/persist)
+  - hooks de carga/acoes (useFinanceData/useFinanceActions)
+- Recomendacao para inicio da proxima sessao:
+  1. Definir contrato de API (endpoints + payloads + auth)
+  2. Implementar adapter de repository para backend mantendo interface atual
+  3. Ajustar hydration e erros/retries
+  4. Atualizar testes de integracao e mocks
+
+8) OBSERVACOES FINAIS
+- Husky foi explicitamente ignorado por solicitacao do usuario em parte da sessao.
+- Estado funcional no fechamento: testes e checks principais verdes.

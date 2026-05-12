@@ -1,4 +1,5 @@
 import { useCallback, useMemo } from 'react';
+import { DEFAULT_CARD_ID, OVERRIDE_TYPES } from '../domain/constants.js';
 import {
   createOverrideMutations,
   getMonthCardBills,
@@ -7,6 +8,7 @@ import {
 import type { MonthOverride, MonthView, OverrideType } from '../domain/types.js';
 import {
   buildTrackedCardBills,
+  getExpenseCard,
   mergeCardBillsWithTrackedExpenses,
 } from '../selectors/summarySelectors.js';
 
@@ -22,6 +24,27 @@ interface UseMonthOverridesActionsParams {
     paid?: boolean;
   }) => void;
   clearMonthOverride: (params: { type: OverrideType; itemId: string; monthKey: string }) => void;
+}
+
+export function propagateCardBillPaid(
+  monthView: MonthView,
+  overrideMutations: ReturnType<typeof createOverrideMutations>,
+  cardKey: string,
+  paid: boolean
+) {
+  (monthView.fixedExpenses || []).forEach((expense) => {
+    const card = getExpenseCard(expense as any);
+    if (card === cardKey) {
+      overrideMutations.setPaid(OVERRIDE_TYPES.FIXED_EXPENSE_PAYMENT, expense.id, paid);
+    }
+  });
+
+  (monthView.installments || []).forEach((inst) => {
+    const card = (inst.card || DEFAULT_CARD_ID) as string;
+    if (card === cardKey) {
+      overrideMutations.setPaid(OVERRIDE_TYPES.INSTALLMENT_PAYMENT, inst.id, paid);
+    }
+  });
 }
 
 export function useMonthOverridesActions({
@@ -73,9 +96,15 @@ export function useMonthOverridesActions({
 
   const toggleMonthPaid = useCallback(
     (type: OverrideType, itemId: string, paid: boolean) => {
+      // Always set the primary override
       overrideMutations.setPaid(type, itemId, paid);
+
+      // If a card bill is marked/unmarked as paid, propagate to related fixed expenses and installments
+      if (type === OVERRIDE_TYPES.CARD_BILL_PAYMENT) {
+        propagateCardBillPaid(monthView, overrideMutations, itemId, paid);
+      }
     },
-    [overrideMutations]
+    [overrideMutations, monthView]
   );
 
   return {

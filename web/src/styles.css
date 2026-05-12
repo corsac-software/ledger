@@ -4,6 +4,8 @@
 @import './styles/core/page.css';
 @import './styles/core/app.css';
 
+@import './styles/shared/controls.css';
+
 @import './styles/navigation/month-nav.css';
 
 @import './styles/sections/metrics.css';

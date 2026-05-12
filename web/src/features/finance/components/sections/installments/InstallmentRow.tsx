@@ -1,16 +1,7 @@
-import { CARD_ICONS } from '../../../ui/constants';
+import type { InstallmentItem } from '../../../domain/types';
 import { formatStartMonth } from '../../../lib/utils';
+import { CARD_ICONS } from '../../../ui/constants';
 import { RowActions } from '../shared/RowActions';
-
-type InstallmentItem = {
-  id: string;
-  name: string;
-  installmentValue: number;
-  totalInstallments: number;
-  startMonth: string;
-  card: string;
-  currentInstallment: number;
-};
 
 interface InstallmentRowProps {
   item: InstallmentItem;

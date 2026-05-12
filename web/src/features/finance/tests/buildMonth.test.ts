@@ -291,6 +291,76 @@ describe('buildMonthView', () => {
     expect(result.fixedExpenses[0].amount).toBe(100);
   });
 
+  it('applies revenue overrides (name) for current month', () => {
+    const state = {
+      ...emptyFinanceState(),
+      currentDate: new Date('2026-04-15'),
+      fixedExpenses: [],
+      revenues: [
+        {
+          id: 'r1',
+          name: 'Salario',
+          baseAmount: 5000,
+          active: true,
+          startMonth: '2026-01',
+          endMonth: null,
+          category: 'outro',
+          notes: '',
+        },
+      ],
+      installments: [],
+      monthOverrides: [
+        {
+          id: 'o1',
+          type: OVERRIDE_TYPES.REVENUE,
+          itemId: 'r1',
+          monthKey: '2026-04',
+          name: 'Salario Ajustado',
+        },
+      ],
+    };
+
+    const result = buildMonthView(state);
+
+    expect(result.revenues[0].name).toBe('Salario Ajustado');
+    expect(result.totals.receitas).toBe(5000);
+  });
+
+  it('hides revenue when override.hidden is true for the month', () => {
+    const state = {
+      ...emptyFinanceState(),
+      currentDate: new Date('2026-04-15'),
+      fixedExpenses: [],
+      revenues: [
+        {
+          id: 'r1',
+          name: 'Salario',
+          baseAmount: 5000,
+          active: true,
+          startMonth: '2026-01',
+          endMonth: null,
+          category: 'outro',
+          notes: '',
+        },
+      ],
+      installments: [],
+      monthOverrides: [
+        {
+          id: 'o1',
+          type: OVERRIDE_TYPES.REVENUE,
+          itemId: 'r1',
+          monthKey: '2026-04',
+          hidden: true,
+        },
+      ],
+    };
+
+    const result = buildMonthView(state);
+
+    expect(result.revenues).toHaveLength(0);
+    expect(result.totals.receitas).toBe(0);
+  });
+
   it('calculates installment progress', () => {
     const state = {
       ...emptyFinanceState(),

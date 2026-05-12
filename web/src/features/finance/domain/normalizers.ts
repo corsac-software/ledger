@@ -1,5 +1,5 @@
 import { createFinanceId } from '../lib/ids';
-import { ALLOWED_PAYMENT_METHODS } from './constants';
+import { ALLOWED_PAYMENT_METHODS, DEFAULT_CARD_ID } from './constants';
 import type { FixedExpense, Installment, Revenue } from './types';
 
 export function normalizeFixedExpense(item: Record<string, unknown>): FixedExpense {
@@ -7,7 +7,7 @@ export function normalizeFixedExpense(item: Record<string, unknown>): FixedExpen
   const card = item?.card as string | undefined;
 
   if (paymentMethod === 'cartao') {
-    const normalizedCard = card?.trim() === '' ? 'outro' : card || 'outro';
+    const normalizedCard = card?.trim() === '' ? DEFAULT_CARD_ID : card || DEFAULT_CARD_ID;
     return { ...item, paymentMethod: 'cartao', card: normalizedCard } as unknown as FixedExpense;
   }
 
@@ -29,7 +29,7 @@ export function normalizeInstallment(item: Record<string, unknown>): Installment
       : typeof raw === 'number' && Number.isFinite(raw)
         ? String(raw)
         : '';
-  const normalizedCard = trimmed !== '' ? trimmed : 'outro';
+  const normalizedCard = trimmed !== '' ? trimmed : DEFAULT_CARD_ID;
   return { ...item, card: normalizedCard } as unknown as Installment;
 }
 

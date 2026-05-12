@@ -1,21 +1,22 @@
 import { useMemo } from 'react';
 import { OVERRIDE_TYPES } from '../../domain/constants';
-import { CARD_ICONS } from '../../ui/constants';
 import type { CardBillItem, FixedExpense } from '../../domain/types';
+import { useActiveFixedExpenses } from '../../hooks/useActiveFixedExpenses';
+import { useCardList } from '../../hooks/useCardList';
+import { useMonthPaymentMap } from '../../hooks/useMonthPaymentMap';
+import { buildCardIconMap } from '../../lib/cardIconMap';
+import { selectMonthFixedExpenseAmounts } from '../../selectors/monthOverrideSelectors';
 import { ConfirmModal, RuleModal } from '../modals';
 import RuleSection from '../RuleSection';
 import { FixedExpenseForm } from './fixed-expenses/FixedExpenseForm';
 import { buildFixedExpensePayload } from './fixed-expenses/fixedExpenseFormHelpers';
 import { FixedExpenseRow } from './fixed-expenses/FixedExpenseRow';
 import { FIXED_EXPENSE_LABELS } from './fixed-expenses/fixedExpenseSectionLabels';
-import { useActiveFixedExpenses } from '../../hooks/useActiveFixedExpenses';
 import { useFixedExpenseCrudState } from './fixed-expenses/useFixedExpenseCrudState';
 import type { CrudSectionCommonProps, MonthPaidSectionProps } from './shared/types';
 import { useCrudFormFlow } from './shared/useCrudFormFlow';
 import { useCrudModalState } from './shared/useCrudModalState';
 import { useMonthAmountInput } from './shared/useMonthAmountInput';
-import { useMonthPaymentMap } from '../../hooks/useMonthPaymentMap';
-import { selectMonthFixedExpenseAmounts } from '../../selectors/monthOverrideSelectors';
 
 type FixedExpensePayload = {
   name: string;
@@ -44,15 +45,9 @@ export function FixedExpensesSection({
   onMonthFixedExpenseAmount,
   cardList,
 }: FixedExpensesSectionProps) {
-  const cards = useMemo(() => cardList ?? [], [cardList]);
+  const cards = useCardList(cardList);
 
-  const cardIconMap = useMemo(() => {
-    const map: Record<string, string> = { ...CARD_ICONS };
-    (cardList ?? []).forEach((card) => {
-      if (card.icon) map[card.id] = card.icon;
-    });
-    return map;
-  }, [cardList]);
+  const cardIconMap = useMemo(() => buildCardIconMap(cards), [cards]);
 
   const activeItems = useActiveFixedExpenses(items, currentMonthKey);
 
