@@ -1,6 +1,6 @@
 package br.dev.brunorsch.ledger.orcamento.mensal.api.dtos
 
-import br.dev.brunorsch.ledger.orcamento.mensal.domain.Cartao
+import br.dev.brunorsch.ledger.orcamento.mensal.domain.cartoes.Cartao
 import kotlinx.serialization.Serializable
 
 @Serializable

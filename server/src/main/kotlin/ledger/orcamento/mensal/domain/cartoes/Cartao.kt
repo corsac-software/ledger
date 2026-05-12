@@ -1,4 +1,4 @@
-package br.dev.brunorsch.ledger.orcamento.mensal.domain
+package br.dev.brunorsch.ledger.orcamento.mensal.domain.cartoes
 
 import br.dev.brunorsch.ledger.utils.idNaoInserido
 import br.dev.brunorsch.ledger.utils.now

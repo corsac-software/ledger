@@ -1,6 +1,6 @@
 package br.dev.brunorsch.ledger.orcamento.mensal.data.schema
 
-import br.dev.brunorsch.ledger.orcamento.mensal.domain.Parcelamento
+import br.dev.brunorsch.ledger.orcamento.mensal.domain.cartoes.Parcelamento
 import br.dev.brunorsch.ledger.orcamento.mensal.domain.toAnoMes
 import org.jetbrains.exposed.v1.core.ResultRow
 import org.jetbrains.exposed.v1.core.dao.id.LongIdTable

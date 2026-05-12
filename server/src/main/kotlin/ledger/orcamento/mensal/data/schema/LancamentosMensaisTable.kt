@@ -1,12 +1,11 @@
 package br.dev.brunorsch.ledger.orcamento.mensal.data.schema
 
-import br.dev.brunorsch.ledger.orcamento.mensal.domain.LancamentoMensal
-import br.dev.brunorsch.ledger.orcamento.mensal.domain.LancamentoMensal.StatusDespesa
-import br.dev.brunorsch.ledger.orcamento.mensal.domain.TipoLancamento.valueOf
+import br.dev.brunorsch.ledger.orcamento.mensal.domain.lancamentos.LancamentoMensal
+import br.dev.brunorsch.ledger.orcamento.mensal.domain.lancamentos.LancamentoMensal.StatusDespesa
+import br.dev.brunorsch.ledger.orcamento.mensal.domain.lancamentos.TipoLancamento.valueOf
 import org.jetbrains.exposed.v1.core.ResultRow
 import org.jetbrains.exposed.v1.core.dao.id.LongIdTable
 import org.jetbrains.exposed.v1.core.statements.UpdateBuilder
-import org.jetbrains.exposed.v1.datetime.datetime
 
 
 object LancamentosMensaisTable : LongIdTable("lancamentos_mensais") {

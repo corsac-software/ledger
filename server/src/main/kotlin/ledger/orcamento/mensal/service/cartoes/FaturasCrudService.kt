@@ -1,16 +1,16 @@
-package br.dev.brunorsch.ledger.orcamento.mensal.service
+package br.dev.brunorsch.ledger.orcamento.mensal.service.cartoes
 
 import br.dev.brunorsch.ledger.orcamento.mensal.api.dtos.FaturaRequest
 import br.dev.brunorsch.ledger.orcamento.mensal.api.dtos.FaturaUpdateRequest
 import br.dev.brunorsch.ledger.orcamento.mensal.data.repository.FaturasRepository
 import br.dev.brunorsch.ledger.orcamento.mensal.data.repository.OrcamentosMensaisRepository
 import br.dev.brunorsch.ledger.orcamento.mensal.domain.AnoMes
-import br.dev.brunorsch.ledger.orcamento.mensal.domain.Fatura
-import br.dev.brunorsch.ledger.orcamento.mensal.domain.LancamentoMensal
+import br.dev.brunorsch.ledger.orcamento.mensal.domain.cartoes.Fatura
+import br.dev.brunorsch.ledger.orcamento.mensal.domain.lancamentos.LancamentoMensal
 import br.dev.brunorsch.ledger.utils.now
 import kotlinx.datetime.LocalDateTime
 
-class FaturasService(
+class FaturasCrudService(
     private val repository: FaturasRepository,
     private val orcamentosMensaisRepository: OrcamentosMensaisRepository
 ) {
@@ -74,8 +74,8 @@ class FaturasService(
         return repository.atualizar(
             existente.copy(
                 valor = request.valor ?: existente.valor,
-                mes = request.mes?.let { AnoMes.parse(it) } ?: existente.mes,
-                atualizadoEm = LocalDateTime.now()
+                mes = request.mes?.let { AnoMes.Companion.parse(it) } ?: existente.mes,
+                atualizadoEm = LocalDateTime.Companion.now()
             ),
             idUsuario
         )

@@ -5,7 +5,7 @@ import br.dev.brunorsch.ledger.orcamento.mensal.data.schema.FaturasTable
 import br.dev.brunorsch.ledger.orcamento.mensal.data.schema.LancamentosMensaisTable
 import br.dev.brunorsch.ledger.orcamento.mensal.data.schema.toFatura
 import br.dev.brunorsch.ledger.orcamento.mensal.data.schema.toStatement
-import br.dev.brunorsch.ledger.orcamento.mensal.domain.Fatura
+import br.dev.brunorsch.ledger.orcamento.mensal.domain.cartoes.Fatura
 import org.jetbrains.exposed.v1.core.and
 import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.jdbc.deleteWhere

@@ -2,8 +2,8 @@ package br.dev.brunorsch.ledger.orcamento.mensal.data.repository
 
 import br.dev.brunorsch.ledger.orcamento.mensal.data.schema.*
 import br.dev.brunorsch.ledger.orcamento.mensal.domain.AnoMes
-import br.dev.brunorsch.ledger.orcamento.mensal.domain.LancamentoFixo
-import br.dev.brunorsch.ledger.orcamento.mensal.domain.LancamentoMensal
+import br.dev.brunorsch.ledger.orcamento.mensal.domain.lancamentos.LancamentoFixo
+import br.dev.brunorsch.ledger.orcamento.mensal.domain.lancamentos.LancamentoMensal
 import br.dev.brunorsch.ledger.orcamento.mensal.domain.OrcamentoMensal
 import org.jetbrains.exposed.v1.core.and
 import org.jetbrains.exposed.v1.core.lessEq

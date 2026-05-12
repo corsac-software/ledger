@@ -1,13 +1,13 @@
-package br.dev.brunorsch.ledger.orcamento.mensal.service
+package br.dev.brunorsch.ledger.orcamento.mensal.service.cartoes
 
 import br.dev.brunorsch.ledger.orcamento.mensal.api.dtos.CartaoRequest
 import br.dev.brunorsch.ledger.orcamento.mensal.api.dtos.CartaoUpdateRequest
 import br.dev.brunorsch.ledger.orcamento.mensal.data.repository.CartoesRepository
-import br.dev.brunorsch.ledger.orcamento.mensal.domain.Cartao
+import br.dev.brunorsch.ledger.orcamento.mensal.domain.cartoes.Cartao
 import br.dev.brunorsch.ledger.utils.now
 import kotlinx.datetime.LocalDateTime
 
-class CartoesService(
+class CartoesCrudService(
     private val repository: CartoesRepository
 ) {
     fun buscarTodos(idUsuario: Long): List<Cartao> {
@@ -46,7 +46,7 @@ class CartoesService(
                 nome = request.nome ?: existente.nome,
                 icone = request.icone ?: existente.icone,
                 cor = request.cor ?: existente.cor,
-                atualizadoEm = LocalDateTime.now()
+                atualizadoEm = LocalDateTime.Companion.now()
             )
         )
     }

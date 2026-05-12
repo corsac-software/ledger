@@ -3,7 +3,7 @@ package br.dev.brunorsch.ledger.orcamento.mensal.data.repository
 import br.dev.brunorsch.ledger.orcamento.mensal.data.schema.CartoesTable
 import br.dev.brunorsch.ledger.orcamento.mensal.data.schema.toCartao
 import br.dev.brunorsch.ledger.orcamento.mensal.data.schema.toStatement
-import br.dev.brunorsch.ledger.orcamento.mensal.domain.Cartao
+import br.dev.brunorsch.ledger.orcamento.mensal.domain.cartoes.Cartao
 import org.jetbrains.exposed.v1.core.and
 import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.jdbc.insertAndGetId

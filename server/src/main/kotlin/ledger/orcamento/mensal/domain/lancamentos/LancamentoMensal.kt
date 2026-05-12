@@ -1,14 +1,14 @@
-package br.dev.brunorsch.ledger.orcamento.mensal.domain
+package br.dev.brunorsch.ledger.orcamento.mensal.domain.lancamentos
 
-import br.dev.brunorsch.ledger.orcamento.mensal.data.schema.LancamentosMensaisTable.statusDespesa
-import br.dev.brunorsch.ledger.orcamento.mensal.domain.LancamentoMensal.StatusDespesa.ABERTO
-import br.dev.brunorsch.ledger.orcamento.mensal.domain.TipoLancamento.DESPESA
-import br.dev.brunorsch.ledger.orcamento.mensal.domain.TipoLancamento.RECEITA
+import br.dev.brunorsch.ledger.orcamento.mensal.domain.OrcamentoMensal
+import br.dev.brunorsch.ledger.orcamento.mensal.domain.lancamentos.LancamentoMensal.StatusDespesa.ABERTO
+import br.dev.brunorsch.ledger.orcamento.mensal.domain.lancamentos.TipoLancamento.DESPESA
+import br.dev.brunorsch.ledger.orcamento.mensal.domain.lancamentos.TipoLancamento.RECEITA
 import br.dev.brunorsch.ledger.utils.idNaoInserido
 import java.math.BigDecimal
 
 data class LancamentoMensal(
-    val id: Long,
+    val id: Long = idNaoInserido,
     val slug: String,
     var descricao: String,
     var valor: BigDecimal,
@@ -36,13 +36,11 @@ data class LancamentoMensal(
         }
 
         private fun criarReceita(
-            id: Long = idNaoInserido,
             slug: String,
             descricao: String,
             valor: BigDecimal
         ): LancamentoMensal {
             return LancamentoMensal(
-                id = id,
                 slug = slug,
                 descricao = descricao,
                 valor = valor,
@@ -64,13 +62,11 @@ data class LancamentoMensal(
         }
 
         private fun criarDespesa(
-            id: Long = idNaoInserido,
             slug: String,
             descricao: String,
             valor: BigDecimal,
         ): LancamentoMensal {
             return LancamentoMensal(
-                id = id,
                 slug = slug,
                 descricao = descricao,
                 valor = valor,

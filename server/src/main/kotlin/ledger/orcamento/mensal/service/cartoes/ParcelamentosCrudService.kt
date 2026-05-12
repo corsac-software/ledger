@@ -1,14 +1,14 @@
-package br.dev.brunorsch.ledger.orcamento.mensal.service
+package br.dev.brunorsch.ledger.orcamento.mensal.service.cartoes
 
 import br.dev.brunorsch.ledger.orcamento.mensal.api.dtos.ParcelamentoRequest
 import br.dev.brunorsch.ledger.orcamento.mensal.api.dtos.ParcelamentoUpdateRequest
 import br.dev.brunorsch.ledger.orcamento.mensal.data.repository.ParcelamentosRepository
 import br.dev.brunorsch.ledger.orcamento.mensal.domain.AnoMes
-import br.dev.brunorsch.ledger.orcamento.mensal.domain.Parcelamento
+import br.dev.brunorsch.ledger.orcamento.mensal.domain.cartoes.Parcelamento
 import br.dev.brunorsch.ledger.utils.now
 import kotlinx.datetime.LocalDateTime
 
-class ParcelamentosService(
+class ParcelamentosCrudService(
     private val repository: ParcelamentosRepository
 ) {
     fun buscarTodos(idCartao: Long, idUsuario: Long): List<Parcelamento>? {
@@ -25,7 +25,7 @@ class ParcelamentosService(
 
         validarNome(request.nome)
         validarParcelas(request.parcelas)
-        val mesInicio = AnoMes.parse(request.mesInicio)
+        val mesInicio = AnoMes.Companion.parse(request.mesInicio)
 
         return repository.criar(
             Parcelamento(
@@ -50,8 +50,8 @@ class ParcelamentosService(
                 nome = request.nome ?: existente.nome,
                 valor = request.valor ?: existente.valor,
                 parcelas = request.parcelas ?: existente.parcelas,
-                mesInicio = request.mesInicio?.let { AnoMes.parse(it) } ?: existente.mesInicio,
-                atualizadoEm = LocalDateTime.now(),
+                mesInicio = request.mesInicio?.let { AnoMes.Companion.parse(it) } ?: existente.mesInicio,
+                atualizadoEm = LocalDateTime.Companion.now(),
             ),
             idUsuario
         )

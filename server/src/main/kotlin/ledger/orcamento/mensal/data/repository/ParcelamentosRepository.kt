@@ -4,7 +4,7 @@ import br.dev.brunorsch.ledger.orcamento.mensal.data.schema.CartoesTable
 import br.dev.brunorsch.ledger.orcamento.mensal.data.schema.ParcelamentosTable
 import br.dev.brunorsch.ledger.orcamento.mensal.data.schema.toParcelamento
 import br.dev.brunorsch.ledger.orcamento.mensal.data.schema.toStatement
-import br.dev.brunorsch.ledger.orcamento.mensal.domain.Parcelamento
+import br.dev.brunorsch.ledger.orcamento.mensal.domain.cartoes.Parcelamento
 import br.dev.brunorsch.ledger.utils.now
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime

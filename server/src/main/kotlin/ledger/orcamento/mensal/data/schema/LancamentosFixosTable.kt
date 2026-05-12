@@ -1,9 +1,7 @@
 package br.dev.brunorsch.ledger.orcamento.mensal.data.schema
 
-import br.dev.brunorsch.ledger.orcamento.mensal.domain.AnoMes
-import br.dev.brunorsch.ledger.orcamento.mensal.domain.LancamentoFixo
-import br.dev.brunorsch.ledger.orcamento.mensal.domain.TipoLancamento
-import br.dev.brunorsch.ledger.orcamento.mensal.domain.TipoLancamento.valueOf
+import br.dev.brunorsch.ledger.orcamento.mensal.domain.lancamentos.LancamentoFixo
+import br.dev.brunorsch.ledger.orcamento.mensal.domain.lancamentos.TipoLancamento.valueOf
 import br.dev.brunorsch.ledger.orcamento.mensal.domain.toAnoMes
 import org.jetbrains.exposed.v1.core.ResultRow
 import org.jetbrains.exposed.v1.core.dao.id.LongIdTable

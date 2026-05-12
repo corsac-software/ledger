@@ -1,7 +1,9 @@
 package br.dev.brunorsch.ledger.orcamento.mensal.domain
 
-import br.dev.brunorsch.ledger.orcamento.mensal.domain.TipoLancamento.DESPESA
-import br.dev.brunorsch.ledger.orcamento.mensal.domain.TipoLancamento.RECEITA
+import br.dev.brunorsch.ledger.orcamento.mensal.domain.lancamentos.LancamentoMensal
+import br.dev.brunorsch.ledger.orcamento.mensal.domain.lancamentos.TipoLancamento
+import br.dev.brunorsch.ledger.orcamento.mensal.domain.lancamentos.TipoLancamento.DESPESA
+import br.dev.brunorsch.ledger.orcamento.mensal.domain.lancamentos.TipoLancamento.RECEITA
 import kotlinx.datetime.LocalDate
 
 data class OrcamentoMensal(

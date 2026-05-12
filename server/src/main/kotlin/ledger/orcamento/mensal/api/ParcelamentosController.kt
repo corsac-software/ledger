@@ -3,14 +3,14 @@ package br.dev.brunorsch.ledger.orcamento.mensal.api
 import br.dev.brunorsch.ledger.orcamento.mensal.api.dtos.ParcelamentoRequest
 import br.dev.brunorsch.ledger.orcamento.mensal.api.dtos.ParcelamentoUpdateRequest
 import br.dev.brunorsch.ledger.orcamento.mensal.api.dtos.toResponse
-import br.dev.brunorsch.ledger.orcamento.mensal.service.ParcelamentosService
+import br.dev.brunorsch.ledger.orcamento.mensal.service.cartoes.ParcelamentosCrudService
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 
 class ParcelamentosController(
-    private val service: ParcelamentosService
+    private val service: ParcelamentosCrudService
 ) {
     suspend fun buscarTodos(call: ApplicationCall) {
         val idCartao = call.parameters["cartaoId"]?.toLongOrNull()

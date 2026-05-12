@@ -3,14 +3,14 @@ package br.dev.brunorsch.ledger.orcamento.mensal.api
 import br.dev.brunorsch.ledger.orcamento.mensal.api.dtos.FaturaRequest
 import br.dev.brunorsch.ledger.orcamento.mensal.api.dtos.FaturaUpdateRequest
 import br.dev.brunorsch.ledger.orcamento.mensal.api.dtos.toResponse
-import br.dev.brunorsch.ledger.orcamento.mensal.service.FaturasService
+import br.dev.brunorsch.ledger.orcamento.mensal.service.cartoes.FaturasCrudService
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 
 class FaturasController(
-    private val service: FaturasService
+    private val service: FaturasCrudService
 ) {
     suspend fun buscarTodos(call: ApplicationCall) {
         val idCartao = call.parameters["cartaoId"]?.toLongOrNull()

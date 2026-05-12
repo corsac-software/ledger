@@ -4,7 +4,7 @@ import br.dev.brunorsch.ledger.orcamento.mensal.api.dtos.CategoriaUpdateRequest
 import br.dev.brunorsch.ledger.orcamento.mensal.data.schema.CategoriasTable
 import br.dev.brunorsch.ledger.orcamento.mensal.data.schema.toCategoria
 import br.dev.brunorsch.ledger.orcamento.mensal.data.schema.toStatement
-import br.dev.brunorsch.ledger.orcamento.mensal.domain.Categoria
+import br.dev.brunorsch.ledger.orcamento.mensal.domain.lancamentos.Categoria
 import org.jetbrains.exposed.v1.core.and
 import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.jdbc.insertAndGetId

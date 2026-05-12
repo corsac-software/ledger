@@ -3,14 +3,14 @@ package br.dev.brunorsch.ledger.orcamento.mensal.api
 import br.dev.brunorsch.ledger.orcamento.mensal.api.dtos.LancamentoFixoRequest
 import br.dev.brunorsch.ledger.orcamento.mensal.api.dtos.LancamentoFixoUpdateRequest
 import br.dev.brunorsch.ledger.orcamento.mensal.api.dtos.toResponse
-import br.dev.brunorsch.ledger.orcamento.mensal.service.LancamentosFixosService
+import br.dev.brunorsch.ledger.orcamento.mensal.service.lancamentos.LancamentosFixosCrudService
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 
 class LancamentosFixosController(
-    private val service: LancamentosFixosService
+    private val service: LancamentosFixosCrudService
 ) {
     suspend fun buscarTodos(call: ApplicationCall) {
         val lancamentos = service.buscarTodos(idUsuario).map { it.toResponse() }

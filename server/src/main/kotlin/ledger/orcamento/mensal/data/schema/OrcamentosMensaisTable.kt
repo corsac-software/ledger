@@ -2,7 +2,7 @@ package br.dev.brunorsch.ledger.orcamento.mensal.data.schema
 
 import br.dev.brunorsch.ledger.orcamento.mensal.api.dtos.OrcamentoMensalUpdateRequest
 import br.dev.brunorsch.ledger.orcamento.mensal.domain.AnoMes
-import br.dev.brunorsch.ledger.orcamento.mensal.domain.LancamentoMensal
+import br.dev.brunorsch.ledger.orcamento.mensal.domain.lancamentos.LancamentoMensal
 import br.dev.brunorsch.ledger.orcamento.mensal.domain.OrcamentoMensal
 import kotlinx.datetime.number
 import org.jetbrains.exposed.v1.core.ResultRow

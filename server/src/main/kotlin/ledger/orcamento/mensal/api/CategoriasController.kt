@@ -3,14 +3,14 @@ package br.dev.brunorsch.ledger.orcamento.mensal.api
 import br.dev.brunorsch.ledger.orcamento.mensal.api.dtos.CategoriaRequest
 import br.dev.brunorsch.ledger.orcamento.mensal.api.dtos.CategoriaUpdateRequest
 import br.dev.brunorsch.ledger.orcamento.mensal.api.dtos.toResponse
-import br.dev.brunorsch.ledger.orcamento.mensal.service.CategoriasService
+import br.dev.brunorsch.ledger.orcamento.mensal.service.lancamentos.CategoriasCrudService
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 
 class CategoriasController(
-    private val service: CategoriasService
+    private val service: CategoriasCrudService
 ) {
     suspend fun buscarTodas(call: ApplicationCall) {
         val categorias = service.buscarTodas(idUsuario).map { it.toResponse() }

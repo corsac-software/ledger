@@ -5,7 +5,7 @@ import br.dev.brunorsch.ledger.orcamento.mensal.data.schema.LancamentosFixosTabl
 import br.dev.brunorsch.ledger.orcamento.mensal.data.schema.toLancamentoFixo
 import br.dev.brunorsch.ledger.orcamento.mensal.data.schema.toStatement
 import br.dev.brunorsch.ledger.orcamento.mensal.domain.AnoMes
-import br.dev.brunorsch.ledger.orcamento.mensal.domain.LancamentoFixo
+import br.dev.brunorsch.ledger.orcamento.mensal.domain.lancamentos.LancamentoFixo
 import org.jetbrains.exposed.v1.core.and
 import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.jdbc.insertAndGetId

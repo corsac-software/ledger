@@ -1,5 +1,6 @@
-package br.dev.brunorsch.ledger.orcamento.mensal.domain
+package br.dev.brunorsch.ledger.orcamento.mensal.domain.lancamentos
 
+import br.dev.brunorsch.ledger.orcamento.mensal.domain.AnoMes
 import br.dev.brunorsch.ledger.utils.idNaoInserido
 import br.dev.brunorsch.ledger.utils.now
 import kotlinx.datetime.LocalDateTime

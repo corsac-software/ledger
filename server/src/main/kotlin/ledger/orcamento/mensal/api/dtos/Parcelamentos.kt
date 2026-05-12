@@ -1,6 +1,6 @@
 package br.dev.brunorsch.ledger.orcamento.mensal.api.dtos
 
-import br.dev.brunorsch.ledger.orcamento.mensal.domain.Parcelamento
+import br.dev.brunorsch.ledger.orcamento.mensal.domain.cartoes.Parcelamento
 import br.dev.brunorsch.ledger.utils.BigDecimalJson
 import kotlinx.serialization.Serializable
 
