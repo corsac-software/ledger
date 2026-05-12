@@ -1,7 +1,10 @@
 package br.dev.brunorsch.ledger.orcamento.mensal.domain
 
+import br.dev.brunorsch.ledger.orcamento.mensal.data.schema.LancamentosMensaisTable.statusDespesa
+import br.dev.brunorsch.ledger.orcamento.mensal.domain.LancamentoMensal.StatusDespesa.ABERTO
 import br.dev.brunorsch.ledger.orcamento.mensal.domain.TipoLancamento.DESPESA
 import br.dev.brunorsch.ledger.orcamento.mensal.domain.TipoLancamento.RECEITA
+import br.dev.brunorsch.ledger.utils.idNaoInserido
 import java.math.BigDecimal
 
 data class LancamentoMensal(
@@ -10,7 +13,8 @@ data class LancamentoMensal(
     var descricao: String,
     var valor: BigDecimal,
     var tipo: TipoLancamento,
-    var statusDespesa: StatusDespesa?
+    var statusDespesa: StatusDespesa?,
+    val faturaId: Long? = null
 ) {
     enum class StatusDespesa {
         ABERTO,
@@ -20,7 +24,19 @@ data class LancamentoMensal(
 
     companion object {
         fun criarReceita(
-            id: Long,
+            orcamento: OrcamentoMensal,
+            descricao: String,
+            valor: BigDecimal,
+        ): LancamentoMensal {
+            return criarReceita(
+                slug = orcamento.proximoSlug(RECEITA),
+                descricao = descricao,
+                valor = valor
+            )
+        }
+
+        private fun criarReceita(
+            id: Long = idNaoInserido,
             slug: String,
             descricao: String,
             valor: BigDecimal
@@ -36,11 +52,22 @@ data class LancamentoMensal(
         }
 
         fun criarDespesa(
-            id: Long,
+            orcamento: OrcamentoMensal,
+            descricao: String,
+            valor: BigDecimal,
+        ): LancamentoMensal {
+            return criarDespesa(
+                slug = orcamento.proximoSlug(DESPESA),
+                descricao = descricao,
+                valor = valor,
+            )
+        }
+
+        private fun criarDespesa(
+            id: Long = idNaoInserido,
             slug: String,
             descricao: String,
             valor: BigDecimal,
-            statusDespesa: StatusDespesa
         ): LancamentoMensal {
             return LancamentoMensal(
                 id = id,
@@ -48,7 +75,7 @@ data class LancamentoMensal(
                 descricao = descricao,
                 valor = valor,
                 tipo = DESPESA,
-                statusDespesa = statusDespesa
+                statusDespesa = ABERTO
             )
         }
     }

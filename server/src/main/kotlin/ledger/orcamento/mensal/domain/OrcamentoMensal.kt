@@ -11,8 +11,8 @@ data class OrcamentoMensal(
     val slug: String = anoMes.toFormatoSlug(),
     val dataInicio: LocalDate,
     val dataFim: LocalDate,
-    val seqReceita: Int = 0,
-    val seqDespesa: Int = 0,
+    var seqReceita: Int = 0,
+    var seqDespesa: Int = 0,
     val lancamentos: List<LancamentoMensal>? = null
 ) {
     fun proximoSlug(tipo: TipoLancamento): String {

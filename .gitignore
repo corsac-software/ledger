@@ -39,3 +39,6 @@ out/
 .env
 
 generated-migrations/*.sql
+
+## AI-related
+.kilo/

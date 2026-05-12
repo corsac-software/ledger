@@ -1,11 +1,9 @@
 package br.dev.brunorsch.ledger.orcamento.mensal.routes
 
-import br.dev.brunorsch.ledger.orcamento.mensal.api.CartaoRequest
-import br.dev.brunorsch.ledger.orcamento.mensal.api.CartaoResponse
-import br.dev.brunorsch.ledger.orcamento.mensal.api.CartaoUpdateRequest
-import br.dev.brunorsch.ledger.orcamento.mensal.api.CartoesController
+import br.dev.brunorsch.ledger.orcamento.mensal.api.FaturaRequest
+import br.dev.brunorsch.ledger.orcamento.mensal.api.FaturaResponse
+import br.dev.brunorsch.ledger.orcamento.mensal.api.FaturaUpdateRequest
 import br.dev.brunorsch.ledger.orcamento.mensal.api.FaturasController
-import br.dev.brunorsch.ledger.orcamento.mensal.api.ParcelamentosController
 import br.dev.brunorsch.ledger.utils.describeOrphan
 import io.ktor.http.HttpStatusCode
 import io.ktor.openapi.jsonSchema
@@ -19,99 +17,97 @@ import io.ktor.server.routing.route
 import io.ktor.utils.io.ExperimentalKtorApi
 
 @OptIn(ExperimentalKtorApi::class)
-fun Route.cartoesRoutes(
-    controller: CartoesController,
-    parcelamentosController: ParcelamentosController,
-    faturasController: FaturasController
+fun Route.faturasRoutes(
+    controller: FaturasController
 ) {
-    route("/api/orcamentos-mensais/cartoes") {
+    route("/faturas") {
         get { controller.buscarTodos(call) }
             .describe {
-                summary = "Listar cartões"
-                description = "Lista os cartões ativos do usuário."
+                summary = "Listar faturas"
+                description = "Lista as faturas de um cartão."
                 responses {
                     HttpStatusCode.OK {
-                        schema = jsonSchema<List<CartaoResponse>>()
+                        schema = jsonSchema<List<FaturaResponse>>()
                     }
                 }
             }
 
-        get("/{cartaoId}") { controller.buscarPorId(call) }
+        get("/{faturaId}") { controller.buscarPorId(call) }
             .describe {
-                summary = "Consultar cartão por ID"
-                description = "Consulta um cartão por ID."
+                summary = "Consultar fatura por ID"
+                description = "Consulta uma fatura por ID."
                 responses {
                     HttpStatusCode.OK {
-                        schema = jsonSchema<CartaoResponse>()
+                        schema = jsonSchema<FaturaResponse>()
                     }
                     HttpStatusCode.BadRequest {
                         description = "A requisição possui parâmetros inválidos."
                     }
                     HttpStatusCode.NotFound {
-                        description = "Nenhum cartão foi encontrado para o ID informado."
+                        description = "Nenhuma fatura foi encontrada para o ID informado."
                     }
                 }
             }
 
         post { controller.criar(call) }
             .describe {
-                summary = "Criar cartão"
-                description = "Cria um cartão para o usuário."
+                summary = "Criar fatura"
+                description = "Cria uma fatura e vincula a um lançamento no orçamento mensal informado."
                 requestBody {
                     content {
-                        schema = jsonSchema<CartaoRequest>()
+                        schema = jsonSchema<FaturaRequest>()
                     }
                 }
                 responses {
                     HttpStatusCode.Created {
-                        schema = jsonSchema<CartaoResponse>()
+                        schema = jsonSchema<FaturaResponse>()
                     }
                     HttpStatusCode.BadRequest {
                         description = "A requisição possui corpo inválido."
                     }
+                    HttpStatusCode.NotFound {
+                        description = "Cartão não encontrado."
+                    }
                 }
             }
 
-        put("/{cartaoId}") { controller.atualizar(call) }
+        put("/{faturaId}") { controller.atualizar(call) }
             .describe {
-                summary = "Atualizar cartão"
-                description = "Atualiza um cartão por ID."
+                summary = "Atualizar fatura"
+                description = "Atualiza uma fatura por ID."
                 requestBody {
                     content {
-                        schema = jsonSchema<CartaoUpdateRequest>()
+                        schema = jsonSchema<FaturaUpdateRequest>()
                     }
                 }
                 responses {
                     HttpStatusCode.OK {
-                        schema = jsonSchema<CartaoResponse>()
+                        schema = jsonSchema<FaturaResponse>()
                     }
                     HttpStatusCode.BadRequest {
                         description = "A requisição possui corpo ou parâmetros inválidos."
                     }
                     HttpStatusCode.NotFound {
-                        description = "Nenhum cartão foi encontrado para o ID informado."
+                        description = "Nenhuma fatura foi encontrada para o ID informado."
                     }
                 }
             }
 
-        delete("/{cartaoId}") { controller.deletar(call) }
+        delete("/{faturaId}") { controller.deletar(call) }
             .describe {
-                summary = "Deletar cartão"
-                description = "Deleta logicamente um cartão por ID."
+                summary = "Deletar fatura"
+                description = "Deleta uma fatura por ID. O lançamento vinculado permanece no orçamento."
                 responses {
                     HttpStatusCode.NoContent {
-                        description = "O cartão foi deletado."
+                        description = "A fatura foi deletada."
                     }
                     HttpStatusCode.BadRequest {
                         description = "A requisição possui parâmetros inválidos."
                     }
                     HttpStatusCode.NotFound {
-                        description = "Nenhum cartão foi encontrado para o ID informado."
+                        description = "Nenhuma fatura foi encontrada para o ID informado."
                     }
                 }
             }
-
-        parcelamentosRoutes(parcelamentosController)
-        faturasRoutes(faturasController)
-    }.describeOrphan { tag("Cartões") }
+    }.describeOrphan { tag("Faturas") }
 }

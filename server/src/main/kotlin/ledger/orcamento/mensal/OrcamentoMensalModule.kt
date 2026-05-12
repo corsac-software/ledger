@@ -5,15 +5,18 @@ import br.dev.brunorsch.ledger.orcamento.mensal.api.*
 import br.dev.brunorsch.ledger.orcamento.mensal.data.repository.CartoesRepository
 import br.dev.brunorsch.ledger.orcamento.mensal.data.repository.CategoriasRepository
 import br.dev.brunorsch.ledger.orcamento.mensal.data.gerarOrcamentoMensalMigrationScripts
+import br.dev.brunorsch.ledger.orcamento.mensal.data.repository.FaturasRepository
 import br.dev.brunorsch.ledger.orcamento.mensal.data.repository.LancamentosFixosRepository
 import br.dev.brunorsch.ledger.orcamento.mensal.data.repository.OrcamentosMensaisRepository
 import br.dev.brunorsch.ledger.orcamento.mensal.data.repository.ParcelamentosRepository
 import br.dev.brunorsch.ledger.orcamento.mensal.routes.cartoesRoutes
+import br.dev.brunorsch.ledger.orcamento.mensal.routes.faturasRoutes
 import br.dev.brunorsch.ledger.orcamento.mensal.routes.lancamentosFixosRoutes
 import br.dev.brunorsch.ledger.orcamento.mensal.routes.orcamentosMensaisRoutes
 import br.dev.brunorsch.ledger.orcamento.mensal.routes.categoriasRoutes
 import br.dev.brunorsch.ledger.orcamento.mensal.service.CartoesService
 import br.dev.brunorsch.ledger.orcamento.mensal.service.CategoriasService
+import br.dev.brunorsch.ledger.orcamento.mensal.service.FaturasService
 import br.dev.brunorsch.ledger.orcamento.mensal.service.LancamentosFixosService
 import br.dev.brunorsch.ledger.orcamento.mensal.service.OrcamentosMensaisService
 import br.dev.brunorsch.ledger.orcamento.mensal.service.ParcelamentosService
@@ -44,6 +47,9 @@ fun Application.orcamentoMensalModule() {
         provide { LancamentosFixosRepository() }
         provide { LancamentosFixosService(resolve()) }
         provide { LancamentosFixosController(resolve()) }
+        provide { FaturasRepository() }
+        provide { FaturasService(resolve(), resolve()) }
+        provide { FaturasController(resolve()) }
     }
 
     val controller: OrcamentosMensaisController by dependencies
@@ -51,11 +57,12 @@ fun Application.orcamentoMensalModule() {
     val cartoesController: CartoesController by dependencies
     val parcelamentosController: ParcelamentosController by dependencies
     val lancamentosFixosController: LancamentosFixosController by dependencies
+    val faturasController: FaturasController by dependencies
 
     routing {
         orcamentosMensaisRoutes(controller)
         categoriasRoutes(categoriasController)
-        cartoesRoutes(cartoesController, parcelamentosController)
+        cartoesRoutes(cartoesController, parcelamentosController, faturasController)
         lancamentosFixosRoutes(lancamentosFixosController)
     }
 }

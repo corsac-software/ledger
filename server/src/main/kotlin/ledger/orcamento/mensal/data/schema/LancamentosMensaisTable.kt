@@ -6,6 +6,7 @@ import br.dev.brunorsch.ledger.orcamento.mensal.domain.TipoLancamento.valueOf
 import org.jetbrains.exposed.v1.core.ResultRow
 import org.jetbrains.exposed.v1.core.dao.id.LongIdTable
 import org.jetbrains.exposed.v1.core.statements.UpdateBuilder
+import org.jetbrains.exposed.v1.datetime.datetime
 
 
 object LancamentosMensaisTable : LongIdTable("lancamentos_mensais") {
@@ -19,6 +20,7 @@ object LancamentosMensaisTable : LongIdTable("lancamentos_mensais") {
 
     val tipo = varchar("tipo", 10)
     val statusDespesa = varchar("status_despesa", 10).nullable()
+    val faturaId = long("fatura_id").nullable()
 
     init {
         uniqueIndex("uk_lancamento_orcamento_slug", orcamentoId, slug)
@@ -32,7 +34,8 @@ fun ResultRow.toLancamentoMensal() = LancamentoMensal(
     valor = this[LancamentosMensaisTable.valor],
     tipo = valueOf(this[LancamentosMensaisTable.tipo]),
     statusDespesa = this[LancamentosMensaisTable.statusDespesa]
-        ?.let { StatusDespesa.valueOf(it) }
+        ?.let { StatusDespesa.valueOf(it) },
+    faturaId = this[LancamentosMensaisTable.faturaId]
 )
 
 fun LancamentoMensal.toStatement(stmt: UpdateBuilder<LancamentosMensaisTable>, orcamentoId: Long) {
@@ -42,4 +45,5 @@ fun LancamentoMensal.toStatement(stmt: UpdateBuilder<LancamentosMensaisTable>, o
     stmt[LancamentosMensaisTable.valor] = this.valor
     stmt[LancamentosMensaisTable.tipo] = this.tipo.name
     stmt[LancamentosMensaisTable.statusDespesa] = this.statusDespesa?.name
+    stmt[LancamentosMensaisTable.faturaId] = this.faturaId
 }

@@ -119,6 +119,7 @@ class OrcamentosMensaisRepository {
             stmt[LancamentosMensaisTable.valor] = lancamento.valor
             stmt[LancamentosMensaisTable.tipo] = lancamento.tipo.name
             stmt[LancamentosMensaisTable.statusDespesa] = lancamento.statusDespesa?.name
+            stmt[LancamentosMensaisTable.faturaId] = lancamento.faturaId
         }
         return@transaction lancamento.copy(id = id.value)
     }
@@ -148,6 +149,8 @@ class OrcamentosMensaisRepository {
             this[LancamentosMensaisTable.valor] = lancamento.valor
             this[LancamentosMensaisTable.tipo] = lancamento.tipo.name
             this[LancamentosMensaisTable.statusDespesa] = lancamento.statusDespesa?.name
+            this[LancamentosMensaisTable.faturaId] = lancamento.faturaId
+            this[LancamentosMensaisTable.faturaId] = lancamento.faturaId
         }.map { it[LancamentosMensaisTable.id].value }
 
         lancamentos.zip(ids) { lancamento, id -> lancamento.copy(id = id) }

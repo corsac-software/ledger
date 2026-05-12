@@ -4,6 +4,8 @@ import br.dev.brunorsch.ledger.orcamento.mensal.api.LancamentoRequest
 import br.dev.brunorsch.ledger.orcamento.mensal.api.LancamentoUpdateRequest
 import br.dev.brunorsch.ledger.orcamento.mensal.api.OrcamentoMensalRequest
 import br.dev.brunorsch.ledger.orcamento.mensal.data.repository.OrcamentosMensaisRepository
+import br.dev.brunorsch.ledger.orcamento.mensal.data.schema.OrcamentosMensaisTable.seqDespesa
+import br.dev.brunorsch.ledger.orcamento.mensal.data.schema.OrcamentosMensaisTable.seqReceita
 import br.dev.brunorsch.ledger.orcamento.mensal.domain.LancamentoMensal
 import br.dev.brunorsch.ledger.orcamento.mensal.domain.OrcamentoMensal
 import br.dev.brunorsch.ledger.orcamento.mensal.domain.TipoLancamento.DESPESA
@@ -60,42 +62,38 @@ class OrcamentosMensaisService(
     fun importarLancamentosFixos(orcamentoId: Long, idUsuario: Long): List<LancamentoMensal> {
         val orcamento = repository.buscarPorId(orcamentoId, idUsuario)
             ?: throw IllegalArgumentException("Orçamento não encontrado")
+
         return importarLancamentosFixos(orcamento)
     }
 
     private fun importarLancamentosFixos(orcamento: OrcamentoMensal): List<LancamentoMensal> {
         val lancamentosFixos = repository.buscarLancamentosFixosParaImportacao(orcamento.idUsuario, orcamento.anoMes)
 
-        var seqReceita = orcamento.seqReceita
-        var seqDespesa = orcamento.seqDespesa
         val lancamentos = lancamentosFixos.map { lancamentoFixo ->
-            val seq = when (lancamentoFixo.tipo) {
-                RECEITA -> ++seqReceita
-                DESPESA -> ++seqDespesa
-            }
-            val slug = "${lancamentoFixo.tipo.prefixoSlug}-${orcamento.anoMes.anoAsString()}-${orcamento.anoMes.mesAsString()}-$seq"
-
+            val lancamentoCriado: LancamentoMensal
             if (lancamentoFixo.tipo == RECEITA) {
-                LancamentoMensal.criarReceita(
-                    id = idNaoInserido,
-                    slug = slug,
+                lancamentoCriado = LancamentoMensal.criarReceita(
+                    orcamento = orcamento,
                     descricao = lancamentoFixo.descricao,
                     valor = lancamentoFixo.valor
                 )
+                orcamento.seqReceita++
             } else {
-                LancamentoMensal.criarDespesa(
-                    id = idNaoInserido,
-                    slug = slug,
+                lancamentoCriado = LancamentoMensal.criarDespesa(
+                    orcamento = orcamento,
                     descricao = lancamentoFixo.descricao,
                     valor = lancamentoFixo.valor,
-                    statusDespesa = LancamentoMensal.StatusDespesa.ABERTO
                 )
+                orcamento.seqDespesa++
             }
+
+            return@map lancamentoCriado
         }
 
         val criados = repository.criarLancamentosBatch(orcamento.id, lancamentos)
+
         if (criados.isNotEmpty()) {
-            repository.atualizarSequencias(orcamento.id, seqReceita, seqDespesa)
+            repository.atualizarSequencias(orcamento.id, orcamento.seqReceita, orcamento.seqDespesa)
         }
 
         return criados
@@ -116,39 +114,26 @@ class OrcamentosMensaisService(
             ?: throw IllegalArgumentException("Orçamento não encontrado")
 
         val tipo = valueOf(request.tipo.uppercase())
-        val statusDespesa = request.statusDespesa?.let {
-            LancamentoMensal.StatusDespesa.valueOf(it.uppercase())
-        }
 
-        if (tipo == DESPESA && statusDespesa == null) {
-            throw IllegalArgumentException("Despesa precisa de status")
-        }
-        if (tipo == RECEITA && statusDespesa != null) {
-            throw IllegalArgumentException("Receita não pode ter status")
-        }
+        val lancamento: LancamentoMensal
 
-        val seq = when (tipo) {
-            RECEITA -> repository.incrementarSeqReceita(orcamentoId)
-            DESPESA -> repository.incrementarSeqDespesa(orcamentoId)
-        }
-        val slug = "${tipo.prefixoSlug}-${orcamento.anoMes.anoAsString()}-${orcamento.anoMes.mesAsString()}-$seq"
-
-        val lancamento = if (tipo == RECEITA) {
-            LancamentoMensal.criarReceita(
-                id = idNaoInserido,
-                slug = slug,
+        if (tipo == RECEITA) {
+            lancamento = LancamentoMensal.criarReceita(
+                orcamento = orcamento,
                 descricao = request.descricao,
                 valor = request.valor
             )
+            orcamento.seqReceita++
         } else {
-            LancamentoMensal.criarDespesa(
-                id = idNaoInserido,
-                slug = slug,
+            lancamento = LancamentoMensal.criarDespesa(
+                orcamento = orcamento,
                 descricao = request.descricao,
-                valor = request.valor,
-                statusDespesa = statusDespesa!!
+                valor = request.valor
             )
+            orcamento.seqDespesa++
         }
+
+        repository.atualizarSequencias(orcamento.id, orcamento.seqReceita, orcamento.seqDespesa)
 
         return repository.criarLancamento(orcamentoId, lancamento)
     }
