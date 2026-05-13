@@ -1,5 +1,6 @@
 package br.dev.brunorsch.ledger.orcamento.mensal.routes
 
+import br.dev.brunorsch.ledger.orcamento.mensal.api.LancamentosMensaisController
 import br.dev.brunorsch.ledger.orcamento.mensal.api.OrcamentosMensaisController
 import br.dev.brunorsch.ledger.orcamento.mensal.api.dtos.*
 import io.ktor.http.*
@@ -9,7 +10,10 @@ import io.ktor.server.routing.openapi.*
 import io.ktor.utils.io.*
 
 @OptIn(ExperimentalKtorApi::class)
-fun Route.orcamentosMensaisRoutes(controller: OrcamentosMensaisController) {
+fun Route.orcamentosMensaisRoutes(
+    controller: OrcamentosMensaisController,
+    lancamentosController: LancamentosMensaisController,
+) {
     route("/api/orcamentos-mensais") {
         get { controller.buscarTodos(call) }
             .describe {
@@ -39,7 +43,7 @@ fun Route.orcamentosMensaisRoutes(controller: OrcamentosMensaisController) {
                 }
             }
 
-        get("/{id}/lancamentos") { controller.buscarLancamentosPorId(call) }
+        get("/{id}/lancamentos") { lancamentosController.buscarPorOrcamentoId(call) }
             .describe {
                 summary = "Consultar lançamentos de um orçamento mensal"
                 description = "Consulta os lançamentos de um orçamento mensal por ID."
@@ -92,7 +96,7 @@ fun Route.orcamentosMensaisRoutes(controller: OrcamentosMensaisController) {
                 }
             }
 
-        post("/{id}/lancamentos") { controller.criarLancamento(call) }
+        post("/{id}/lancamentos") { lancamentosController.criar(call) }
             .describe {
                 summary = "Criar lançamento em orçamento mensal"
                 description = "Cria um lançamento vinculado ao orçamento mensal informado."
@@ -114,7 +118,7 @@ fun Route.orcamentosMensaisRoutes(controller: OrcamentosMensaisController) {
                 }
             }
 
-        post("/{id}/lancamentos-fixos/importar") { controller.importarLancamentosFixos(call) }
+        post("/{id}/lancamentos-fixos/importar") { lancamentosController.importarLancamentosFixos(call) }
             .describe {
                 summary = "Importar lançamentos fixos"
                 description = "Cria lançamentos mensais a partir dos lançamentos fixos válidos para o mês do orçamento."
@@ -131,7 +135,7 @@ fun Route.orcamentosMensaisRoutes(controller: OrcamentosMensaisController) {
                 }
             }
 
-        put("/{id}/lancamentos/{lancamentoId}") { controller.atualizarLancamento(call) }
+        put("/{id}/lancamentos/{lancamentoId}") { lancamentosController.atualizar(call) }
             .describe {
                 summary = "Atualizar lançamento em orçamento mensal"
                 description = "Atualiza um lançamento de um orçamento mensal pelos IDs informados."
@@ -153,7 +157,7 @@ fun Route.orcamentosMensaisRoutes(controller: OrcamentosMensaisController) {
                 }
             }
 
-        delete("/{id}/lancamentos/{lancamentoId}") { controller.excluirLancamento(call) }
+        delete("/{id}/lancamentos/{lancamentoId}") { lancamentosController.excluir(call) }
             .describe {
                 summary = "Excluir lançamento de orçamento mensal"
                 description = "Exclui um lançamento de um orçamento mensal pelos IDs informado."

@@ -37,7 +37,7 @@ fun ResultRow.toLancamentoMensal() = LancamentoMensal(
     faturaId = this[LancamentosMensaisTable.faturaId]
 )
 
-fun LancamentoMensal.toStatement(stmt: UpdateBuilder<LancamentosMensaisTable>, orcamentoId: Long) {
+fun LancamentoMensal.toStatement(stmt: UpdateBuilder<*>, orcamentoId: Long) {
     stmt[LancamentosMensaisTable.orcamentoId] = orcamentoId
     stmt[LancamentosMensaisTable.slug] = this.slug
     stmt[LancamentosMensaisTable.descricao] = this.descricao

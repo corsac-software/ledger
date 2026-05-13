@@ -9,6 +9,10 @@ import br.dev.brunorsch.ledger.orcamento.mensal.domain.lancamentos.LancamentoFix
 import kotlinx.datetime.LocalDateTime
 import org.jetbrains.exposed.v1.core.and
 import org.jetbrains.exposed.v1.core.eq
+import org.jetbrains.exposed.v1.core.greaterEq
+import org.jetbrains.exposed.v1.core.lessEq
+import org.jetbrains.exposed.v1.core.or
+import org.jetbrains.exposed.v1.core.SortOrder
 import org.jetbrains.exposed.v1.jdbc.insertAndGetId
 import org.jetbrains.exposed.v1.jdbc.selectAll
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
@@ -44,6 +48,21 @@ class LancamentosFixosRepository {
             }
             .limit(1)
             .any()
+    }
+
+    fun buscarParaImportacao(idUsuario: Long, anoMes: AnoMes): List<LancamentoFixo> = transaction {
+        val anoMesSlug = anoMes.toFormatoSlug()
+        LancamentosFixosTable.selectAll()
+            .where {
+                (LancamentosFixosTable.usuarioId eq idUsuario) and
+                        (LancamentosFixosTable.mesInicio lessEq anoMesSlug) and
+                        (
+                                (LancamentosFixosTable.ativo eq true) or
+                                        (LancamentosFixosTable.excluidoEm greaterEq anoMesSlug)
+                                )
+            }
+            .orderBy(LancamentosFixosTable.id to SortOrder.ASC)
+            .map { it.toLancamentoFixo() }
     }
 
     fun criar(lancamentoFixo: LancamentoFixo): LancamentoFixo = transaction {

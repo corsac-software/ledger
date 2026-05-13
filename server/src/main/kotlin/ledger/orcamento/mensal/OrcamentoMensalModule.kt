@@ -13,6 +13,7 @@ import br.dev.brunorsch.ledger.orcamento.mensal.service.cartoes.FaturasCrudServi
 import br.dev.brunorsch.ledger.orcamento.mensal.service.cartoes.ParcelamentosCrudService
 import br.dev.brunorsch.ledger.orcamento.mensal.service.lancamentos.CategoriasCrudService
 import br.dev.brunorsch.ledger.orcamento.mensal.service.lancamentos.LancamentosFixosCrudService
+import br.dev.brunorsch.ledger.orcamento.mensal.service.lancamentos.LancamentosMensaisService
 import br.dev.brunorsch.ledger.utils.withMigrationGenerationEnabled
 import io.ktor.server.application.*
 import io.ktor.server.plugins.di.*
@@ -27,8 +28,11 @@ fun Application.orcamentoMensalModule() {
 
     dependencies {
         provide { OrcamentosMensaisRepository() }
-        provide { OrcamentosMensaisService(resolve()) }
+        provide { LancamentosMensaisRepository() }
+        provide { LancamentosMensaisService(resolve(), resolve(), resolve()) }
+        provide { OrcamentosMensaisService(resolve(), resolve()) }
         provide { OrcamentosMensaisController(resolve()) }
+        provide { LancamentosMensaisController(resolve()) }
         provide { CategoriasRepository() }
         provide { CategoriasCrudService(resolve()) }
         provide { CategoriasController(resolve()) }
@@ -42,11 +46,12 @@ fun Application.orcamentoMensalModule() {
         provide { LancamentosFixosCrudService(resolve()) }
         provide { LancamentosFixosController(resolve()) }
         provide { FaturasRepository() }
-        provide { FaturasCrudService(resolve(), resolve()) }
+        provide { FaturasCrudService(resolve(), resolve(), resolve()) }
         provide { FaturasController(resolve()) }
     }
 
     val controller: OrcamentosMensaisController by dependencies
+    val lancamentosMensaisController: LancamentosMensaisController by dependencies
     val categoriasController: CategoriasController by dependencies
     val cartoesController: CartoesController by dependencies
     val parcelamentosController: ParcelamentosController by dependencies
@@ -54,7 +59,7 @@ fun Application.orcamentoMensalModule() {
     val faturasController: FaturasController by dependencies
 
     routing {
-        orcamentosMensaisRoutes(controller)
+        orcamentosMensaisRoutes(controller, lancamentosMensaisController)
         categoriasRoutes(categoriasController)
         cartoesRoutes(cartoesController, parcelamentosController, faturasController)
         lancamentosFixosRoutes(lancamentosFixosController)

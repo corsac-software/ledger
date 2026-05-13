@@ -3,6 +3,7 @@ package br.dev.brunorsch.ledger.orcamento.mensal.service.cartoes
 import br.dev.brunorsch.ledger.orcamento.mensal.api.dtos.FaturaRequest
 import br.dev.brunorsch.ledger.orcamento.mensal.api.dtos.FaturaUpdateRequest
 import br.dev.brunorsch.ledger.orcamento.mensal.data.repository.FaturasRepository
+import br.dev.brunorsch.ledger.orcamento.mensal.data.repository.LancamentosMensaisRepository
 import br.dev.brunorsch.ledger.orcamento.mensal.data.repository.OrcamentosMensaisRepository
 import br.dev.brunorsch.ledger.orcamento.mensal.domain.AnoMes
 import br.dev.brunorsch.ledger.orcamento.mensal.domain.cartoes.Fatura
@@ -12,7 +13,8 @@ import kotlinx.datetime.LocalDateTime
 
 class FaturasCrudService(
     private val repository: FaturasRepository,
-    private val orcamentosMensaisRepository: OrcamentosMensaisRepository
+    private val orcamentosMensaisRepository: OrcamentosMensaisRepository,
+    private val lancamentosMensaisRepository: LancamentosMensaisRepository,
 ) {
     fun buscarTodos(idCartao: Long, idUsuario: Long): List<Fatura>? {
         if (!repository.cartaoExiste(idCartao, idUsuario)) return null
@@ -41,7 +43,7 @@ class FaturasCrudService(
 
         orcamentosMensaisRepository.incrementarSeqDespesa(request.orcamentoId)
 
-        val lancamentoCriado = orcamentosMensaisRepository.criarLancamento(request.orcamentoId, lancamento)
+        val lancamentoCriado = lancamentosMensaisRepository.criar(request.orcamentoId, lancamento)
 
         val fatura = repository.criar(
             Fatura(
@@ -64,7 +66,7 @@ class FaturasCrudService(
         request.descricao?.let { validarDescricao(it) }
 
         if (request.descricao != null || request.valor != null) {
-            orcamentosMensaisRepository.atualizarLancamento(
+            lancamentosMensaisRepository.atualizar(
                 id = existente.idLancamento,
                 descricao = request.descricao,
                 valor = request.valor,

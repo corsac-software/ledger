@@ -42,3 +42,4 @@ generated-migrations/*.sql
 
 ## AI-related
 .kilo/
+.sisyphus/
