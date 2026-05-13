@@ -2,22 +2,12 @@ package br.dev.brunorsch.ledger.orcamento.mensal.data.repository
 
 import br.dev.brunorsch.ledger.orcamento.mensal.data.schema.*
 import br.dev.brunorsch.ledger.orcamento.mensal.domain.AnoMes
-import br.dev.brunorsch.ledger.orcamento.mensal.domain.LancamentoFixo
-import br.dev.brunorsch.ledger.orcamento.mensal.domain.LancamentoMensal
 import br.dev.brunorsch.ledger.orcamento.mensal.domain.OrcamentoMensal
-import org.jetbrains.exposed.v1.core.and
-import org.jetbrains.exposed.v1.core.lessEq
+import br.dev.brunorsch.ledger.orcamento.mensal.domain.lancamentos.LancamentoFixo
+import br.dev.brunorsch.ledger.orcamento.mensal.domain.lancamentos.LancamentoMensal
+import org.jetbrains.exposed.v1.core.*
 import org.jetbrains.exposed.v1.core.JoinType.INNER
-import org.jetbrains.exposed.v1.core.eq
-import org.jetbrains.exposed.v1.core.or
-import org.jetbrains.exposed.v1.core.SortOrder
-import org.jetbrains.exposed.v1.core.greaterEq
-import org.jetbrains.exposed.v1.jdbc.batchInsert
-import org.jetbrains.exposed.v1.jdbc.deleteWhere
-import org.jetbrains.exposed.v1.jdbc.insertAndGetId
-import org.jetbrains.exposed.v1.jdbc.select
-import org.jetbrains.exposed.v1.jdbc.selectAll
-import org.jetbrains.exposed.v1.jdbc.update
+import org.jetbrains.exposed.v1.jdbc.*
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 import java.math.BigDecimal
 
@@ -87,7 +77,7 @@ class OrcamentosMensaisRepository {
             }
             .empty().not()
     }
-    
+
     fun excluir(id: Long, idUsuario: Long) = transaction {
         OrcamentosMensaisTable.deleteWhere {
             OrcamentosMensaisTable.id eq id
@@ -119,6 +109,7 @@ class OrcamentosMensaisRepository {
             stmt[LancamentosMensaisTable.valor] = lancamento.valor
             stmt[LancamentosMensaisTable.tipo] = lancamento.tipo.name
             stmt[LancamentosMensaisTable.statusDespesa] = lancamento.statusDespesa?.name
+            stmt[LancamentosMensaisTable.faturaId] = lancamento.faturaId
         }
         return@transaction lancamento.copy(id = id.value)
     }
@@ -128,30 +119,33 @@ class OrcamentosMensaisRepository {
         LancamentosFixosTable.selectAll()
             .where {
                 (LancamentosFixosTable.usuarioId eq idUsuario) and
-                    (LancamentosFixosTable.mesInicio lessEq anoMesSlug) and
-                    (
-                        (LancamentosFixosTable.ativo eq true) or
-                            (LancamentosFixosTable.excluidoEm greaterEq anoMesSlug)
-                    )
+                        (LancamentosFixosTable.mesInicio lessEq anoMesSlug) and
+                        (
+                                (LancamentosFixosTable.ativo eq true) or
+                                        (LancamentosFixosTable.excluidoEm greaterEq anoMesSlug)
+                                )
             }
             .orderBy(LancamentosFixosTable.id to SortOrder.ASC)
             .map { it.toLancamentoFixo() }
     }
 
-    fun criarLancamentosBatch(orcamentoId: Long, lancamentos: List<LancamentoMensal>): List<LancamentoMensal> = transaction {
-        if (lancamentos.isEmpty()) return@transaction emptyList()
+    fun criarLancamentosBatch(orcamentoId: Long, lancamentos: List<LancamentoMensal>): List<LancamentoMensal> =
+        transaction {
+            if (lancamentos.isEmpty()) return@transaction emptyList()
 
-        val ids = LancamentosMensaisTable.batchInsert(lancamentos) { lancamento ->
-            this[LancamentosMensaisTable.orcamentoId] = orcamentoId
-            this[LancamentosMensaisTable.slug] = lancamento.slug
-            this[LancamentosMensaisTable.descricao] = lancamento.descricao
-            this[LancamentosMensaisTable.valor] = lancamento.valor
-            this[LancamentosMensaisTable.tipo] = lancamento.tipo.name
-            this[LancamentosMensaisTable.statusDespesa] = lancamento.statusDespesa?.name
-        }.map { it[LancamentosMensaisTable.id].value }
+            val ids = LancamentosMensaisTable.batchInsert(lancamentos) { lancamento ->
+                this[LancamentosMensaisTable.orcamentoId] = orcamentoId
+                this[LancamentosMensaisTable.slug] = lancamento.slug
+                this[LancamentosMensaisTable.descricao] = lancamento.descricao
+                this[LancamentosMensaisTable.valor] = lancamento.valor
+                this[LancamentosMensaisTable.tipo] = lancamento.tipo.name
+                this[LancamentosMensaisTable.statusDespesa] = lancamento.statusDespesa?.name
+                this[LancamentosMensaisTable.faturaId] = lancamento.faturaId
+                this[LancamentosMensaisTable.faturaId] = lancamento.faturaId
+            }.map { it[LancamentosMensaisTable.id].value }
 
-        lancamentos.zip(ids) { lancamento, id -> lancamento.copy(id = id) }
-    }
+            lancamentos.zip(ids) { lancamento, id -> lancamento.copy(id = id) }
+        }
 
     fun atualizarSequencias(orcamentoId: Long, seqReceita: Int, seqDespesa: Int) = transaction {
         OrcamentosMensaisTable.update({ OrcamentosMensaisTable.id eq orcamentoId }) { stmt ->
@@ -160,13 +154,14 @@ class OrcamentosMensaisRepository {
         }
     }
 
-    fun atualizarLancamento(id: Long, descricao: String?, valor: BigDecimal?, statusDespesa: String?) = transaction {
-        LancamentosMensaisTable.update({ LancamentosMensaisTable.id eq id }) { stmt ->
-            descricao?.let { stmt[LancamentosMensaisTable.descricao] = it }
-            valor?.let { stmt[LancamentosMensaisTable.valor] = it }
-            statusDespesa?.let { stmt[LancamentosMensaisTable.statusDespesa] = it }
+    fun atualizarLancamento(id: Long, descricao: String?, valor: BigDecimal?, statusDespesa: String? = null) =
+        transaction {
+            LancamentosMensaisTable.update({ LancamentosMensaisTable.id eq id }) { stmt ->
+                descricao?.let { stmt[LancamentosMensaisTable.descricao] = it }
+                valor?.let { stmt[LancamentosMensaisTable.valor] = it }
+                statusDespesa?.let { stmt[LancamentosMensaisTable.statusDespesa] = it }
+            }
         }
-    }
 
     fun excluirLancamento(id: Long, orcamentoId: Long) = transaction {
         LancamentosMensaisTable.deleteWhere {

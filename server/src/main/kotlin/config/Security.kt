@@ -3,7 +3,7 @@ package br.dev.brunorsch.config
 import com.kborowy.authprovider.firebase.firebase
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
-import io.ktor.server.plugins.di.dependencies
+import io.ktor.server.plugins.di.*
 import java.io.File
 
 fun Application.configureSecurity() {

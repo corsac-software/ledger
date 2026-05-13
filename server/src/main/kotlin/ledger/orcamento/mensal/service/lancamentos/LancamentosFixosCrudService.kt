@@ -1,19 +1,16 @@
-package br.dev.brunorsch.ledger.orcamento.mensal.service
+package br.dev.brunorsch.ledger.orcamento.mensal.service.lancamentos
 
-import br.dev.brunorsch.ledger.orcamento.mensal.api.LancamentoFixoRequest
-import br.dev.brunorsch.ledger.orcamento.mensal.api.LancamentoFixoUpdateRequest
+import br.dev.brunorsch.ledger.orcamento.mensal.api.dtos.LancamentoFixoRequest
+import br.dev.brunorsch.ledger.orcamento.mensal.api.dtos.LancamentoFixoUpdateRequest
 import br.dev.brunorsch.ledger.orcamento.mensal.data.repository.LancamentosFixosRepository
 import br.dev.brunorsch.ledger.orcamento.mensal.domain.AnoMes
-import br.dev.brunorsch.ledger.orcamento.mensal.domain.LancamentoFixo
-import br.dev.brunorsch.ledger.orcamento.mensal.domain.TipoLancamento
-import br.dev.brunorsch.ledger.orcamento.mensal.domain.TipoLancamento.valueOf
-import br.dev.brunorsch.ledger.orcamento.mensal.domain.toAnoMes
-import br.dev.brunorsch.ledger.utils.idNaoInserido
+import br.dev.brunorsch.ledger.orcamento.mensal.domain.lancamentos.LancamentoFixo
+import br.dev.brunorsch.ledger.orcamento.mensal.domain.lancamentos.TipoLancamento
 import br.dev.brunorsch.ledger.utils.now
 import kotlinx.datetime.LocalDateTime
 import java.time.YearMonth
 
-class LancamentosFixosService(
+class LancamentosFixosCrudService(
     private val repository: LancamentosFixosRepository
 ) {
     fun buscarTodos(idUsuario: Long): List<LancamentoFixo> {
@@ -26,17 +23,15 @@ class LancamentosFixosService(
 
     fun criar(idUsuario: Long, request: LancamentoFixoRequest): LancamentoFixo {
         val tipo = parseTipo(request.tipo)
-        val mesInicio = parseAnoMes(request.mesInicio)
+        val mesInicio = AnoMes.parse(request.mesInicio)
         val formaPagamento = parseFormaPagamento(request.formaPagamento)
         validarDescricao(request.descricao)
         validarDiaVencimento(request.diaVencimento)
         validarFormaPagamento(formaPagamento, request.idCartao)
         validarCategoria(request.idCategoria, idUsuario)
 
-        val agora = LocalDateTime.now()
         return repository.criar(
             LancamentoFixo(
-                id = idNaoInserido,
                 idUsuario = idUsuario,
                 tipo = tipo,
                 descricao = request.descricao,
@@ -46,10 +41,6 @@ class LancamentosFixosService(
                 formaPagamento = formaPagamento,
                 idCartao = request.idCartao,
                 idCategoria = request.idCategoria,
-                ativo = true,
-                criadoEm = agora,
-                atualizadoEm = agora,
-                excluidoEm = null
             )
         )
     }
@@ -61,11 +52,13 @@ class LancamentosFixosService(
         val formaPagamento = request.formaPagamento
             ?.let { parseFormaPagamento(it) }
             ?: existente.formaPagamento
+
         val idCartao = when {
             formaPagamento != LancamentoFixo.FormaPagamento.CARTAO -> null
             request.idCartao != null -> request.idCartao
             else -> existente.idCartao
         }
+
         val idCategoria = request.idCategoria ?: existente.idCategoria
 
         request.descricao?.let { validarDescricao(it) }
@@ -79,13 +72,11 @@ class LancamentosFixosService(
                 descricao = request.descricao ?: existente.descricao,
                 valor = request.valor ?: existente.valor,
                 diaVencimento = request.diaVencimento ?: existente.diaVencimento,
-                mesInicio = request.mesInicio?.let { parseAnoMes(it) } ?: existente.mesInicio,
+                mesInicio = request.mesInicio?.let { AnoMes.parse(it) } ?: existente.mesInicio,
                 formaPagamento = formaPagamento,
                 idCartao = idCartao,
                 idCategoria = idCategoria,
-                ativo = request.ativo ?: existente.ativo,
                 atualizadoEm = LocalDateTime.now(),
-                excluidoEm = if (request.ativo == true) null else existente.excluidoEm
             )
         )
     }
@@ -121,15 +112,11 @@ class LancamentosFixosService(
     }
 
     private fun parseTipo(tipo: String): TipoLancamento {
-        return valueOf(tipo.uppercase())
+        return TipoLancamento.valueOf(tipo.uppercase())
     }
 
     private fun parseFormaPagamento(formaPagamento: String): LancamentoFixo.FormaPagamento {
         return LancamentoFixo.FormaPagamento.valueOf(formaPagamento.uppercase())
-    }
-
-    private fun parseAnoMes(anoMes: String): AnoMes {
-        return anoMes.replace("-", "").toAnoMes()
     }
 
     private fun YearMonth.toAnoMes() = AnoMes(year, monthValue)

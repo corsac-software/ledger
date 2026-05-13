@@ -1,13 +1,16 @@
 package br.dev.brunorsch.ledger.orcamento.mensal.api
 
-import br.dev.brunorsch.ledger.orcamento.mensal.service.CartoesService
-import io.ktor.http.HttpStatusCode
-import io.ktor.server.application.ApplicationCall
-import io.ktor.server.request.receive
-import io.ktor.server.response.respond
+import br.dev.brunorsch.ledger.orcamento.mensal.api.dtos.CartaoRequest
+import br.dev.brunorsch.ledger.orcamento.mensal.api.dtos.CartaoUpdateRequest
+import br.dev.brunorsch.ledger.orcamento.mensal.api.dtos.toResponse
+import br.dev.brunorsch.ledger.orcamento.mensal.service.cartoes.CartoesCrudService
+import io.ktor.http.*
+import io.ktor.server.application.*
+import io.ktor.server.request.*
+import io.ktor.server.response.*
 
 class CartoesController(
-    private val service: CartoesService
+    private val service: CartoesCrudService
 ) {
     suspend fun buscarTodos(call: ApplicationCall) {
         val cartoes = service.buscarTodos(idUsuario).map { it.toResponse() }

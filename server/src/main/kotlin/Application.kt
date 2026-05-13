@@ -3,12 +3,12 @@ package br.dev.brunorsch
 import br.dev.brunorsch.config.*
 import br.dev.brunorsch.ledger.orcamento.mensal.orcamentoMensalModule
 import io.ktor.server.application.*
-import io.ktor.server.config.propertyOrNull
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 
 fun main() {
-    embeddedServer(Netty,
+    embeddedServer(
+        Netty,
         port = 8080,
         host = "0.0.0.0",
         module = Application::module,

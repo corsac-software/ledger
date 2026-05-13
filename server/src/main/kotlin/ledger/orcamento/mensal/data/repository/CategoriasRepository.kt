@@ -1,10 +1,10 @@
 package br.dev.brunorsch.ledger.orcamento.mensal.data.repository
 
-import br.dev.brunorsch.ledger.orcamento.mensal.api.CategoriaUpdateRequest
+import br.dev.brunorsch.ledger.orcamento.mensal.api.dtos.CategoriaUpdateRequest
 import br.dev.brunorsch.ledger.orcamento.mensal.data.schema.CategoriasTable
 import br.dev.brunorsch.ledger.orcamento.mensal.data.schema.toCategoria
 import br.dev.brunorsch.ledger.orcamento.mensal.data.schema.toStatement
-import br.dev.brunorsch.ledger.orcamento.mensal.domain.Categoria
+import br.dev.brunorsch.ledger.orcamento.mensal.domain.lancamentos.Categoria
 import org.jetbrains.exposed.v1.core.and
 import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.jdbc.insertAndGetId
@@ -17,7 +17,7 @@ class CategoriasRepository {
         CategoriasTable.selectAll()
             .where {
                 (CategoriasTable.usuarioId eq idUsuario) and
-                    (CategoriasTable.ativo eq true)
+                        (CategoriasTable.ativo eq true)
             }
             .map { it.toCategoria() }
     }
@@ -44,8 +44,8 @@ class CategoriasRepository {
     fun atualizar(id: Long, idUsuario: Long, request: CategoriaUpdateRequest): Categoria? = transaction {
         CategoriasTable.update({
             (CategoriasTable.id eq id) and
-                (CategoriasTable.usuarioId eq idUsuario) and
-                (CategoriasTable.ativo eq true)
+                    (CategoriasTable.usuarioId eq idUsuario) and
+                    (CategoriasTable.ativo eq true)
         }) { stmt ->
             request.toStatement(stmt)
         }
@@ -53,8 +53,8 @@ class CategoriasRepository {
         CategoriasTable.selectAll()
             .where {
                 (CategoriasTable.id eq id) and
-                    (CategoriasTable.usuarioId eq idUsuario) and
-                    (CategoriasTable.ativo eq true)
+                        (CategoriasTable.usuarioId eq idUsuario) and
+                        (CategoriasTable.ativo eq true)
             }
             .singleOrNull()
             ?.toCategoria()
@@ -63,8 +63,8 @@ class CategoriasRepository {
     fun deletar(id: Long, idUsuario: Long): Result<Unit> = transaction {
         val linhasAfetadas = CategoriasTable.update({
             (CategoriasTable.id eq id) and
-                (CategoriasTable.usuarioId eq idUsuario) and
-                (CategoriasTable.ativo eq true)
+                    (CategoriasTable.usuarioId eq idUsuario) and
+                    (CategoriasTable.ativo eq true)
         }) { stmt ->
             stmt[CategoriasTable.ativo] = false
         }

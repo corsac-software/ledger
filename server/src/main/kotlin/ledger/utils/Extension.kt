@@ -1,11 +1,8 @@
 package br.dev.brunorsch.ledger.utils
 
-import io.ktor.server.routing.Route
-import io.ktor.server.routing.openapi.OperationDescribeAttributeKey
-import io.ktor.server.routing.openapi.RouteOperationFunction
-import io.ktor.server.routing.openapi.describe
-import io.ktor.util.AttributeKey
-import io.ktor.utils.io.ExperimentalKtorApi
+import io.ktor.server.routing.*
+import io.ktor.server.routing.openapi.*
+import io.ktor.utils.io.*
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -18,7 +15,7 @@ inline fun <reified T> T.slf4j(): Logger {
 // TODO: Remover (Não funcionou)
 @OptIn(ExperimentalKtorApi::class)
 fun Route.describeOrphan(configure: RouteOperationFunction) {
-    describe{}
+    describe {}
         .apply { this.attributes.remove(OperationDescribeAttributeKey) }
         .describe(configure)
 }

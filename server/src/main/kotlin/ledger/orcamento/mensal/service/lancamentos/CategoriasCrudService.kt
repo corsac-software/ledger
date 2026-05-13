@@ -1,12 +1,12 @@
-package br.dev.brunorsch.ledger.orcamento.mensal.service
+package br.dev.brunorsch.ledger.orcamento.mensal.service.lancamentos
 
-import br.dev.brunorsch.ledger.orcamento.mensal.api.CategoriaRequest
-import br.dev.brunorsch.ledger.orcamento.mensal.api.CategoriaUpdateRequest
+import br.dev.brunorsch.ledger.orcamento.mensal.api.dtos.CategoriaRequest
+import br.dev.brunorsch.ledger.orcamento.mensal.api.dtos.CategoriaUpdateRequest
 import br.dev.brunorsch.ledger.orcamento.mensal.data.repository.CategoriasRepository
-import br.dev.brunorsch.ledger.orcamento.mensal.domain.Categoria
+import br.dev.brunorsch.ledger.orcamento.mensal.domain.lancamentos.Categoria
 import br.dev.brunorsch.ledger.utils.idNaoInserido
 
-class CategoriasService(
+class CategoriasCrudService(
     private val repository: CategoriasRepository
 ) {
     fun buscarTodas(idUsuario: Long): List<Categoria> {
@@ -19,11 +19,9 @@ class CategoriasService(
 
         return repository.criar(
             Categoria(
-                id = idNaoInserido,
                 idUsuario = idUsuario,
                 nome = request.nome,
                 icone = request.icone,
-                ativo = true
             )
         )
     }

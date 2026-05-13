@@ -1,6 +1,6 @@
-package br.dev.brunorsch.ledger.orcamento.mensal.api
+package br.dev.brunorsch.ledger.orcamento.mensal.api.dtos
 
-import br.dev.brunorsch.ledger.orcamento.mensal.domain.Cartao
+import br.dev.brunorsch.ledger.orcamento.mensal.domain.cartoes.Cartao
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -15,7 +15,6 @@ data class CartaoUpdateRequest(
     val nome: String? = null,
     val icone: String? = null,
     val cor: String? = null,
-    val ativo: Boolean? = null
 )
 
 @Serializable

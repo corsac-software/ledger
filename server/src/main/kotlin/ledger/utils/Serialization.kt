@@ -22,12 +22,12 @@ object BigDecimalSerializer : KSerializer<BigDecimal> {
     override fun deserialize(decoder: Decoder): BigDecimal =
         when (decoder) {
             is JsonDecoder -> decoder.decodeJsonElement().jsonPrimitive.content.toBigDecimal()
-            else           -> decoder.decodeString().toBigDecimal()
+            else -> decoder.decodeString().toBigDecimal()
         }
 
     override fun serialize(encoder: Encoder, value: BigDecimal) =
         when (encoder) {
             is JsonEncoder -> encoder.encodeJsonElement(JsonUnquotedLiteral(value.toPlainString()))
-            else           -> encoder.encodeString(value.toPlainString())
+            else -> encoder.encodeString(value.toPlainString())
         }
 }

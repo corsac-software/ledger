@@ -1,7 +1,9 @@
 package br.dev.brunorsch.ledger.orcamento.mensal.domain
 
-import br.dev.brunorsch.ledger.orcamento.mensal.domain.TipoLancamento.DESPESA
-import br.dev.brunorsch.ledger.orcamento.mensal.domain.TipoLancamento.RECEITA
+import br.dev.brunorsch.ledger.orcamento.mensal.domain.lancamentos.LancamentoMensal
+import br.dev.brunorsch.ledger.orcamento.mensal.domain.lancamentos.TipoLancamento
+import br.dev.brunorsch.ledger.orcamento.mensal.domain.lancamentos.TipoLancamento.DESPESA
+import br.dev.brunorsch.ledger.orcamento.mensal.domain.lancamentos.TipoLancamento.RECEITA
 import kotlinx.datetime.LocalDate
 
 data class OrcamentoMensal(
@@ -11,8 +13,8 @@ data class OrcamentoMensal(
     val slug: String = anoMes.toFormatoSlug(),
     val dataInicio: LocalDate,
     val dataFim: LocalDate,
-    val seqReceita: Int = 0,
-    val seqDespesa: Int = 0,
+    var seqReceita: Int = 0,
+    var seqDespesa: Int = 0,
     val lancamentos: List<LancamentoMensal>? = null
 ) {
     fun proximoSlug(tipo: TipoLancamento): String {
