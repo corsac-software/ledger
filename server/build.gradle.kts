@@ -13,11 +13,11 @@ plugins {
     id("org.jetbrains.kotlin.plugin.serialization") version "2.3.0"
 }
 
-group = "br.dev.brunorsch"
+group = "br.dev.corsac.ledger"
 version = "0.0.1"
 
 application {
-    mainClass = "br.dev.brunorsch.ApplicationKt"
+    mainClass = "br.dev.corsac.ledger.ApplicationKt"
 }
 
 kotlin {

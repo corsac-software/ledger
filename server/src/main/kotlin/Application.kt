@@ -1,7 +1,7 @@
-package br.dev.brunorsch
+package br.dev.corsac.ledger
 
-import br.dev.brunorsch.config.*
-import br.dev.brunorsch.ledger.orcamento.mensal.orcamentoMensalModule
+import br.dev.corsac.ledger.config.*
+import br.dev.corsac.ledger.orcamento.mensal.orcamentoMensalModule
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*

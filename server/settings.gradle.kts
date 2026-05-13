@@ -1,4 +1,4 @@
-rootProject.name = "pregs-ledger"
+rootProject.name = "ledger"
 
 dependencyResolutionManagement {
     repositories {

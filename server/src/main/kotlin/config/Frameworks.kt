@@ -1,7 +1,7 @@
-package br.dev.brunorsch.config
+package br.dev.corsac.ledger.config
 
-import br.dev.brunorsch.ledger.utils.resolveDirectoryFromRoot
-import br.dev.brunorsch.ledger.utils.setupExposedMigrationDb
+import br.dev.corsac.ledger.utils.resolveDirectoryFromRoot
+import br.dev.corsac.ledger.utils.setupExposedMigrationDb
 import com.typesafe.config.ConfigFactory
 import com.zaxxer.hikari.HikariDataSource
 import io.ktor.server.application.*

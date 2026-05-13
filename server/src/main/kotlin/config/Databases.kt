@@ -1,4 +1,4 @@
-package br.dev.brunorsch.config
+package br.dev.corsac.ledger.config
 
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource

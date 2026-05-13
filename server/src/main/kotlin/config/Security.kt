@@ -1,4 +1,4 @@
-package br.dev.brunorsch.config
+package br.dev.corsac.ledger.config
 
 import com.kborowy.authprovider.firebase.firebase
 import io.ktor.server.application.*
