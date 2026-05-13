@@ -7,9 +7,9 @@ import type {
   Revenue,
   Settings,
 } from '../domain/types.js';
-import { emptyFinanceState, financeSchemaVersion } from './schema.js';
-import { monthKey } from './utils.js';
 import type { IFinanceRepository } from './financeRepository.js';
+import { emptyFinanceState, financeSchemaVersion } from './schema.js';
+import { clone, monthKey } from './utils.js';
 
 interface SettingsRow {
   key: string;
@@ -52,10 +52,6 @@ class FinanceDatabase extends Dexie {
       meta: 'key',
     });
   }
-}
-
-function clone<T>(value: T): T {
-  return JSON.parse(JSON.stringify(value));
 }
 
 class DexieFinanceRepository implements IFinanceRepository {

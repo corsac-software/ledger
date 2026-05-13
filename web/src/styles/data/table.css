@@ -30,9 +30,11 @@ td {
   line-height: 1.4;
 }
 
-tr:last-child td { border-bottom: none; }
-tr:hover td { 
-  background: var(--color-background-highlight); 
+tr:last-child td {
+  border-bottom: none;
+}
+tr:hover td {
+  background: var(--color-background-highlight);
 }
 
 th:first-child,
@@ -46,7 +48,7 @@ td:last-child {
   text-align: right;
 }
 
-tr td input[type="checkbox"] {
+tr td input[type='checkbox'] {
   width: 16px;
   height: 16px;
   cursor: pointer;

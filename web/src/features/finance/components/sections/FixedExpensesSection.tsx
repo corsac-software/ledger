@@ -1,21 +1,19 @@
 import { useMemo } from 'react';
 import { OVERRIDE_TYPES } from '../../domain/constants';
-import { CARD_ICONS } from '../../ui/constants';
 import type { CardBillItem, FixedExpense } from '../../domain/types';
-import { ConfirmModal, RuleModal } from '../modals';
-import RuleSection from '../RuleSection';
-import { FixedExpenseForm } from './fixed-expenses/FixedExpenseForm';
+import { useActiveFixedExpenses } from '../../hooks/useActiveFixedExpenses';
+import { useCardList } from '../../hooks/useCardList';
+import { useMonthPaymentMap } from '../../hooks/useMonthPaymentMap';
+import { buildCardIconMap } from '../../lib/cardIconMap';
+import { selectMonthFixedExpenseAmounts } from '../../selectors/monthOverrideSelectors';
+import { FixedExpenseForm, type FixedExpenseFormState } from './fixed-expenses/FixedExpenseForm';
 import { buildFixedExpensePayload } from './fixed-expenses/fixedExpenseFormHelpers';
 import { FixedExpenseRow } from './fixed-expenses/FixedExpenseRow';
 import { FIXED_EXPENSE_LABELS } from './fixed-expenses/fixedExpenseSectionLabels';
-import { useActiveFixedExpenses } from '../../hooks/useActiveFixedExpenses';
 import { useFixedExpenseCrudState } from './fixed-expenses/useFixedExpenseCrudState';
+import { CrudSection } from './shared/CrudSection';
 import type { CrudSectionCommonProps, MonthPaidSectionProps } from './shared/types';
-import { useCrudFormFlow } from './shared/useCrudFormFlow';
-import { useCrudModalState } from './shared/useCrudModalState';
 import { useMonthAmountInput } from './shared/useMonthAmountInput';
-import { useMonthPaymentMap } from '../../hooks/useMonthPaymentMap';
-import { selectMonthFixedExpenseAmounts } from '../../selectors/monthOverrideSelectors';
 
 type FixedExpensePayload = {
   name: string;
@@ -44,15 +42,9 @@ export function FixedExpensesSection({
   onMonthFixedExpenseAmount,
   cardList,
 }: FixedExpensesSectionProps) {
-  const cards = useMemo(() => cardList ?? [], [cardList]);
+  const cards = useCardList(cardList);
 
-  const cardIconMap = useMemo(() => {
-    const map: Record<string, string> = { ...CARD_ICONS };
-    (cardList ?? []).forEach((card) => {
-      if (card.icon) map[card.id] = card.icon;
-    });
-    return map;
-  }, [cardList]);
+  const cardIconMap = useMemo(() => buildCardIconMap(cards), [cards]);
 
   const activeItems = useActiveFixedExpenses(items, currentMonthKey);
 
@@ -62,16 +54,6 @@ export function FixedExpensesSection({
       defaultCardId: cards[0]?.id || '',
       onDelete,
     });
-
-  const {
-    modal,
-    confirm,
-    closeModal,
-    openCreateModal: openCreateBase,
-    openEditModal: openEditBase,
-    openDeleteConfirm,
-    closeDeleteConfirm,
-  } = useCrudModalState<FixedExpense>();
 
   const monthPaymentMap = useMonthPaymentMap(
     monthOverrides,
@@ -83,23 +65,8 @@ export function FixedExpensesSection({
     [currentMonthKey, monthOverrides]
   );
 
-  const buildPayload = (currentForm: any) => buildFixedExpensePayload(currentForm, cards);
-
-  const handleSubmit = useCrudFormFlow({
-    modal,
-    form,
-    canSubmit,
-    closeModal,
-    resetForm,
-    buildPayload,
-    onAdd: (payload) => onAdd(payload!),
-    onEdit: (id, payload) => onEdit(id, payload!),
-  });
-
-  const openCreateModal = () => {
-    openCreateForm();
-    openCreateBase();
-  };
+  const buildPayload = (currentForm: FixedExpenseFormState) =>
+    buildFixedExpensePayload(currentForm, cards);
 
   const {
     tempInputValues,
@@ -109,75 +76,42 @@ export function FixedExpensesSection({
   } = useMonthAmountInput(onMonthFixedExpenseAmount);
 
   return (
-    <>
-      <RuleSection
-        title={FIXED_EXPENSE_LABELS.title}
-        description={FIXED_EXPENSE_LABELS.description}
-        addLabel={FIXED_EXPENSE_LABELS.addLabel}
-        onAddClick={openCreateModal}
-        items={activeItems as any}
-        emptyText={FIXED_EXPENSE_LABELS.emptyText}
-        sortBy="value-desc"
-        columns={FIXED_EXPENSE_LABELS.columns as unknown as string[]}
-        renderItem={(item: any, money: (value: number) => string) => {
-          const hasOverride =
-            monthFixedExpenseAmounts && monthFixedExpenseAmounts[item.id] !== undefined;
+    <CrudSection
+      labels={FIXED_EXPENSE_LABELS}
+      items={activeItems}
+      form={form}
+      canSubmit={canSubmit}
+      resetForm={resetForm}
+      openCreateForm={openCreateForm}
+      openEditForm={openEditForm}
+      buildPayload={buildPayload}
+      onAdd={(payload) => onAdd(payload!)}
+      onEdit={(id, payload) => onEdit(id, payload!)}
+      onDelete={onDelete}
+      renderForm={() => <FixedExpenseForm form={form} setForm={setForm} cards={cards} />}
+      renderItem={(item, money, { openEdit, openDelete }) => {
+        const hasOverride =
+          monthFixedExpenseAmounts && monthFixedExpenseAmounts[item.id] !== undefined;
 
-          return (
-            <FixedExpenseRow
-              key={item.id}
-              item={item}
-              money={money}
-              displayAmount={hasOverride ? monthFixedExpenseAmounts[item.id] : item.amount}
-              tempValue={tempInputValues[item.id]}
-              hasOverride={hasOverride}
-              isPaid={monthPaymentMap.get(item.id)?.paid === true}
-              cardIconMap={cardIconMap}
-              onMonthAmountInput={handleMonthAmountInput}
-              onMonthAmountBlur={handleMonthAmountBlur}
-              onMonthAmountChange={handleMonthAmountChange}
-              onTogglePaid={onTogglePaid}
-              onEdit={() => {
-                openEditForm(item);
-                openEditBase(item.id);
-              }}
-              onDelete={() => openDeleteConfirm(item)}
-            />
-          );
-        }}
-      />
-
-      <ConfirmModal
-        open={confirm.open}
-        title={FIXED_EXPENSE_LABELS.delete.title}
-        message={FIXED_EXPENSE_LABELS.delete.message(
-          (confirm.item as FixedExpense | null)?.name || ''
-        )}
-        onConfirm={async () => {
-          const item = confirm.item as FixedExpense | null;
-          if (item) await onDelete(item.id);
-          closeDeleteConfirm();
-        }}
-        onCancel={closeDeleteConfirm}
-      />
-
-      <RuleModal
-        open={modal.open}
-        title={
-          modal.mode === 'edit'
-            ? FIXED_EXPENSE_LABELS.modal.edit.title
-            : FIXED_EXPENSE_LABELS.modal.create.title
-        }
-        onClose={closeModal}
-        onSubmit={handleSubmit}
-        submitLabel={
-          modal.mode === 'edit'
-            ? FIXED_EXPENSE_LABELS.modal.edit.submitLabel
-            : FIXED_EXPENSE_LABELS.modal.create.submitLabel
-        }
-      >
-        <FixedExpenseForm form={form} setForm={setForm} cards={cards} />
-      </RuleModal>
-    </>
+        return (
+          <FixedExpenseRow
+            key={item.id}
+            item={item}
+            money={money}
+            displayAmount={hasOverride ? monthFixedExpenseAmounts[item.id] : item.amount}
+            tempValue={tempInputValues[item.id]}
+            hasOverride={hasOverride}
+            isPaid={monthPaymentMap.get(item.id)?.paid === true}
+            cardIconMap={cardIconMap}
+            onMonthAmountInput={handleMonthAmountInput}
+            onMonthAmountBlur={handleMonthAmountBlur}
+            onMonthAmountChange={handleMonthAmountChange}
+            onTogglePaid={onTogglePaid}
+            onEdit={() => openEdit(item)}
+            onDelete={() => openDelete(item)}
+          />
+        );
+      }}
+    />
   );
 }

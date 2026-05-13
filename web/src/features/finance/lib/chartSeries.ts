@@ -1,6 +1,7 @@
-import { CARD_LABELS, CATEGORY_LABELS } from '../ui/constants.js';
+import { DEFAULT_CARD_ID } from '../domain/constants.js';
 import type { MonthView, MonthViewFixedExpense } from '../domain/types.js';
 import { getExpenseCard } from '../selectors/summarySelectors.js';
+import { CARD_LABELS, CATEGORY_LABELS } from '../ui/constants.js';
 import { formatMoney } from './utils.js';
 
 // Chart color palette
@@ -41,7 +42,7 @@ export function buildCategorySeries(monthView: MonthView) {
 
 export function buildCardSeries(monthView: MonthView) {
   const cardMap = new Map<string, number>();
-  cardMap.set('outro', 0);
+  cardMap.set(DEFAULT_CARD_ID, 0);
 
   monthView.fixedExpenses.forEach((item) => {
     const card = getExpenseCard(item as MonthViewFixedExpense);
@@ -50,7 +51,7 @@ export function buildCardSeries(monthView: MonthView) {
   });
 
   monthView.installments.forEach((item) => {
-    const card = (item.card || 'outro') as string;
+    const card = (item.card || DEFAULT_CARD_ID) as string;
     cardMap.set(card, (cardMap.get(card) || 0) + Number(item.installmentValue || 0));
   });
 
@@ -65,7 +66,7 @@ export function buildCardSeries(monthView: MonthView) {
 
 export function buildCardStatusSeries(monthView: MonthView) {
   const cardMap = new Map<string, { total: number; paid: number }>();
-  cardMap.set('outro', { total: 0, paid: 0 });
+  cardMap.set(DEFAULT_CARD_ID, { total: 0, paid: 0 });
 
   monthView.fixedExpenses.forEach((item) => {
     const card = getExpenseCard(item as MonthViewFixedExpense);
@@ -78,7 +79,7 @@ export function buildCardStatusSeries(monthView: MonthView) {
   });
 
   monthView.installments.forEach((item) => {
-    const card = (item.card || 'outro') as string;
+    const card = (item.card || DEFAULT_CARD_ID) as string;
     const amount = Number(item.installmentValue || 0);
     const current = cardMap.get(card) || { total: 0, paid: 0 };
     current.total += amount;

@@ -36,17 +36,9 @@
 }
 
 .month-step-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
   font-size: 12px;
   font-weight: 500;
   padding: 6px 10px;
-  border: 1px solid var(--color-border);
-  border-radius: 6px;
-  background: var(--color-background-primary);
-  color: var(--color-text-primary);
-  cursor: pointer;
 }
 
 .month-step-btn--icon {
@@ -56,17 +48,13 @@
 }
 
 .theme-btn {
-  display: inline-flex;
-  align-items: center;
   gap: 5px;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
   font-weight: 500;
   padding: 5px 8px;
   border: 0.5px solid var(--color-border-secondary);
-  border-radius: 6px;
-  background: var(--color-background-primary);
-  color: var(--color-text-primary);
-  cursor: pointer;
 }
 
 .theme-btn-label {
@@ -96,24 +84,15 @@
 
 .card-bill-title {
   margin: 0;
-  font-size: 9px;
-  text-transform: uppercase;
-  letter-spacing: 0.07em;
-  color: var(--color-text-tertiary);
+  --label-xs-color: var(--color-text-tertiary);
+  --label-xs-letter-spacing: 0.07em;
 }
 
 .card-bill-add-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
   padding: 5px 8px;
-  border-radius: 6px;
   border: 1px solid var(--color-border-secondary);
-  background: var(--color-background-primary);
-  color: var(--color-text-primary);
   font-size: 10px;
   font-weight: 600;
-  cursor: pointer;
 }
 
 .card-bill-add-form {
@@ -147,13 +126,16 @@
   scroll-padding-inline: 10px;
   scrollbar-width: none;
   -ms-overflow-style: none;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
 .icon-selector--glow {
   border-right-width: 0.5px;
   border-right-color: color-mix(in srgb, var(--color-accent) 70%, var(--color-border-secondary));
-  box-shadow: inset -1px 0 0 0 color-mix(in srgb, var(--color-accent) 76%, var(--color-border-secondary)),
+  box-shadow:
+    inset -1px 0 0 0 color-mix(in srgb, var(--color-accent) 76%, var(--color-border-secondary)),
     inset -7px 0 12px -10px color-mix(in srgb, var(--color-accent) 56%, transparent),
     inset -12px 0 16px -14px color-mix(in srgb, var(--color-accent) 28%, transparent);
 }
@@ -242,9 +224,11 @@
   padding: 11px;
   border: 1px solid color-mix(in srgb, var(--bill-card-color) 75%, #0b2b57 20%);
   border-radius: 8px;
-  background: linear-gradient(175deg,
-      color-mix(in srgb, var(--bill-card-color) 72%, #ffffff 8%) 8%,
-      color-mix(in srgb, var(--bill-card-color) 94%, #0a2b58 10%) 120%);
+  background: linear-gradient(
+    175deg,
+    color-mix(in srgb, var(--bill-card-color) 72%, #ffffff 8%) 8%,
+    color-mix(in srgb, var(--bill-card-color) 94%, #0a2b58 10%) 120%
+  );
   color: #ffffff;
   cursor: default;
   flex: 0 1 174px;
@@ -271,11 +255,9 @@
 }
 
 .bill-card-label {
-  font-size: 7px;
-  font-weight: 600;
-  letter-spacing: 0.056em;
-  text-transform: uppercase;
-  color: color-mix(in srgb, #ffffff 82%, transparent);
+  --label-xs-size: 7px;
+  --label-xs-color: color-mix(in srgb, #ffffff 82%, transparent);
+  --label-xs-letter-spacing: 0.056em;
 }
 
 .bill-card-status {
@@ -311,8 +293,11 @@
   color: #ffffff;
   letter-spacing: 0.014em;
   transition: opacity 0.3s ease;
-  width: 100%;
+  flex: 1;
   min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .bill-card-add-value {
@@ -376,84 +361,52 @@
 
 .bill-currency {
   width: 0;
+  display: inline-flex;
+  align-items: baseline;
   opacity: 0;
   overflow: hidden;
-  transition: width 0.3s ease, opacity 0.3s ease, margin-right 0.3s ease;
+  margin-right: 0;
   white-space: nowrap;
   flex-shrink: 0;
   font-size: 18px;
   font-weight: 600;
   color: #ffffff;
   letter-spacing: 0.03em;
+  transition:
+    width 0.3s ease,
+    opacity 0.3s ease,
+    margin-right 0.3s ease;
 }
 
-.bill-display.editing .bill-card-value {
-  opacity: 0;
-}
-
-.bill-display.editing .bill-card-add-value {
+.bill-input-shell {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 8px;
+  border: 0.5px solid var(--color-border-secondary);
+  border-radius: var(--border-radius-md);
+  background: var(--color-background-primary);
+  transform: translate(-100%, -50%);
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
-}
-
-.bill-input-shell {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.3s ease, visibility 0.3s ease;
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
   white-space: nowrap;
-}
-
-.bill-display.editing .bill-input-shell {
-  opacity: 1;
-  visibility: visible;
-  width: 100%;
-}
-
-.bill-display.editing .bill-card-value {
-  opacity: 0;
-}
-
-.bill-display.editing .bill-card-add-value {
-  opacity: 0;
-  visibility: hidden;
-}
-
-.bill-input-shell {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.3s ease, visibility 0.3s ease;
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  white-space: nowrap;
-}
-
-.bill-display.editing .bill-input-shell {
-  opacity: 1;
-  visibility: visible;
-  position: relative;
-  left: auto;
-  top: auto;
-  transform: none;
-  width: 100%;
+  transition:
+    transform 0.3s ease,
+    opacity 0.3s ease,
+    visibility 0.3s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .bill-display.editing .bill-currency {
-  width: 25px;
+  width: 22px;
   opacity: 1;
-  margin-right: 0px;
+  margin-right: 3px;
 }
 
 .bill-card-value,
@@ -466,79 +419,24 @@
   opacity: 0;
   visibility: hidden;
   position: absolute;
-}
-
-.bill-input-shell {
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.3s ease, visibility 0.3s ease;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-}
-
-.bill-display.editing .bill-input-shell {
-  opacity: 1;
-  visibility: visible;
-  position: relative;
-  left: auto;
-  top: auto;
-  transform: none;
-  width: 100%;
-}
-
-.bill-card-static,
-.bill-input-shell {
-  position: absolute;
-  top: 50%;
-  left: 0;
-  width: 100%;
-  transition: transform 0.3s ease, opacity 0.3s ease;
-}
-
-.bill-card-static {
-  transform: translate(0, -50%);
-  opacity: 1;
-  pointer-events: auto;
-}
-
-.bill-card-static.hidden {
-  transform: translate(-100%, -50%);
-  opacity: 0;
-  pointer-events: none;
-}
-
-.bill-input-shell {
-  transform: translate(-100%, -50%);
-  opacity: 0;
   pointer-events: none;
 }
 
 .bill-input-shell.visible {
   transform: translate(0, -50%);
   opacity: 1;
+  visibility: visible;
   pointer-events: auto;
-  width: 100%;
-}
-
-.bill-display.editing .bill-card-value,
-.bill-display.editing .bill-card-add-value {
-  pointer-events: none;
 }
 
 .bill-display.editing .bill-input-shell {
+  visibility: visible;
   pointer-events: auto;
 }
 
 .bill-card-value {
   transition: none;
 }
-
-
 
 .card-bill-add-input {
   width: 100%;
@@ -594,13 +492,10 @@
 .card-bill-empty-btn {
   margin-top: 2px;
   padding: 5px 10px;
-  border-radius: 6px;
   border: 1px solid var(--color-accent);
   background: color-mix(in srgb, var(--color-accent) 22%, transparent);
-  color: var(--color-text-primary);
   font-size: 10px;
   font-weight: 600;
-  cursor: pointer;
 }
 
 .card-bill-empty-btn:hover {
@@ -627,14 +522,6 @@
   color: var(--color-accent-strong);
 }
 
-.card-bill-field--santander .card-bill-icon {
-  color: #d62d36;
-}
-
-.card-bill-field--nubank .card-bill-icon {
-  color: #7c3aed;
-}
-
 .card-bill-label {
   font-size: 9px;
   color: var(--color-text-secondary);
@@ -652,28 +539,6 @@
   background: transparent;
   color: var(--color-text-primary);
   min-width: 0;
-}
-
-.bill-input-shell {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 0 6px;
-  border: 1px solid var(--color-border-secondary);
-  border-radius: 6px;
-  background: var(--color-background-primary);
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-.bill-input-shell {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  padding: 0 8px;
-  border: 0.5px solid var(--color-border-secondary);
-  border-radius: var(--border-radius-md);
-  background: var(--color-background-primary);
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .bill-input-shell:focus-within {
@@ -702,26 +567,39 @@
 }
 
 .bill-card .bill-input-shell {
+  position: static;
   display: inline-flex;
   align-items: baseline;
+  flex: 1 1 auto;
+  max-width: 0;
+  min-width: 0;
   gap: 4px;
   padding: 0;
   border: 0;
   border-radius: 0;
   background: transparent;
+  transform: none;
+  opacity: 0;
+  visibility: hidden;
+  overflow: hidden;
+  pointer-events: none;
   box-shadow: none;
+  transition:
+    max-width 0s ease,
+    opacity 0s ease,
+    visibility 0.3s ease;
+}
+
+.bill-card .bill-input-shell.visible {
+  max-width: 100%;
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
 }
 
 .bill-card .bill-input-shell:focus-within {
   border: 0;
   box-shadow: none;
-}
-
-@media (max-width: 900px) {
-  .bill-card {
-    min-width: 100%;
-    max-width: none;
-  }
 }
 
 .bill-card-delete:disabled {
@@ -735,6 +613,11 @@
 }
 
 @media (max-width: 900px) {
+  .bill-card {
+    min-width: 100%;
+    max-width: none;
+  }
+
   .month-nav-top {
     flex-wrap: wrap;
     justify-content: center;

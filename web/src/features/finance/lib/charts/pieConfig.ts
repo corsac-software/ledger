@@ -1,3 +1,5 @@
+import { PAID_COLOR, UNPAID_COLOR, type PieMode } from '../../domain/constants.js';
+import type { MonthView } from '../../domain/types.js';
 import {
   buildCardSeries,
   buildCardStatusSeries,
@@ -6,9 +8,6 @@ import {
   CHART_COLORS,
 } from '../chartSeries.js';
 import { formatMoney } from '../utils.js';
-import type { MonthView } from '../../domain/types.js';
-
-type PieMode = 'categories' | 'cards' | 'cardsStatus';
 
 export function hasPieChartData(monthView: MonthView, pieMode: PieMode): boolean {
   return buildPieChartConfig(monthView, pieMode) !== null;
@@ -31,13 +30,13 @@ export function buildPieChartConfig(monthView: MonthView, pieMode: PieMode) {
           {
             label: 'Pago (rastreado)',
             data: paidValues,
-            backgroundColor: '#1D9E75',
+            backgroundColor: PAID_COLOR,
             borderRadius: 5,
           },
           {
             label: 'Pendente (rastreado)',
             data: toPayValues,
-            backgroundColor: '#D85A30',
+            backgroundColor: UNPAID_COLOR,
             borderRadius: 5,
           },
         ],

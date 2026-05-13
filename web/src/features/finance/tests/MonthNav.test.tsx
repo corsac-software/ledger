@@ -81,6 +81,25 @@ describe('MonthNav.tsx', () => {
     );
     expect(screen.getByText('Nubank')).toBeInTheDocument();
     expect(screen.getByText(/500,00/)).toBeInTheDocument();
+
+    const card = screen.getByText('Nubank').closest('.bill-card');
+    expect(card?.querySelector('.bill-card-value')).toHaveTextContent('500,00');
+    expect(card?.querySelector('.bill-display')).not.toHaveClass('editing');
+  });
+
+  it('shows add bill button without currency when card has no value', () => {
+    render(
+      <MonthNav
+        {...defaultProps}
+        cardList={[{ id: 'nubank', name: 'Nubank', icon: '💙' }]}
+        cardBills={{}}
+      />
+    );
+
+    const card = screen.getByText('Nubank').closest('.bill-card');
+    expect(screen.getByText('+ Incluir fatura')).toBeInTheDocument();
+    expect(card?.querySelector('.bill-card-value')).toHaveTextContent('');
+    expect(card?.querySelector('.bill-display')).not.toHaveClass('editing');
   });
 
   it('does not edit the bill value when the card body is clicked', () => {
@@ -123,6 +142,30 @@ describe('MonthNav.tsx', () => {
 
     fireEvent.blur(input);
     expect(onSetCardBill).toHaveBeenCalledWith('nubank', 1999);
+  });
+
+  it('commits and closes bill editing when clicking outside the input', () => {
+    const onSetCardBill = vi.fn();
+    render(
+      <MonthNav
+        {...defaultProps}
+        onSetCardBill={onSetCardBill}
+        cardList={[{ id: 'nubank', name: 'Nubank', icon: '💙' }]}
+        cardBills={{ nubank: 500 }}
+      />
+    );
+
+    fireEvent.click(screen.getByText(/500,00/));
+
+    const input = screen.getByLabelText('Valor da fatura Nubank') as HTMLInputElement;
+    expect(document.activeElement).toBe(input);
+
+    fireEvent.change(input, { target: { value: '539,90' } });
+    fireEvent.pointerDown(screen.getByText('Abril 2026'));
+
+    expect(onSetCardBill).toHaveBeenCalledTimes(1);
+    expect(onSetCardBill).toHaveBeenCalledWith('nubank', 539.9);
+    expect(document.activeElement).not.toBe(input);
   });
 
   it('renders card bill panel title', () => {

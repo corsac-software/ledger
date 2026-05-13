@@ -1,5 +1,6 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import type { CardBillItem } from '../domain/types';
+import { useCardList } from '../hooks/useCardList';
 import { detectBankColor } from '../lib/bankColors';
 import { useI18n } from '../lib/i18n';
 import { applyMoneyMask, formatMoneyInput, parseMoneyInput } from '../lib/moneyInput';
@@ -39,7 +40,10 @@ function BillCard({
   const [isEditing, setIsEditing] = useState(false);
   const [inputValue, setInputValue] = useState(value);
   const [hasValue, setHasValue] = useState(false);
+  const inputShellRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const hasCommittedRef = useRef(false);
+  const displayValue = value.replace(/^R\$\s*/, '');
 
   useEffect(() => {
     if (!isEditing) {
@@ -48,13 +52,29 @@ function BillCard({
     setHasValue(!!value && value !== 'R$ 0,00');
   }, [isEditing, value]);
 
-  useEffect(() => {
-    if (isEditing && inputRef.current) {
-      inputRef.current.focus();
-    }
+  useLayoutEffect(() => {
+    if (!isEditing) return;
+
+    hasCommittedRef.current = false;
+    inputRef.current?.focus();
+    const frameId = requestAnimationFrame(() => {
+      inputRef.current?.focus();
+      inputRef.current?.select();
+    });
+    const timeoutId = window.setTimeout(() => {
+      inputRef.current?.focus();
+      inputRef.current?.select();
+    }, 0);
+
+    return () => {
+      cancelAnimationFrame(frameId);
+      window.clearTimeout(timeoutId);
+    };
   }, [isEditing]);
 
-  const handleBlur = () => {
+  const commitInputValue = useCallback(() => {
+    if (hasCommittedRef.current) return;
+    hasCommittedRef.current = true;
     setIsEditing(false);
     const parsed = parseMoneyInput(inputValue, { allowZero: true });
     if (parsed !== null && parsed > 0) {
@@ -67,6 +87,32 @@ function BillCard({
       setInputValue('');
       setHasValue(false);
     }
+  }, [inputValue, onChange]);
+
+  useEffect(() => {
+    if (!isEditing) return;
+
+    const handlePointerDown = (event: PointerEvent) => {
+      if (inputShellRef.current?.contains(event.target as Node)) return;
+      inputRef.current?.blur();
+      commitInputValue();
+    };
+
+    document.addEventListener('pointerdown', handlePointerDown);
+    return () => document.removeEventListener('pointerdown', handlePointerDown);
+  }, [commitInputValue, isEditing]);
+
+  const handleBlur = () => {
+    commitInputValue();
+  };
+
+  const startEditing = () => {
+    setIsEditing(true);
+    window.setTimeout(() => {
+      inputRef.current?.focus();
+      const length = inputRef.current?.value.length || 0;
+      inputRef.current?.setSelectionRange(length, length);
+    }, 100);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -122,27 +168,35 @@ function BillCard({
         <span className="bill-currency">R$</span>
         <p
           className="bill-card-value"
+          onPointerDown={(e) => {
+            if (hasValue) e.preventDefault();
+          }}
           onClick={(e) => {
             e.stopPropagation();
-            if (!isEditing && hasValue) setIsEditing(true);
+            if (!isEditing && hasValue) startEditing();
           }}
           style={{ cursor: hasValue && !isEditing ? 'pointer' : 'default' }}
         >
-          {value}
+          {displayValue}
         </p>
         {!hasValue && !isEditing && (
           <button
             type="button"
             className="bill-card-add-value"
+            onPointerDown={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+            }}
             onClick={(e) => {
               e.stopPropagation();
-              setIsEditing(true);
+              startEditing();
             }}
           >
             + Incluir fatura
           </button>
         )}
         <div
+          ref={inputShellRef}
           className={`bill-input-shell${isEditing ? ' visible' : ''}`}
           onMouseDown={(e) => e.stopPropagation()}
           onClick={(e) => e.stopPropagation()}
@@ -152,7 +206,7 @@ function BillCard({
             className="bill-card-input"
             type="text"
             value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
+            onChange={(e) => setInputValue(applyMoneyMask(e.target.value))}
             onBlur={handleBlur}
             onKeyDown={handleKeyDown}
             inputMode="decimal"
@@ -182,7 +236,7 @@ export default function MonthNav({
   const isDarkTheme = theme === 'premium';
   const nextThemeIcon = isDarkTheme ? '☀' : '🌙';
   const nextThemeLabel = isDarkTheme ? 'Claro' : 'Escuro';
-  const cards = useMemo(() => cardList ?? [], [cardList]);
+  const cards = useCardList(cardList);
   const hasCards = cards.length > 0;
 
   // Memoize the computation of billInputs to avoid redundant calculations

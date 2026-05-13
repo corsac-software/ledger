@@ -6,8 +6,12 @@
   flex-shrink: 0;
 }
 
-.dot-ok { background: var(--color-semantic-success); }
-.dot-pend { background: var(--color-semantic-warning); }
+.dot-ok {
+  background: var(--color-semantic-success);
+}
+.dot-pend {
+  background: var(--color-semantic-warning);
+}
 
 .progress-cell {
   display: flex;

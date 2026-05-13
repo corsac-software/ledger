@@ -39,7 +39,7 @@
   background: none;
   color: var(--color-text-secondary);
   border-radius: 8px;
-  transition: all .15s;
+  transition: all 0.15s;
 }
 
 .app-tab-btn:hover {
@@ -56,7 +56,7 @@
   padding: 0 24px;
 }
 
-.app-content>*+* {
+.app-content > * + * {
   margin-top: var(--layout-gap-section);
 }
 

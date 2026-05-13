@@ -1,10 +1,9 @@
 import { useEffect, useMemo, useRef, useState, type MutableRefObject } from 'react';
+import type { PieMode } from '../domain/constants.js';
 import type { MonthView } from '../domain/types.js';
 import { loadChartModule } from '../lib/chartLoader.js';
 import { buildInstallmentBarConfig } from '../lib/charts/installmentBarConfig.js';
 import { buildPieChartConfig } from '../lib/charts/pieConfig.js';
-
-type PieMode = 'categories' | 'cards' | 'cardsStatus';
 
 interface ChartModule {
   default?: new (canvas: HTMLCanvasElement, config: unknown) => unknown;

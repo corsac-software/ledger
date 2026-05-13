@@ -1,11 +1,13 @@
+import { DEFAULT_CARD_ID } from '../domain/constants.js';
+
 export const ICONS: Record<string, string> = {
   boleto: '📄',
   pix: '⚡',
-  outro: '💳',
+  [DEFAULT_CARD_ID]: '💳',
 };
 
 export const CARD_ICONS: Record<string, string> = {
-  outro: '💳',
+  [DEFAULT_CARD_ID]: '💳',
 };
 
 export const CATEGORIES: Record<string, string> = {
@@ -46,7 +48,7 @@ export const BILL_CARDS: BillCardConfig[] = [];
 
 export const BILL_CARD_KEYS: string[] = [];
 
-export const CARD_ORDER = ['outro'] as const;
+export const CARD_ORDER = [DEFAULT_CARD_ID] as const;
 
 export const CATEGORY_LABELS: Record<string, string> = {
   debito: 'DEBITO',
@@ -61,9 +63,9 @@ export const CATEGORY_LABELS: Record<string, string> = {
 };
 
 export const CARD_LABELS: Record<string, string> = {
-  outro: 'OUTROS',
+  [DEFAULT_CARD_ID]: 'OUTROS',
 };
 
 export const CARD_NAMES: Record<string, string> = {
-  outro: 'Outro',
+  [DEFAULT_CARD_ID]: 'Outro',
 };

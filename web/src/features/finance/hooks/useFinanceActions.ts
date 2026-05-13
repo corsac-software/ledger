@@ -1,7 +1,11 @@
 import { useMemo } from 'react';
 import { useFinance } from '../context/FinanceContext';
+import {
+  createDefaultFixedExpense,
+  createDefaultInstallment,
+  createDefaultRevenue,
+} from '../domain/factories';
 import type { FixedExpense, Installment, Revenue } from '../domain/types';
-import { createFinanceId } from '../lib/ids';
 
 export function useFinanceActions() {
   const {
@@ -26,29 +30,10 @@ export function useFinanceActions() {
   const actions = useMemo(
     () => ({
       addFixedExpense: (data: Partial<FixedExpense>) =>
-        _addFixedExpense({
-          id: createFinanceId('fixed'),
-          active: true,
-          notes: '',
-          endMonth: null,
-          ...data,
-        }),
-      addRevenue: (data: Partial<Revenue>) =>
-        _addRevenue({
-          id: createFinanceId('rev'),
-          active: true,
-          notes: '',
-          endMonth: null,
-          ...data,
-        }),
+        _addFixedExpense(createDefaultFixedExpense(data)),
+      addRevenue: (data: Partial<Revenue>) => _addRevenue(createDefaultRevenue(data)),
       addInstallment: (data: Partial<Installment>) =>
-        _addInstallment({
-          id: createFinanceId('inst'),
-          active: true,
-          closedAt: null,
-          currentInstallment: 1,
-          ...data,
-        }),
+        _addInstallment(createDefaultInstallment(data)),
       updateFixedExpense: _updateFixedExpense,
       updateRevenue: _updateRevenue,
       updateInstallment: _updateInstallment,

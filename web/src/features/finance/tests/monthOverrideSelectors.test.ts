@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import {
   selectMonthFixedExpenseAmounts,
-  selectMonthCardBills,
+  selectMonthCardBillAmounts,
   selectMonthRevenueAmounts,
 } from '../selectors/monthOverrideSelectors';
 import { OVERRIDE_TYPES } from '../domain/constants';
@@ -59,9 +59,9 @@ describe('monthOverrideSelectors.ts', () => {
     });
   });
 
-  describe('selectMonthCardBills', () => {
+  describe('selectMonthCardBillAmounts', () => {
     it('returns empty object when no overrides', () => {
-      expect(selectMonthCardBills([], '2026-04')).toEqual({});
+      expect(selectMonthCardBillAmounts([], '2026-04')).toEqual({});
     });
 
     it('filters CARD_BILL_AMOUNT for correct month', () => {
@@ -88,7 +88,7 @@ describe('monthOverrideSelectors.ts', () => {
           amount: 100,
         },
       ];
-      const result = selectMonthCardBills(overrides, '2026-04');
+      const result = selectMonthCardBillAmounts(overrides, '2026-04');
       expect(result).toEqual({ nubank: 500 });
     });
 
@@ -116,13 +116,13 @@ describe('monthOverrideSelectors.ts', () => {
           amount: -100,
         },
       ];
-      const result = selectMonthCardBills(overrides, '2026-04');
+      const result = selectMonthCardBillAmounts(overrides, '2026-04');
       expect(result).toEqual({ nubank: 500 });
     });
 
     it('handles null/undefined overrides', () => {
-      expect(selectMonthCardBills(null as any, '2026-04')).toEqual({});
-      expect(selectMonthCardBills(undefined as any, '2026-04')).toEqual({});
+      expect(selectMonthCardBillAmounts(null as any, '2026-04')).toEqual({});
+      expect(selectMonthCardBillAmounts(undefined as any, '2026-04')).toEqual({});
     });
   });
 

@@ -275,7 +275,7 @@ export function useI18n() {
       locale: 'pt-BR',
       t: (key: string) => key,
       normalizeCardName: (name: string) => name,
-      changeLocale: () => { },
+      changeLocale: () => {},
       availableLocales: ['pt-BR', 'en-US'],
     };
   }

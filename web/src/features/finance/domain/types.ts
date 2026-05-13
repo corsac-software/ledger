@@ -25,6 +25,16 @@ export interface Installment {
   closedAt: string | null;
 }
 
+export interface InstallmentItem {
+  id: string;
+  name: string;
+  installmentValue: number;
+  totalInstallments: number;
+  startMonth: string;
+  card: string;
+  currentInstallment: number;
+}
+
 export interface Revenue {
   id: string;
   name: string;

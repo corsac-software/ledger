@@ -9,8 +9,12 @@
   line-height: 1;
 }
 
-.del { font-size: 16px; }
-.edit { font-size: 14px; }
+.del {
+  font-size: 16px;
+}
+.edit {
+  font-size: 14px;
+}
 
 .del:hover {
   background: var(--color-background-danger);

@@ -117,13 +117,23 @@ export function buildMonthView(
     if (item.active === false) continue;
     if (!isMonthInRange(currentMonthKey, item.startMonth, item.endMonth)) continue;
 
+    // Apply full revenue override (name/hidden/etc) if present, similar to fixed expenses
+    const overridden = applyOverride(
+      item,
+      overridesMap[OVERRIDE_TYPES.REVENUE]?.get(item.id) as OverrideWithHidden | undefined
+    );
+
     const revenueAmount = monthRevenueAmounts?.[item.id];
     const final = {
-      ...item,
+      ...overridden,
       amount: revenueAmount !== undefined ? revenueAmount : item.baseAmount,
-    };
-    revenues.push(final);
-    receitasTotal += Number(final.amount || 0);
+    } as any;
+
+    // Skip hidden revenue items (but apply overrides to others)
+    if (!(final as Revenue & { hidden?: boolean }).hidden) {
+      revenues.push(final);
+      receitasTotal += Number(final.amount || 0);
+    }
   }
 
   const installments: MonthViewInstallment[] = [];

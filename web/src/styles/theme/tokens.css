@@ -16,7 +16,9 @@
   --color-accent-strong: #8a6914;
   --color-semantic-danger: #be123c;
   --color-semantic-success: #047857;
-  --color-semantic-warning: #b45309;
+  --color-semantic-waning: #b45309;
+  --color-summary-paid: #a32d2d;
+  --color-summary-payable: #854f0b;
   --color-pill-san-bg: #ffe4e6;
   --color-pill-san-text: #9f1239;
   --color-pill-nub-bg: #ede9fe;
@@ -63,7 +65,7 @@ body[data-theme='premium'] {
   --color-accent-strong: #f59e0b;
   --color-semantic-danger: #fb7185;
   --color-semantic-success: #34d399;
-  --color-semantic-warning: #fbbf24;
+  --color-semantic-waning: #fbbf24;
   --color-pill-san-bg: #3f1d24;
   --color-pill-san-text: #fecdd3;
   --color-pill-nub-bg: #2d2344;

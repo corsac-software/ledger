@@ -1,14 +1,17 @@
 import { ReactNode, useState } from 'react';
 import { formatMoney } from '../lib/utils';
 
-interface RuleSectionProps {
+interface RuleSectionItem {
+  name: string;
+  amount?: number;
+  installmentValue?: number;
+}
+
+interface RuleSectionProps<TItem extends RuleSectionItem> {
   title: string;
   description: string;
-  items: Array<{ name: string; amount?: number; installmentValue?: number }>;
-  renderItem: (
-    item: { name: string; amount?: number; installmentValue?: number },
-    money: (value: number) => string
-  ) => ReactNode;
+  items: TItem[];
+  renderItem: (item: TItem, money: (value: number) => string) => ReactNode;
   emptyText: string;
   columns?: string[];
   addLabel?: string;
@@ -16,7 +19,7 @@ interface RuleSectionProps {
   sortBy?: 'name' | 'value-asc' | 'value-desc';
 }
 
-export default function RuleSection({
+export default function RuleSection<TItem extends RuleSectionItem>({
   title,
   description,
   items,
@@ -26,7 +29,7 @@ export default function RuleSection({
   addLabel = '+ Adicionar',
   onAddClick,
   sortBy = 'name',
-}: RuleSectionProps) {
+}: RuleSectionProps<TItem>) {
   const [sort, setSort] = useState(sortBy);
 
   const sortedItems = [...items].sort((a, b) => {
@@ -58,7 +61,7 @@ export default function RuleSection({
             {description}
           </p>
         </div>
-        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+        <div className="sec-actions">
           <select
             value={sort}
             onChange={(e) => setSort(e.target.value as 'name' | 'value-asc' | 'value-desc')}

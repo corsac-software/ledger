@@ -1,5 +1,6 @@
-import { formatMoney } from '../utils.js';
+import { PAID_COLOR } from '../../domain/constants.js';
 import type { MonthView } from '../../domain/types.js';
+import { formatMoney } from '../utils.js';
 
 export function hasInstallmentBarData(monthView: MonthView): boolean {
   return buildInstallmentBarConfig(monthView) !== null;
@@ -30,7 +31,7 @@ export function buildInstallmentBarConfig(monthView: MonthView) {
         {
           label: 'Já pago (acumulado)',
           data: paidValues,
-          backgroundColor: '#1D9E75',
+          backgroundColor: PAID_COLOR,
           borderRadius: 4,
         },
         {

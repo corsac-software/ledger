@@ -50,10 +50,10 @@ export default function Summary({
             Receitas <strong>{formatMoney(totals.receitas)}</strong>
           </div>
           <div>
-            Pago <strong style={{ color: '#A32D2D' }}>{formatMoney(despesasPagasBrutas)}</strong>
+            Pago <strong className="saldo-detail-paid">{formatMoney(despesasPagasBrutas)}</strong>
           </div>
           <div>
-            A pagar <strong style={{ color: '#854F0B' }}>{formatMoney(aPagar)}</strong>
+            A pagar <strong className="saldo-detail-payable">{formatMoney(aPagar)}</strong>
           </div>
         </div>
       </section>
