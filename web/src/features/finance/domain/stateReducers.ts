@@ -1,6 +1,11 @@
 import { createFinanceId } from '../lib/ids';
-import { previousMonthKey } from '../lib/utils';
+import { softDeleteItem } from '../lib/utils';
 import { OVERRIDE_TYPES } from './constants';
+import {
+  createDefaultFixedExpense,
+  createDefaultInstallment,
+  createDefaultRevenue,
+} from './factories';
 import { matchOverride } from './overrides/repository';
 import type { FinanceState, FixedExpense, Installment, OverrideType, Revenue } from './types';
 
@@ -34,13 +39,7 @@ export function addFixedExpense(state: FinanceState, data: Partial<FixedExpense>
     ...state,
     fixedExpenses: [
       ...state.fixedExpenses,
-      {
-        id: createFinanceId('fixed'),
-        active: true,
-        notes: '',
-        endMonth: null,
-        ...data,
-      } as FixedExpense,
+      createDefaultFixedExpense(data),
     ],
   };
 }
@@ -50,13 +49,7 @@ export function addRevenue(state: FinanceState, data: Partial<Revenue>): Finance
     ...state,
     revenues: [
       ...state.revenues,
-      {
-        id: createFinanceId('rev'),
-        active: true,
-        notes: '',
-        endMonth: null,
-        ...data,
-      } as Revenue,
+      createDefaultRevenue(data),
     ],
   };
 }
@@ -66,13 +59,7 @@ export function addInstallment(state: FinanceState, data: Partial<Installment>):
     ...state,
     installments: [
       ...state.installments,
-      {
-        id: createFinanceId('inst'),
-        active: true,
-        closedAt: null,
-        currentInstallment: 1,
-        ...data,
-      } as Installment,
+      createDefaultInstallment(data),
     ],
   };
 }
@@ -91,16 +78,10 @@ export function updateFixedExpense(
 }
 
 export function removeFixedExpense(state: FinanceState, id: string): FinanceState {
-  const closingMonth = previousMonthKey(new Date(state.currentDate).toISOString().slice(0, 7));
   return {
     ...state,
     fixedExpenses: state.fixedExpenses.map((item) =>
-      item.id === id
-        ? {
-            ...item,
-            endMonth: item.endMonth && item.endMonth < closingMonth ? item.endMonth : closingMonth,
-          }
-        : item
+      item.id === id ? softDeleteItem(item, state.currentDate) : item
     ),
   };
 }
@@ -117,16 +98,10 @@ export function updateRevenue(
 }
 
 export function removeRevenue(state: FinanceState, id: string): FinanceState {
-  const closingMonth = previousMonthKey(new Date(state.currentDate).toISOString().slice(0, 7));
   return {
     ...state,
     revenues: state.revenues.map((item) =>
-      item.id === id
-        ? {
-            ...item,
-            endMonth: item.endMonth && item.endMonth < closingMonth ? item.endMonth : closingMonth,
-          }
-        : item
+      item.id === id ? softDeleteItem(item, state.currentDate) : item
     ),
   };
 }
@@ -145,17 +120,10 @@ export function updateInstallment(
 }
 
 export function removeInstallment(state: FinanceState, id: string): FinanceState {
-  const currentMonthKey = new Date(state.currentDate).toISOString().slice(0, 7);
-  const closingMonth = previousMonthKey(currentMonthKey);
   return {
     ...state,
     installments: state.installments.map((item) =>
-      item.id === id
-        ? {
-            ...item,
-            closedAt: item.closedAt && item.closedAt < closingMonth ? item.closedAt : closingMonth,
-          }
-        : item
+      item.id === id ? softDeleteItem(item, state.currentDate, 'closedAt') : item
     ),
     monthOverrides: state.monthOverrides.filter(
       (override) =>

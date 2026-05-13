@@ -189,3 +189,53 @@ Data: 2026-05-12
   - `useLayoutEffect` reforca foco/seleção quando `isEditing` muda.
   - `eslint` passou via Node local.
   - `npm test`/`npm run build` nao puderam ser rerodados nesta ultima iteracao por falha de ambiente: Git Bash passou a falhar com `Win32 error 5`, e Vitest via Node direto falhou com `spawn EPERM` ao carregar config do Vite. Na iteracao imediatamente anterior, antes deste ajuste de foco, lint/test/build estavam verdes.
+- Fase 4 iniciada e concluida:
+  - Passos 4.1 a 4.4:
+    - Criado `src/features/finance/components/sections/shared/useCrudState.ts`.
+    - `useRevenueCrudState.ts`, `useFixedExpenseCrudState.ts` e `useInstallmentCrudState.ts` agora delegam estado/form/delete para o hook generico, preservando suas APIs publicas.
+    - Validado com `npm run lint`, `npm test` (221 testes) e `npm run build`.
+  - Passo 4.5:
+    - Criado `src/features/finance/components/sections/shared/createSectionLabels.ts`.
+    - `revenueSectionLabels.ts`, `fixedExpenseSectionLabels.ts` e `installmentSectionLabels.ts` usam a factory tipada, preservando estrutura de labels/modal/delete.
+    - Validado com `npm run lint`, `npm test` (221 testes) e `npm run build`.
+  - Passo 4.6:
+    - Criado `src/features/finance/components/sections/shared/createFormHelpers.ts`.
+    - `revenueFormHelpers.ts`, `fixedExpenseFormHelpers.ts` e `installmentFormHelpers.ts` usam a factory tipada para `createEmptyForm`, `createEditForm` e `buildPayload`.
+    - Validado com `npm run lint`, `npm test` (221 testes) e `npm run build`.
+  - Passo 4.7:
+    - Criado `softDeleteItem` em `src/features/finance/lib/utils.ts`.
+    - `stateReducers.ts` usa o helper para remover gastos fixos, receitas e parcelamentos (`endMonth`/`closedAt`).
+    - Validado com `npm run lint`, `npm test` (221 testes) e `npm run build`.
+  - Ressalva: tentativa de validacao visual dos modais CRUD nao concluiu porque o dev server local nao respondeu em `127.0.0.1:5173`; os gates de codigo da fase passaram.
+  - Proximo passo formal do roadmap: Fase 5, comecando por 5.1 (identificar diferencas reais entre as 3 sections).
+- Fase 5 iniciada:
+  - Passo 5.1 aplicado como analise comparativa documentada em `ROADMAP_PHASE5_ANALYSIS.md`.
+  - Conclusao: a extracao segura deve cobrir o shell repetido (`RuleSection`, `ConfirmModal`, `RuleModal`, `useCrudFormFlow`), mantendo fora do generico os dados derivados e renderizacao de rows de cada dominio.
+  - Proximo: passo 5.2, criar `shared/CrudSection.tsx` com esse limite de responsabilidade.
+- Fase 5 concluida:
+  - Passo 5.2: criado `src/features/finance/components/sections/shared/CrudSection.tsx` para encapsular `RuleSection`, modal CRUD, confirmacao de delete e `useCrudFormFlow`.
+  - Passos 5.3 a 5.5: `RevenuesSection.tsx`, `FixedExpensesSection.tsx` e `InstallmentsSection.tsx` migradas para o `CrudSection`, mantendo preparo de dados e row rendering especificos em cada section.
+  - Passo 5.6: boilerplate morto dos tres arquivos foi removido junto com a migracao.
+  - Passo 5.7: criado `src/features/finance/components/modals/ModalShell.tsx`; `ConfirmModal` e `RuleModal` compartilham o wrapper visual.
+  - Validado com `npm run lint`, `npm test` (221 testes) e `npm run build`.
+  - Ressalva: warnings ja conhecidos do Vite/plugin React continuam aparecendo, sem falhar build.
+  - Proximo passo formal do roadmap: Fase 6, comecando por factories de defaults em `domain/factories.ts`.
+- Fase 6 concluida:
+  - Passo 6.1: criado `src/features/finance/domain/factories.ts` com `createDefaultFixedExpense`, `createDefaultRevenue` e `createDefaultInstallment`.
+  - Passo 6.2: `stateReducers.ts` e `useFinanceActions.ts` passaram a usar as factories.
+  - Passo 6.3: defaults com `createFinanceId` ficaram centralizados nas factories.
+  - Validado com `npm run lint`, `npm test` (221 testes) e `npm run build`.
+  - Roadmap principal de deduplicacao concluido ate a Fase 6.
+- Auditoria final pos-roadmap:
+  - Atualizado `roadmap-deduplicacao.md` com a secao "Auditoria Final Pos-Roadmap".
+  - Removidos `dev-server.log` e `dev-server.err.log`.
+  - Removido `console.log` de `ExportButton.tsx`.
+  - `RuleSection` passou a ser generico, permitindo `CrudSection` usar itens tipados sem cast.
+  - Removidos casts `as any` introduzidos pela migracao para `CrudSection` em `RevenuesSection`, `FixedExpensesSection`, `InstallmentsSection` e `CrudSection`.
+  - Ressalvas mantidas no roadmap: `package-lock.json` ignorado, `*roadmap*` ignorado e warnings recorrentes do Vite/plugin React.
+  - Validado com `npm run lint`, `npm test` (221 testes), `npm run build`, `tsc --noEmit --pretty false` e `git diff --check`.
+- Preparacao V1:
+  - `ARCHITECTURE.md` reescrito para refletir a arquitetura atual apos o roadmap de deduplicacao.
+  - Documento agora cobre camadas, fluxo de dados, CRUD compartilhado, factories, soft-delete, estilos, gates, hooks/Husky, warnings conhecidos e ressalvas antes do lancamento.
+  - Adicionada secao explicita `Regras Obrigatorias para IA`, mantendo as convencoes existentes e tornando os pontos bloqueantes mais visiveis para futuras sessoes.
+  - `git diff --check -- ARCHITECTURE.md`: passou.

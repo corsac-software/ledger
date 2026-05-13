@@ -4,7 +4,6 @@ export function ExportButton() {
   const handleExport = async () => {
     try {
       const link = await generateExportLink();
-      console.log('Link gerado (primeiros 100 chars):', link.substring(0, 100) + '...');
       const copiado = await navigator.clipboard
         .writeText(link)
         .then(() => true)

@@ -32,6 +32,20 @@ export function previousMonthKey(key: string): string {
   return monthKey(date);
 }
 
+export function softDeleteItem<T extends Record<string, unknown>>(
+  item: T,
+  currentDate: Date,
+  dateField = 'endMonth'
+): T {
+  const closingMonth = previousMonthKey(new Date(currentDate).toISOString().slice(0, 7));
+  const currentValue = item[dateField];
+  return {
+    ...item,
+    [dateField]:
+      typeof currentValue === 'string' && currentValue < closingMonth ? currentValue : closingMonth,
+  };
+}
+
 export function isMonthInRange(
   monthKeyValue: string,
   startMonth: string | null,
