@@ -154,3 +154,38 @@ Data: 2026-05-12
   - Consolidado `jest-dom` em `vitest.setup.ts` usando `@testing-library/jest-dom/vitest`.
   - Removido `src/features/finance/tests/setupTests.ts` e simplificado `setupFiles` em `vitest.config.ts`.
   - Validado com `npm run lint`, `npm test` (219 testes) e `npm run build`.
+- Mini-ajuste do ponto 5 aplicado:
+  - Removidas duplicacoes locais de `buildCardIconMap` em `FixedExpenseForm.tsx` e `InstallmentForm.tsx`.
+  - Ambos os forms agora usam `src/features/finance/lib/cardIconMap.ts`.
+  - Validado com `npm run lint`, `npm test` (219 testes) e `npm run build`.
+- Ponto 6 (validacao visual ampliada) aplicado:
+  - Validada tela de resumo vazia em desktop e mobile com checks de overflow horizontal.
+  - Validado estado com cartao/fatura criado via UI em contexto temporario Playwright, desktop e mobile.
+  - Validada aba `Gastos Fixos` em desktop e mobile para `.sec-header`, `.sec-title`, `.sec-actions` e `.add-btn`.
+  - Encontrado e corrigido no mobile o botao `+ Novo gasto fixo` quebrando em varias linhas.
+  - `RuleSection.tsx` agora usa `className="sec-actions"` no grupo de acoes; `section-header.css` trata wrap mobile e `white-space: nowrap` nos botoes.
+  - Validado novamente com `npm run lint`, `npm test` (219 testes), `npm run build` e capturas Playwright.
+- Correcao do `BillCard` de faturas:
+  - Restaurado comportamento esperado do `R$`: escondido no repouso, aparece animando pela esquerda apenas no modo de edicao.
+  - Valor exibido no repouso fica sem `R$`, evitando sobreposicao com o prefixo.
+  - Clique fora do input agora confirma o valor e fecha a edicao.
+  - Input de fatura passou a aplicar mascara monetaria enquanto digita.
+  - Adicionados testes para valor existente, card sem valor/botao `+ Incluir fatura` e fechamento ao clicar fora.
+  - Validado com `npm run lint`, `npm test` (221 testes), `npm run build` e capturas Playwright dos estados normal/edicao/clique fora.
+- Analise ampla do `web`:
+  - `npm run lint`: passou.
+  - `npm test`: passou, 22 arquivos e 221 testes.
+  - `npm run build`: passou.
+  - `tsc --noEmit --pretty false`: passou.
+  - `git diff --check` e `git diff --cached --check`: passaram.
+  - `git hook run pre-commit`: passou, executando lint e testes via `web/.husky/pre-commit`.
+  - Nao foram encontrados erros de TypeScript, imports quebrados, testes falhando, conflito de merge ou whitespace invalidado pelo Git.
+  - Ressalva atual: `src/styles/navigation/month-nav.css` esta em estado `MM`; ha um ajuste nao stageado posterior na animacao do `BillCard` que causou regressao visual e deve ser refeito antes do commit.
+  - Ressalva de ambiente/dependencias: Vite emite warnings sobre `vite:react-babel`/`oxc`, e `@vitejs/plugin-react` esta fora da faixa peer ideal para `vite@8`; build segue verde, mas isso merece ajuste dedicado.
+  - Restaram logs temporarios locais `dev-server.log` e `dev-server.err.log`.
+- Ajuste final do `BillCard`:
+  - `bill-input-shell` do card voltou para fluxo flex com `max-width` animado de `0` para `100%`, para ser empurrado pelo `R$` ao entrar em edicao em vez de pular para a posicao final.
+  - Entrada em edicao agora previne o foco padrao do clique/pointer e agenda foco/seleção do input no proprio gesto do usuario.
+  - `useLayoutEffect` reforca foco/seleção quando `isEditing` muda.
+  - `eslint` passou via Node local.
+  - `npm test`/`npm run build` nao puderam ser rerodados nesta ultima iteracao por falha de ambiente: Git Bash passou a falhar com `Win32 error 5`, e Vitest via Node direto falhou com `spawn EPERM` ao carregar config do Vite. Na iteracao imediatamente anterior, antes deste ajuste de foco, lint/test/build estavam verdes.

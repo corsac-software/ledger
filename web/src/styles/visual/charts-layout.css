@@ -87,7 +87,7 @@
   font-size: 13px;
   font-weight: 500;
   color: var(--color-text-secondary);
-  letter-spacing: .05em;
+  letter-spacing: 0.05em;
   margin-bottom: var(--layout-gap-sm);
 }
 

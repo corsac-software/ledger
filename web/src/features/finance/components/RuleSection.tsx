@@ -58,7 +58,7 @@ export default function RuleSection({
             {description}
           </p>
         </div>
-        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+        <div className="sec-actions">
           <select
             value={sort}
             onChange={(e) => setSort(e.target.value as 'name' | 'value-asc' | 'value-desc')}

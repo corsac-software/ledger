@@ -16,7 +16,9 @@
   margin-bottom: var(--layout-gap);
 }
 
-.form-grid.tri { grid-template-columns: 1fr 1fr 1fr; }
+.form-grid.tri {
+  grid-template-columns: 1fr 1fr 1fr;
+}
 
 .field label {
   font-size: 12px;

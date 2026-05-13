@@ -1,8 +1,8 @@
 import type { ChangeEvent, Dispatch, SetStateAction } from 'react';
 import type { CardBillItem } from '../../../domain/types';
+import { buildCardIconMap } from '../../../lib/cardIconMap';
 import { useI18n } from '../../../lib/i18n';
 import { applyMoneyMask } from '../../../lib/moneyInput';
-import { CARD_ICONS } from '../../../ui/constants';
 import { Input, SelectWithIcon } from '../../inputs';
 
 export type InstallmentFormState = {
@@ -31,17 +31,6 @@ function buildCardOptions(
   }
 
   return options;
-}
-
-function buildCardIconMap(cards: CardBillItem[]): Record<string, string> {
-  const map: Record<string, string> = { ...CARD_ICONS };
-  // Adicionar ícones dos cartões dinâmicos, se houver
-  cards.forEach((card) => {
-    if (card.icon && !map[card.id]) {
-      map[card.id] = card.icon;
-    }
-  });
-  return map;
 }
 
 export function InstallmentForm({ form, setForm, cards }: InstallmentFormProps) {

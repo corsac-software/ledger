@@ -293,8 +293,11 @@
   color: #ffffff;
   letter-spacing: 0.014em;
   transition: opacity 0.3s ease;
-  width: 100%;
+  flex: 1;
   min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .bill-card-add-value {
@@ -358,18 +361,21 @@
 
 .bill-currency {
   width: 0;
+  display: inline-flex;
+  align-items: baseline;
   opacity: 0;
   overflow: hidden;
-  transition:
-    width 0.3s ease,
-    opacity 0.3s ease,
-    margin-right 0.3s ease;
+  margin-right: 0;
   white-space: nowrap;
   flex-shrink: 0;
   font-size: 18px;
   font-weight: 600;
   color: #ffffff;
   letter-spacing: 0.03em;
+  transition:
+    width 0.3s ease,
+    opacity 0.3s ease,
+    margin-right 0.3s ease;
 }
 
 .bill-input-shell {
@@ -398,9 +404,9 @@
 }
 
 .bill-display.editing .bill-currency {
-  width: 25px;
+  width: 22px;
   opacity: 1;
-  margin-right: 0px;
+  margin-right: 3px;
 }
 
 .bill-card-value,
@@ -421,7 +427,6 @@
   opacity: 1;
   visibility: visible;
   pointer-events: auto;
-  width: 100%;
 }
 
 .bill-display.editing .bill-input-shell {
@@ -570,14 +575,34 @@
 }
 
 .bill-card .bill-input-shell {
+  position: static;
   display: inline-flex;
   align-items: baseline;
+  flex: 1 1 auto;
+  max-width: 0;
+  min-width: 0;
   gap: 4px;
   padding: 0;
   border: 0;
   border-radius: 0;
   background: transparent;
+  transform: none;
+  opacity: 0;
+  visibility: hidden;
+  overflow: hidden;
+  pointer-events: none;
   box-shadow: none;
+  transition:
+    max-width 0.3s ease,
+    opacity 0.2s ease,
+    visibility 0.2s ease;
+}
+
+.bill-card .bill-input-shell.visible {
+  max-width: 100%;
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
 }
 
 .bill-card .bill-input-shell:focus-within {

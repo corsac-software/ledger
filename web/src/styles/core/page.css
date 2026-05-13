@@ -1,6 +1,10 @@
 body {
   background-color: var(--color-background-canvas);
-  background-image: radial-gradient(1200px 420px at 50% -220px, var(--color-background-glow) 0%, rgba(0, 0, 0, 0) 72%);
+  background-image: radial-gradient(
+    1200px 420px at 50% -220px,
+    var(--color-background-glow) 0%,
+    rgba(0, 0, 0, 0) 72%
+  );
   color: var(--color-text-primary);
   padding: 16px;
   font-family: var(--font-sans);
@@ -12,7 +16,15 @@ body {
   padding: 16px 0 40px;
 }
 
-.neg { color: var(--color-semantic-danger); }
-.pos { color: var(--color-semantic-success); }
-.warn { color: var(--color-semantic-warning); }
-.neu { color: var(--color-text-primary); }
+.neg {
+  color: var(--color-semantic-danger);
+}
+.pos {
+  color: var(--color-semantic-success);
+}
+.warn {
+  color: var(--color-semantic-warning);
+}
+.neu {
+  color: var(--color-text-primary);
+}
