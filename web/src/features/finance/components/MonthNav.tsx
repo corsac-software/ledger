@@ -110,8 +110,9 @@ function BillCard({
     setIsEditing(true);
     window.setTimeout(() => {
       inputRef.current?.focus();
-      inputRef.current?.select();
-    }, 0);
+      const length = inputRef.current?.value.length || 0;
+      inputRef.current?.setSelectionRange(length, length);
+    }, 10);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {

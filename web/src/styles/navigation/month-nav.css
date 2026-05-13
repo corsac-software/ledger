@@ -522,14 +522,6 @@
   color: var(--color-accent-strong);
 }
 
-.card-bill-field--santander .card-bill-icon {
-  color: #d62d36;
-}
-
-.card-bill-field--nubank .card-bill-icon {
-  color: #7c3aed;
-}
-
 .card-bill-label {
   font-size: 9px;
   color: var(--color-text-secondary);
@@ -593,9 +585,9 @@
   pointer-events: none;
   box-shadow: none;
   transition:
-    max-width 0.3s ease,
-    opacity 0.2s ease,
-    visibility 0.2s ease;
+    max-width 0s ease,
+    opacity 0s ease,
+    visibility 0.3s ease;
 }
 
 .bill-card .bill-input-shell.visible {
