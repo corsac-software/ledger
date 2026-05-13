@@ -40,6 +40,9 @@ out/
 
 generated-migrations/*.sql
 
+.DS_Store
+
 ## AI-related
 .kilo/
 .sisyphus/
+
