@@ -1,4 +1,4 @@
-package br.dev.brunorsch.config
+package br.dev.corsac.ledger.config
 
 import org.flywaydb.core.Flyway
 import javax.sql.DataSource

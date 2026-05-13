@@ -1,4 +1,4 @@
-package br.dev.brunorsch.config
+package br.dev.corsac.ledger.config
 
 import io.ktor.http.*
 import io.ktor.server.application.*
