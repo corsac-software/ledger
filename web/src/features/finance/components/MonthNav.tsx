@@ -112,7 +112,7 @@ function BillCard({
       inputRef.current?.focus();
       const length = inputRef.current?.value.length || 0;
       inputRef.current?.setSelectionRange(length, length);
-    }, 10);
+    }, 100);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
