@@ -10,3 +10,9 @@
   align-items: center;
   gap: var(--layout-gap-sm);
 }
+
+.alert-bar--guidance {
+  background: var(--color-alert-guidance-bg);
+  border-color: var(--color-alert-guidance-border);
+  color: var(--color-alert-text);
+}

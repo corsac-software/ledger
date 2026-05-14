@@ -3,12 +3,10 @@ import { ALLOWED_BILL_CARDS, ALLOWED_PAYMENT_METHODS, OVERRIDE_TYPES } from '../
 import {
   BILL_CARDS,
   BILL_CARD_KEYS,
-  CARD_ICONS,
   CARD_LABELS,
   CARD_ORDER,
   CATEGORIES,
   CATEGORY_LABELS,
-  ICONS,
   TABS,
 } from '../ui/constants';
 
@@ -77,20 +75,6 @@ describe('constants.ts', () => {
   describe('CARD_LABELS', () => {
     it('has fallback card label', () => {
       expect(CARD_LABELS.outro).toBe('OUTROS');
-    });
-  });
-
-  describe('ICONS', () => {
-    it('has icons for payment methods', () => {
-      expect(ICONS.boleto).toBeDefined();
-      expect(ICONS.pix).toBeDefined();
-      expect(ICONS.outro).toBeDefined();
-    });
-  });
-
-  describe('CARD_ICONS', () => {
-    it('has icons for fallback card', () => {
-      expect(CARD_ICONS.outro).toBeDefined();
     });
   });
 

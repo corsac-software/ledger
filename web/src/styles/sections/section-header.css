@@ -1,5 +1,5 @@
 .section {
-  margin-bottom: var(--layout-gap-section);
+  margin-bottom: 0;
 }
 
 .sec-header {
@@ -7,7 +7,11 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  margin-bottom: 6px;
+  margin: 2px 0 18px;
+}
+
+.section-header--finflow {
+  margin-bottom: var(--layout-gap-section);
 }
 
 .sec-header > :first-child {
@@ -22,16 +26,53 @@
 }
 
 .sec-title {
-  --label-xs-size: 11px;
+  --label-xs-size: 18px;
+  --label-xs-color: var(--color-text-primary);
+  --label-xs-letter-spacing: 0;
+  text-transform: none;
+  font-weight: 800;
+}
+
+.sec-description {
+  margin: 4px 0 0;
+  color: var(--color-text-secondary);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.sec-description span {
+  color: var(--color-accent-strong);
+  font-weight: 700;
 }
 
 .add-btn {
-  gap: 4px;
-  font-size: 11px;
-  font-weight: 500;
-  padding: 6px 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  font-size: 12px;
+  font-weight: 800;
+  min-height: 36px;
+  padding: 8px 18px;
+  border-radius: 999px;
   white-space: nowrap;
   transition: all 0.15s ease;
+}
+
+.add-btn svg {
+  flex: 0 0 auto;
+}
+
+.add-btn--primary {
+  border-color: color-mix(in srgb, var(--color-accent) 84%, var(--color-border));
+  background: var(--color-accent);
+  color: #ffffff;
+  font-weight: 800;
+}
+
+.add-btn--primary:hover {
+  background: var(--color-accent-strong);
+  color: #ffffff;
 }
 
 .add-btn:hover {

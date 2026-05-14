@@ -42,7 +42,6 @@ export interface Revenue {
   active: boolean;
   startMonth: string;
   endMonth: string | null;
-  category: string;
   notes: string;
 }
 
@@ -109,6 +108,5 @@ export type FinanceIdPrefix = 'fixed' | 'rev' | 'inst' | 'ovr' | 'test';
 export interface CardBillItem {
   id: string;
   name: string;
-  icon?: string;
   color?: string;
 }

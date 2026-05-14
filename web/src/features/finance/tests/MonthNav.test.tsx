@@ -62,8 +62,8 @@ describe('MonthNav.tsx', () => {
       <MonthNav
         {...defaultProps}
         cardList={[
-          { id: 'nubank', name: 'Nubank', icon: '💙' },
-          { id: 'santander', name: 'Santander', icon: '🔴' },
+          { id: 'nubank', name: 'Nubank' },
+          { id: 'santander', name: 'Santander' },
         ]}
       />
     );
@@ -75,7 +75,7 @@ describe('MonthNav.tsx', () => {
     render(
       <MonthNav
         {...defaultProps}
-        cardList={[{ id: 'nubank', name: 'Nubank', icon: '💙' }]}
+        cardList={[{ id: 'nubank', name: 'Nubank' }]}
         cardBills={{ nubank: 500 }}
       />
     );
@@ -89,11 +89,7 @@ describe('MonthNav.tsx', () => {
 
   it('shows add bill button without currency when card has no value', () => {
     render(
-      <MonthNav
-        {...defaultProps}
-        cardList={[{ id: 'nubank', name: 'Nubank', icon: '💙' }]}
-        cardBills={{}}
-      />
+      <MonthNav {...defaultProps} cardList={[{ id: 'nubank', name: 'Nubank' }]} cardBills={{}} />
     );
 
     const card = screen.getByText('Nubank').closest('.bill-card');
@@ -106,7 +102,7 @@ describe('MonthNav.tsx', () => {
     render(
       <MonthNav
         {...defaultProps}
-        cardList={[{ id: 'nubank', name: 'Nubank', icon: '💙' }]}
+        cardList={[{ id: 'nubank', name: 'Nubank' }]}
         cardBills={{ nubank: 500 }}
       />
     );
@@ -126,7 +122,7 @@ describe('MonthNav.tsx', () => {
       <MonthNav
         {...defaultProps}
         onSetCardBill={onSetCardBill}
-        cardList={[{ id: 'nubank', name: 'Nubank', icon: '💙' }]}
+        cardList={[{ id: 'nubank', name: 'Nubank' }]}
         cardBills={{ nubank: 500 }}
       />
     );
@@ -150,7 +146,7 @@ describe('MonthNav.tsx', () => {
       <MonthNav
         {...defaultProps}
         onSetCardBill={onSetCardBill}
-        cardList={[{ id: 'nubank', name: 'Nubank', icon: '💙' }]}
+        cardList={[{ id: 'nubank', name: 'Nubank' }]}
         cardBills={{ nubank: 500 }}
       />
     );
@@ -179,10 +175,8 @@ describe('MonthNav.tsx', () => {
     expect(screen.getByText('Nenhum cartão adicionado')).toBeInTheDocument();
   });
 
-  it('renders the card icon before the card name', () => {
-    render(
-      <MonthNav {...defaultProps} cardList={[{ id: 'nubank', name: 'Nubank', icon: '💜' }]} />
-    );
+  it('renders the card name and delete action', () => {
+    render(<MonthNav {...defaultProps} cardList={[{ id: 'nubank', name: 'Nubank' }]} />);
 
     const card = screen.getByText('Nubank').closest('.bill-card');
     expect(card).not.toBeNull();
@@ -193,34 +187,68 @@ describe('MonthNav.tsx', () => {
     expect(top?.querySelector('.bill-card-delete')).toHaveTextContent('Excluir');
   });
 
-  it('adds a new card to the list', () => {
+  it('adds a new card without requiring an initial bill', () => {
     const onSetCardList = vi.fn();
+    const onSetCardBill = vi.fn();
     render(
       <MonthNav
         {...defaultProps}
-        cardList={[{ id: 'nubank', name: 'Nubank', icon: '💜' }]}
+        cardList={[{ id: 'nubank', name: 'Nubank' }]}
         onSetCardList={onSetCardList}
+        onSetCardBill={onSetCardBill}
       />
     );
 
     fireEvent.click(screen.getByText('+ Novo cartão'));
     expect(screen.getByText('Adicionar cartão')).toBeInTheDocument();
-    fireEvent.change(screen.getByPlaceholderText('Nome do cartão'), {
+    expect(
+      screen.getByText('Opcional. Voce pode adicionar o cartao agora e informar a fatura depois.')
+    ).toBeInTheDocument();
+    fireEvent.change(screen.getByLabelText('Nome do cartão'), {
       target: { value: 'Cartao novo' },
     });
     fireEvent.click(screen.getByText('Adicionar'));
 
     expect(onSetCardList).toHaveBeenCalledWith([
-      { id: 'nubank', name: 'Nubank', icon: '💜' },
-      { id: 'cartao-novo', name: 'Cartao novo', icon: '💳' },
+      { id: 'nubank', name: 'Nubank' },
+      { id: 'cartao-novo', name: 'Cartao novo' },
     ]);
+    expect(onSetCardBill).not.toHaveBeenCalled();
   });
 
-  it('does not render a manual color picker for new cards', () => {
+  it('adds a new card and launches the optional initial bill', () => {
+    const onSetCardList = vi.fn();
+    const onSetCardBill = vi.fn();
     render(
       <MonthNav
         {...defaultProps}
-        cardList={[{ id: 'nubank', name: 'Nubank', icon: '💜' }]}
+        cardList={[{ id: 'nubank', name: 'Nubank' }]}
+        onSetCardList={onSetCardList}
+        onSetCardBill={onSetCardBill}
+      />
+    );
+
+    fireEvent.click(screen.getByText('+ Novo cartão'));
+    fireEvent.change(screen.getByLabelText('Nome do cartão'), {
+      target: { value: 'Cartao novo' },
+    });
+    fireEvent.change(screen.getByLabelText('Fatura deste mês'), {
+      target: { value: '2.400,00' },
+    });
+    fireEvent.click(screen.getByText('Adicionar'));
+
+    expect(onSetCardList).toHaveBeenCalledWith([
+      { id: 'nubank', name: 'Nubank' },
+      { id: 'cartao-novo', name: 'Cartao novo' },
+    ]);
+    expect(onSetCardBill).toHaveBeenCalledWith('cartao-novo', 2400);
+  });
+
+  it('does not render manual visual pickers for new cards', () => {
+    render(
+      <MonthNav
+        {...defaultProps}
+        cardList={[{ id: 'nubank', name: 'Nubank' }]}
         onSetCardList={vi.fn()}
       />
     );
@@ -241,7 +269,7 @@ describe('MonthNav.tsx', () => {
     render(
       <MonthNav
         {...defaultProps}
-        cardList={[{ id: 'nubank', name: 'Nubank', icon: '💜' }]}
+        cardList={[{ id: 'nubank', name: 'Nubank' }]}
         onSetCardList={onSetCardList}
         onSetCardBill={onSetCardBill}
       />
@@ -260,7 +288,7 @@ describe('MonthNav.tsx', () => {
     render(
       <MonthNav
         {...defaultProps}
-        cardList={[{ id: 'nubank', name: 'Nubank', icon: '💜' }]}
+        cardList={[{ id: 'nubank', name: 'Nubank' }]}
         cardDeleteReasons={{ nubank: 'Usado em uma despesa fixa' }}
       />
     );

@@ -39,6 +39,8 @@ export function normalizeRevenue(item: Record<string, unknown>): Revenue {
   const id = item?.id as string | undefined;
 
   const updates: Record<string, unknown> = {};
+  const rest = { ...item };
+  delete rest.category;
 
   if (amount !== undefined && baseAmount === undefined) {
     updates.baseAmount = amount;
@@ -49,8 +51,8 @@ export function normalizeRevenue(item: Record<string, unknown>): Revenue {
   }
 
   if (Object.keys(updates).length > 0) {
-    return { ...item, ...updates } as unknown as Revenue;
+    return { ...rest, ...updates } as unknown as Revenue;
   }
 
-  return item as unknown as Revenue;
+  return rest as unknown as Revenue;
 }

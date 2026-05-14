@@ -31,6 +31,8 @@ export function RevenueRow({
   return (
     <tr>
       <td>{item.name}</td>
+      <td>{formatStartMonth(item.startMonth)}</td>
+      <td>Sim</td>
       <td>
         <div className="month-amount-cell">
           <input
@@ -50,12 +52,11 @@ export function RevenueRow({
               onClick={() => onMonthAmountChange(item.id, null)}
               title="Restaurar valor original"
             >
-              ×
+              x
             </button>
           )}
         </div>
       </td>
-      <td>{formatStartMonth(item.startMonth)}</td>
       <td>
         <RowActions onEdit={onEdit} onDelete={onDelete} />
       </td>

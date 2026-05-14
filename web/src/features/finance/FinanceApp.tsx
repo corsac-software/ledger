@@ -1,3 +1,4 @@
+import { Moon, Sun } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { AppTabs } from './components/app-shell/AppTabs';
 import { LoadingScreen } from './components/app-shell/LoadingScreen';
@@ -28,6 +29,7 @@ export default function FinanceApp() {
   const { monthView, currentKey, currentDate } = finance;
   const { fixedExpenses, revenues, monthOverrides } = finance;
   const settings = useFinanceSettings();
+  const ThemeIcon = settings.theme === 'premium' ? Sun : Moon;
   const { isReady } = finance;
   const actions = useFinanceActions();
   const [activeTab, setActiveTab] = useState('resumo');
@@ -155,33 +157,74 @@ export default function FinanceApp() {
     <div className="app">
       <h2 className="sr-only">Painel de controle financeiro</h2>
 
-      <header className="sticky-header">
-        <MonthNav
-          label={monthLabel(currentDate)}
-          onPrev={() => actions.changeMonth(-1)}
-          onNext={() => actions.changeMonth(1)}
-          theme={settings.theme}
-          onToggleTheme={() =>
-            actions.setTheme(settings.theme === 'premium' ? 'default' : 'premium')
-          }
-          cardBills={monthCardBills}
-          onSetCardBill={setMonthCardBill}
-          cardList={cardBillsList}
-          onSetCardList={handleSetCardList}
-          cardDeleteReasons={cardDeleteReasons}
-        />
-
-        <div className="finance-backup-actions">
-          <ExportButton />
+      <header className="app-topbar">
+        <div className="app-brand" aria-label="Ledger">
+          <span className="app-brand-mark" aria-hidden="true">
+            L
+          </span>
+          <span>Ledger</span>
         </div>
-        <AppTabs tabs={TABS} activeTab={activeTab} translate={t} onChange={setActiveTab} />
+
+        <div className="app-month-stepper" role="group" aria-label="Navegacao de meses">
+          <button
+            className="month-step-btn month-step-btn--icon"
+            type="button"
+            onClick={() => actions.changeMonth(-1)}
+            aria-label="Mes anterior"
+          >
+            &lt;
+          </button>
+          <h2>{monthLabel(currentDate)}</h2>
+          <button
+            className="month-step-btn month-step-btn--icon"
+            type="button"
+            onClick={() => actions.changeMonth(1)}
+            aria-label="Proximo mes"
+          >
+            &gt;
+          </button>
+        </div>
+
+        <div className="app-topbar-actions">
+          <ExportButton />
+          <button
+            className="theme-btn"
+            onClick={() => actions.setTheme(settings.theme === 'premium' ? 'default' : 'premium')}
+            aria-label={`Mudar para tema ${settings.theme === 'premium' ? 'Claro' : 'Escuro'}`}
+            title={`Mudar para tema ${settings.theme === 'premium' ? 'Claro' : 'Escuro'}`}
+          >
+            <ThemeIcon aria-hidden="true" className="theme-btn-icon" size={15} strokeWidth={2} />
+          </button>
+        </div>
       </header>
 
-      <main className="app-content" aria-live="polite">
-        <div className="app-screen app-screen--active" key={activeTab}>
-          {renderTabContent(activeTab)}
-        </div>
-      </main>
+      <div className="dashboard-shell">
+        <section className="dashboard-controls">
+          <MonthNav
+            label={monthLabel(currentDate)}
+            onPrev={() => actions.changeMonth(-1)}
+            onNext={() => actions.changeMonth(1)}
+            theme={settings.theme}
+            onToggleTheme={() =>
+              actions.setTheme(settings.theme === 'premium' ? 'default' : 'premium')
+            }
+            cardBills={monthCardBills}
+            onSetCardBill={setMonthCardBill}
+            cardList={cardBillsList}
+            onSetCardList={handleSetCardList}
+            cardDeleteReasons={cardDeleteReasons}
+            headerActions={<ExportButton />}
+          />
+
+          <AppTabs tabs={TABS} activeTab={activeTab} translate={t} onChange={setActiveTab} />
+        </section>
+
+        <main className="app-content" aria-live="polite">
+          <div className="app-screen app-screen--active" key={activeTab}>
+            {renderTabContent(activeTab)}
+          </div>
+        </main>
+      </div>
     </div>
   );
 }

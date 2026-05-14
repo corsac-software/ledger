@@ -1,4 +1,13 @@
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import {
+  type ReactNode,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
+import { Moon, Plus, Sun, Trash2 } from 'lucide-react';
 import type { CardBillItem } from '../domain/types';
 import { useCardList } from '../hooks/useCardList';
 import { detectBankColor } from '../lib/bankColors';
@@ -18,6 +27,7 @@ interface MonthNavProps {
   cardList?: CardBillItem[];
   onSetCardList?: (list: CardBillItem[]) => void;
   cardDeleteReasons?: Record<string, string>;
+  headerActions?: ReactNode;
 }
 
 function BillCard({
@@ -135,7 +145,12 @@ function BillCard({
   };
 
   return (
-    <div className="bill-card" style={getCardStyle()}>
+    <div
+      className={`bill-card ${hasValue ? 'bill-card--has-value' : 'bill-card--empty'} ${
+        deleteReason ? 'bill-card--locked' : ''
+      }`}
+      style={getCardStyle()}
+    >
       <div className="bill-card-top">
         <span className="bill-card-name" title={displayName}>
           {displayName}
@@ -153,6 +168,7 @@ function BillCard({
             aria-label={`Apagar cartão ${displayName}`}
             title={`Apagar cartão ${displayName}`}
           >
+            <Trash2 size={11} strokeWidth={2} aria-hidden />
             Excluir
           </button>
         )}
@@ -231,11 +247,12 @@ export default function MonthNav({
   cardList,
   onSetCardList,
   cardDeleteReasons,
+  headerActions,
 }: MonthNavProps) {
   const { normalizeCardName } = useI18n();
   const isDarkTheme = theme === 'premium';
-  const nextThemeIcon = isDarkTheme ? '☀' : '🌙';
   const nextThemeLabel = isDarkTheme ? 'Claro' : 'Escuro';
+  const ThemeIcon = isDarkTheme ? Sun : Moon;
   const cards = useCardList(cardList);
   const hasCards = cards.length > 0;
 
@@ -267,40 +284,12 @@ export default function MonthNav({
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [newCardName, setNewCardName] = useState('');
-  const [newCardIcon, setNewCardIcon] = useState('💳');
+  const [newCardBillInput, setNewCardBillInput] = useState('');
   const [deleteTarget, setDeleteTarget] = useState<CardBillItem | null>(null);
-  const [canScrollIconSelector, setCanScrollIconSelector] = useState(false);
-  const iconSelectorRef = useRef<HTMLDivElement>(null);
-
-  const iconOptions = [
-    '💳',
-    '🔴',
-    '🟠',
-    '🟡',
-    '🟢',
-    '🔵',
-    '🟣',
-    '⚪',
-    '⚫',
-    '🟤',
-    '🩷',
-    '🩵',
-    '🩶',
-    '❤️',
-    '💛',
-    '💚',
-    '💙',
-    '💜',
-    '🖤',
-    '🏦',
-    '🏠',
-    '💰',
-    '🪙',
-  ];
 
   const resetAddCardForm = () => {
     setNewCardName('');
-    setNewCardIcon('💳');
+    setNewCardBillInput('');
   };
 
   const openAddCardModal = () => {
@@ -313,40 +302,26 @@ export default function MonthNav({
     resetAddCardForm();
   };
 
-  const updateIconSelectorScrollState = () => {
-    const element = iconSelectorRef.current;
-    if (!element) {
-      setCanScrollIconSelector(false);
-      return;
-    }
-
-    const hasOverflow = element.scrollWidth > element.clientWidth + 1;
-    const isAtEnd = element.scrollLeft + element.clientWidth >= element.scrollWidth - 1;
-    setCanScrollIconSelector(hasOverflow && !isAtEnd);
-  };
-
-  const handleIconSelect = (icon: string, event: React.MouseEvent<HTMLButtonElement>) => {
-    setNewCardIcon(icon);
-    event.currentTarget.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
-  };
-
   const handleAddCard = () => {
     if (!onSetCardList) return;
     const id = newCardName.trim().toLowerCase().replace(/\s+/g, '-');
     if (!id) return;
 
     const cardColor = detectBankColor(newCardName);
+    const initialBill = parseMoneyInput(newCardBillInput, { allowZero: false });
 
     const newCard: CardBillItem = {
       id,
       name: newCardName.trim(),
-      icon: newCardIcon,
     };
     if (cardColor) {
       newCard.color = cardColor;
     }
     const next = [...(cardList || []), newCard];
     onSetCardList(next);
+    if (initialBill !== null) {
+      onSetCardBill(id, initialBill);
+    }
     closeAddCardModal();
   };
 
@@ -361,24 +336,9 @@ export default function MonthNav({
     if (!hasCards) {
       setIsAddModalOpen(false);
       setNewCardName('');
-      setNewCardIcon('💳');
+      setNewCardBillInput('');
     }
   }, [hasCards]);
-
-  useEffect(() => {
-    if (!isAddModalOpen) {
-      setCanScrollIconSelector(false);
-      return;
-    }
-
-    const frame = window.requestAnimationFrame(updateIconSelectorScrollState);
-    window.addEventListener('resize', updateIconSelectorScrollState);
-
-    return () => {
-      window.cancelAnimationFrame(frame);
-      window.removeEventListener('resize', updateIconSelectorScrollState);
-    };
-  }, [isAddModalOpen]);
 
   return (
     <div className="month-nav">
@@ -402,23 +362,25 @@ export default function MonthNav({
             →
           </button>
         </div>
-        <button
-          className="theme-btn"
-          onClick={onToggleTheme}
-          aria-label={`Mudar para tema ${nextThemeLabel}`}
-          title={`Mudar para tema ${nextThemeLabel}`}
-        >
-          <span aria-hidden="true" className="theme-btn-icon">
-            {nextThemeIcon}
-          </span>
-        </button>
+        <div className="month-nav-actions">
+          {headerActions}
+          <button
+            className="theme-btn"
+            onClick={onToggleTheme}
+            aria-label={`Mudar para tema ${nextThemeLabel}`}
+            title={`Mudar para tema ${nextThemeLabel}`}
+          >
+            <ThemeIcon aria-hidden="true" className="theme-btn-icon" size={15} strokeWidth={2} />
+          </button>
+        </div>
       </div>
       <div className="card-bill-panel">
         <div className="card-bill-panel-head">
           <p className="card-bill-title">Faturas do mês</p>
           {hasCards && onSetCardList ? (
             <button type="button" className="card-bill-add-btn" onClick={openAddCardModal}>
-              + Novo cartão
+              <Plus size={13} strokeWidth={2.4} aria-hidden />
+              Novo cartão
             </button>
           ) : null}
         </div>
@@ -454,35 +416,36 @@ export default function MonthNav({
         }}
       >
         <div className="card-bill-add-form">
-          <input
-            className="card-bill-add-input"
-            type="text"
-            placeholder="Nome do cartão"
-            value={newCardName}
-            onChange={(e) => setNewCardName(e.target.value)}
-          />
-          <div className="icon-selector-shell">
-            <div
-              ref={iconSelectorRef}
-              className={`icon-selector ${canScrollIconSelector ? 'icon-selector--glow' : ''}`}
-              onScroll={updateIconSelectorScrollState}
-            >
-              {iconOptions.map((icon) => (
-                <button
-                  key={icon}
-                  type="button"
-                  className={`icon-option ${newCardIcon === icon ? 'selected' : ''}`}
-                  onClick={(event) => handleIconSelect(icon, event)}
-                >
-                  {icon}
-                </button>
-              ))}
-            </div>
-          </div>
+          <label className="field card-bill-add-field">
+            <span>Nome do cartão</span>
+            <input
+              className="card-bill-add-input"
+              type="text"
+              placeholder="Ex.: Sicredi"
+              value={newCardName}
+              onChange={(e) => setNewCardName(e.target.value)}
+              autoComplete="off"
+            />
+          </label>
+          <label className="field card-bill-add-field">
+            <span>Fatura deste mês</span>
+            <input
+              className="card-bill-add-input"
+              type="text"
+              placeholder="0,00"
+              value={newCardBillInput}
+              onChange={(e) => setNewCardBillInput(applyMoneyMask(e.target.value))}
+              inputMode="decimal"
+              autoComplete="off"
+            />
+          </label>
+          <p className="card-bill-add-hint">
+            Opcional. Voce pode adicionar o cartao agora e informar a fatura depois.
+          </p>
           {newCardName && detectBankColor(newCardName) ? (
             <div className="color-detection-info">
               <p className="color-detection-label">
-                🎨 Cor fixa detectada automaticamente para <strong>{newCardName}</strong>
+                Cor detectada automaticamente para <strong>{newCardName}</strong>
               </p>
               <div
                 className="color-preview"
@@ -491,9 +454,7 @@ export default function MonthNav({
                   border: `2px solid ${detectBankColor(newCardName)}`,
                 }}
                 title="Cor do cartão"
-              >
-                <span style={{ fontSize: '20px' }}>{newCardIcon}</span>
-              </div>
+              />
             </div>
           ) : null}
         </div>

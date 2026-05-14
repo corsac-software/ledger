@@ -2,7 +2,11 @@ import type { ChangeEvent, Dispatch, SetStateAction } from 'react';
 import { applyMoneyMask } from '../../../lib/moneyInput';
 import { Input } from '../../inputs';
 
-export type RevenueFormState = { name: string; amount: string; startMonth: string };
+export type RevenueFormState = {
+  name: string;
+  amount: string;
+  startMonth: string;
+};
 
 interface RevenueFormProps {
   form: RevenueFormState;
@@ -19,7 +23,7 @@ export function RevenueForm({ form, setForm }: RevenueFormProps) {
           onChange={(e: ChangeEvent<HTMLInputElement>) =>
             setForm((prev) => ({ ...prev, name: e.target.value }))
           }
-          placeholder="Salário, extra, bônus..."
+          placeholder="Salario, extra, bonus..."
         />
         <Input
           label="Valor"
@@ -34,7 +38,7 @@ export function RevenueForm({ form, setForm }: RevenueFormProps) {
         />
       </div>
       <Input
-        label="Mês de início"
+        label="Mes de inicio"
         type="month"
         value={form.startMonth}
         onChange={(e: ChangeEvent<HTMLInputElement>) =>

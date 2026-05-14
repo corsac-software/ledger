@@ -12,7 +12,11 @@ const revenueFormHelpers = createFormHelpers<
   [currentMonthKey: string],
   [currentMonthKey: string]
 >({
-  createEmptyForm: (currentMonthKey) => ({ name: '', amount: '', startMonth: currentMonthKey }),
+  createEmptyForm: (currentMonthKey) => ({
+    name: '',
+    amount: '',
+    startMonth: currentMonthKey,
+  }),
   createEditForm: (item, currentMonthKey) => ({
     name: item.name || '',
     amount: formatMoneyInput(item.baseAmount),
@@ -40,7 +44,6 @@ export function toRevenueCreateItem(payload: RevenuePayload) {
     baseAmount: payload.amount,
     active: true,
     endMonth: null,
-    category: 'outro',
     notes: '',
   };
 }

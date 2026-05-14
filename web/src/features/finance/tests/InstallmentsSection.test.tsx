@@ -14,12 +14,7 @@ describe('InstallmentsSection.tsx', () => {
   };
 
   it('includes new cards in the installment card options', () => {
-    render(
-      <InstallmentsSection
-        {...defaultProps}
-        cardList={[{ id: 'amex', name: 'Amex', icon: '💠' }]}
-      />
-    );
+    render(<InstallmentsSection {...defaultProps} cardList={[{ id: 'amex', name: 'Amex' }]} />);
 
     fireEvent.click(screen.getByRole('button', { name: '+ Novo parcelamento' }));
 

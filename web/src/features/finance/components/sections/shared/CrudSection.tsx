@@ -53,6 +53,7 @@ interface CrudSectionProps<TItem extends CrudSectionItem, TForm, TPayload> {
   ) => ReactNode;
   renderForm: () => ReactNode;
   sortBy?: SortMode;
+  topContent?: ReactNode;
 }
 
 export function CrudSection<TItem extends CrudSectionItem, TForm, TPayload>({
@@ -70,6 +71,7 @@ export function CrudSection<TItem extends CrudSectionItem, TForm, TPayload>({
   renderItem,
   renderForm,
   sortBy = 'value-desc',
+  topContent,
 }: CrudSectionProps<TItem, TForm, TPayload>) {
   const {
     modal,
@@ -119,6 +121,7 @@ export function CrudSection<TItem extends CrudSectionItem, TForm, TPayload>({
             openDelete: openDeleteConfirm,
           })
         }
+        topContent={topContent}
       />
 
       <ConfirmModal
@@ -138,9 +141,7 @@ export function CrudSection<TItem extends CrudSectionItem, TForm, TPayload>({
         onClose={closeModal}
         onSubmit={handleSubmit}
         submitLabel={
-          modal.mode === 'edit'
-            ? labels.modal.edit.submitLabel
-            : labels.modal.create.submitLabel
+          modal.mode === 'edit' ? labels.modal.edit.submitLabel : labels.modal.create.submitLabel
         }
       >
         {renderForm()}

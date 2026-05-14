@@ -6,16 +6,16 @@ import { formatMoney } from './utils.js';
 
 // Chart color palette
 export const CHART_COLORS = [
-  '#b8860b', // Gold accent
-  '#9f1239', // Danger
-  '#5b21b6', // Purple
-  '#047857', // Success
-  '#b45309', // Warning
-  '#1e40af', // Blue
-  '#a16207', // Bronze
-  '#6b21a8', // Dark purple
-  '#0369a1', // Sky blue
-  '#7c3aed', // Violet
+  '#10b981',
+  '#38bdf8',
+  '#fbbf24',
+  '#fb7185',
+  '#8b5cf6',
+  '#14b8a6',
+  '#f97316',
+  '#60a5fa',
+  '#a3e635',
+  '#f472b6',
 ];
 
 function sortEntriesByValue<K>(entries: Array<[K, number]>): Array<[K, number]> {

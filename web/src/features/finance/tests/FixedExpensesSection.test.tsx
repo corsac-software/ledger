@@ -14,12 +14,7 @@ describe('FixedExpensesSection.tsx', () => {
   };
 
   it('includes new cards in the payment method options', () => {
-    render(
-      <FixedExpensesSection
-        {...defaultProps}
-        cardList={[{ id: 'amex', name: 'Amex', icon: '💠' }]}
-      />
-    );
+    render(<FixedExpensesSection {...defaultProps} cardList={[{ id: 'amex', name: 'Amex' }]} />);
 
     fireEvent.click(screen.getByRole('button', { name: '+ Novo gasto fixo' }));
 

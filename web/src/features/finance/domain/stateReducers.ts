@@ -7,7 +7,14 @@ import {
   createDefaultRevenue,
 } from './factories';
 import { matchOverride } from './overrides/repository';
-import type { FinanceState, FixedExpense, Installment, OverrideType, Revenue } from './types';
+import type {
+  CardBillItem,
+  FinanceState,
+  FixedExpense,
+  Installment,
+  OverrideType,
+  Revenue,
+} from './types';
 
 export function changeMonth(state: FinanceState, step: number): FinanceState {
   const next = new Date(state.currentDate);
@@ -31,36 +38,33 @@ export function setCardBills(
   state: FinanceState,
   cardBills: FinanceState['settings']['cardBills']
 ): FinanceState {
-  return { ...state, settings: { ...state.settings, cardBills } };
+  const normalizedCardBills = (cardBills || []).map((card) => {
+    const normalized: CardBillItem = { id: card.id, name: card.name };
+    if (card.color) normalized.color = card.color;
+    return normalized;
+  });
+
+  return { ...state, settings: { ...state.settings, cardBills: normalizedCardBills } };
 }
 
 export function addFixedExpense(state: FinanceState, data: Partial<FixedExpense>): FinanceState {
   return {
     ...state,
-    fixedExpenses: [
-      ...state.fixedExpenses,
-      createDefaultFixedExpense(data),
-    ],
+    fixedExpenses: [...state.fixedExpenses, createDefaultFixedExpense(data)],
   };
 }
 
 export function addRevenue(state: FinanceState, data: Partial<Revenue>): FinanceState {
   return {
     ...state,
-    revenues: [
-      ...state.revenues,
-      createDefaultRevenue(data),
-    ],
+    revenues: [...state.revenues, createDefaultRevenue(data)],
   };
 }
 
 export function addInstallment(state: FinanceState, data: Partial<Installment>): FinanceState {
   return {
     ...state,
-    installments: [
-      ...state.installments,
-      createDefaultInstallment(data),
-    ],
+    installments: [...state.installments, createDefaultInstallment(data)],
   };
 }
 
