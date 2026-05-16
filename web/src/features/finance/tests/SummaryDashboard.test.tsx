@@ -1,5 +1,5 @@
+import { fireEvent, render, screen } from '@testing-library/react';
 import { createRef } from 'react';
-import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { SummaryDashboard } from '../components/summary/SummaryDashboard';
 import type { MonthView } from '../domain/types';
@@ -64,11 +64,11 @@ describe('SummaryDashboard.tsx', () => {
     expect(screen.queryByText('TOTAL/MES')).not.toBeInTheDocument();
     expect(screen.queryByText('TOTAL RESTANTE')).not.toBeInTheDocument();
     expect(screen.queryByText('QUASE NO FIM')).not.toBeInTheDocument();
-    expect(screen.getByText('100%')).toBeInTheDocument();
-    expect(screen.getByText('Tudo concentrado em')).toBeInTheDocument();
-    expect(screen.getByText('TELEFONE')).toBeInTheDocument();
+    expect(screen.getByText('100%', { selector: '.chart-insight-percent' })).toBeInTheDocument();
+    expect(screen.getByText('Principal foco')).toBeInTheDocument();
+    expect(screen.getByText('TELEFONE', { selector: '.chart-insight-list-row span' })).toBeInTheDocument();
     expect(
-      screen.getByText('Mac concentra a maior parte das parcelas futuras.')
+      screen.getByText('Mac concentra a maior parte das parcelas deste mes.')
     ).toBeInTheDocument();
     expect(screen.getByText('1 em aberto')).toBeInTheDocument();
 
@@ -105,5 +105,29 @@ describe('SummaryDashboard.tsx', () => {
     );
 
     expect(screen.getByText('PAGO E PENDENTE')).toBeInTheDocument();
+  });
+
+  it('offers a discreet shortcut to the cards tab', () => {
+    const onOpenCards = vi.fn();
+
+    render(
+      <SummaryDashboard
+        monthView={monthView}
+        monthCardBills={{}}
+        monthOverrides={[]}
+        currentMonthKey="2026-05"
+        pieMode="categories"
+        setPieMode={vi.fn()}
+        pieChartRef={createRef<HTMLCanvasElement>()}
+        barChartRef={createRef<HTMLCanvasElement>()}
+        onToggleMonthPaid={vi.fn()}
+        cardList={[]}
+        onOpenCards={onOpenCards}
+      />
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'Ver cartoes' }));
+
+    expect(onOpenCards).toHaveBeenCalledTimes(1);
   });
 });

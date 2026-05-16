@@ -1,14 +1,10 @@
 import { Moon, Sun } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { AppTabs } from './components/app-shell/AppTabs';
+import { CardBillsSection } from './components/CardBillsSection';
 import { LoadingScreen } from './components/app-shell/LoadingScreen';
 import { ExportButton } from './components/ExportButton';
-import MonthNav from './components/MonthNav';
-import {
-  FixedExpensesSection,
-  InstallmentsSection,
-  RevenuesSection,
-} from './components/sections/index';
+import { ExpensesSection, InstallmentsSection, RevenuesSection } from './components/sections/index';
 import { SummaryDashboard } from './components/summary/SummaryDashboard';
 import { useFinance } from './context/FinanceContext';
 import { type PieMode, OVERRIDE_TYPES } from './domain/constants';
@@ -87,13 +83,14 @@ export default function FinanceApp() {
           barChartRef={barChartRef}
           onToggleMonthPaid={toggleMonthPaid}
           cardList={cardListMapped}
+          onOpenCards={() => setActiveTab('parcelas')}
         />
       );
     }
 
     if (tabId === 'gastos') {
       return (
-        <FixedExpensesSection
+        <ExpensesSection
           items={fixedExpenses}
           currentMonthKey={currentKey}
           monthOverrides={monthOverrides}
@@ -117,18 +114,28 @@ export default function FinanceApp() {
 
     if (tabId === 'parcelas') {
       return (
-        <InstallmentsSection
-          items={monthView.installments as any}
-          currentMonthKey={currentKey}
-          monthOverrides={monthOverrides}
-          cardList={cardBillsList}
-          onAdd={actions.addInstallment}
-          onEdit={actions.updateInstallment}
-          onDelete={actions.removeInstallment}
-          onTogglePaid={(itemId, paid) =>
-            toggleMonthPaid(OVERRIDE_TYPES.INSTALLMENT_PAYMENT, itemId, paid)
-          }
-        />
+        <section className="cards-section">
+          <CardBillsSection
+            cardBills={monthCardBills}
+            onSetCardBill={setMonthCardBill}
+            cardList={cardBillsList}
+            onSetCardList={handleSetCardList}
+            cardDeleteReasons={cardDeleteReasons}
+          />
+
+          <InstallmentsSection
+            items={monthView.installments as any}
+            currentMonthKey={currentKey}
+            monthOverrides={monthOverrides}
+            cardList={cardBillsList}
+            onAdd={actions.addInstallment}
+            onEdit={actions.updateInstallment}
+            onDelete={actions.removeInstallment}
+            onTogglePaid={(itemId, paid) =>
+              toggleMonthPaid(OVERRIDE_TYPES.INSTALLMENT_PAYMENT, itemId, paid)
+            }
+          />
+        </section>
       );
     }
 
@@ -200,22 +207,6 @@ export default function FinanceApp() {
 
       <div className="dashboard-shell">
         <section className="dashboard-controls">
-          <MonthNav
-            label={monthLabel(currentDate)}
-            onPrev={() => actions.changeMonth(-1)}
-            onNext={() => actions.changeMonth(1)}
-            theme={settings.theme}
-            onToggleTheme={() =>
-              actions.setTheme(settings.theme === 'premium' ? 'default' : 'premium')
-            }
-            cardBills={monthCardBills}
-            onSetCardBill={setMonthCardBill}
-            cardList={cardBillsList}
-            onSetCardList={handleSetCardList}
-            cardDeleteReasons={cardDeleteReasons}
-            headerActions={<ExportButton />}
-          />
-
           <AppTabs tabs={TABS} activeTab={activeTab} translate={t} onChange={setActiveTab} />
         </section>
 

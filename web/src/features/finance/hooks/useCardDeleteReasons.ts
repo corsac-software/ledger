@@ -48,7 +48,7 @@ export function useCardDeleteReasons({
             isMonthInRange(currentKey, item.startMonth, item.endMonth)
         )
       ) {
-        labels.push('gastos fixos');
+        labels.push('despesas fixas');
       }
       if (
         monthViewInstallments.some(

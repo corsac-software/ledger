@@ -90,7 +90,7 @@ export function markBillAsPaid(
   installments: MonthViewInstallment[],
   billPaymentMap: Record<string, boolean>
 ): void {
-  // Marcar gastos fixos como pagos
+  // Marcar despesas fixas como pagas
   fixedExpenses.forEach((expense) => {
     let card = getExpenseCard(expense);
     // fallback: some test fixtures / legacy items may set `card` directly

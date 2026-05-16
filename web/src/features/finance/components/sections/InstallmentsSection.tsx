@@ -190,7 +190,7 @@ export function InstallmentsSection({
         ) : (
           <div className="installments-empty">
             <p>Nenhum parcelamento ativo</p>
-            <span>{INSTALLMENT_LABELS.emptyText}</span>
+            <span>Compras parceladas aparecem aqui quando houver impacto neste mes.</span>
           </div>
         )}
       </section>

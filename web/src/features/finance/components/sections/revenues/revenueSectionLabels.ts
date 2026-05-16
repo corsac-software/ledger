@@ -2,8 +2,7 @@ import { createSectionLabels } from '../shared/createSectionLabels';
 
 export const REVENUE_LABELS = createSectionLabels({
   title: 'RECEITAS',
-  description:
-    'A receita se repete por mes e pode receber ajuste especifico depois, se necessario.',
+  description: '',
   addLabel: '+ Nova receita',
   emptyText: 'Nenhuma receita cadastrada ainda.',
   columns: ['Descricao', 'Recebimento', 'Recorrente', 'Valor', 'Acoes'] as const,

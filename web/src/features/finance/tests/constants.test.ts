@@ -86,5 +86,10 @@ describe('constants.ts', () => {
       expect(TABS.find((t) => t.id === 'parcelas')).toBeDefined();
       expect(TABS.find((t) => t.id === 'receitas')).toBeDefined();
     });
+
+    it('keeps stable ids while pointing to the new product labels', () => {
+      expect(TABS.find((t) => t.id === 'gastos')?.labelKey).toBe('tabs.gastos');
+      expect(TABS.find((t) => t.id === 'parcelas')?.labelKey).toBe('tabs.parcelas');
+    });
   });
 });

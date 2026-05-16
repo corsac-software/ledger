@@ -24,6 +24,7 @@ interface SummaryDashboardProps {
   barChartRef: RefObject<HTMLCanvasElement | null>;
   onToggleMonthPaid: (type: any, itemId: string, paid: boolean) => void;
   cardList?: { key: string; label: string }[];
+  onOpenCards?: () => void;
 }
 
 export function SummaryDashboard({
@@ -37,6 +38,7 @@ export function SummaryDashboard({
   barChartRef,
   onToggleMonthPaid,
   cardList,
+  onOpenCards,
 }: SummaryDashboardProps) {
   const { pieTitle, pieAriaLabel, totalRestante, almostDone } = useSummaryMetrics(
     monthView,
@@ -106,7 +108,7 @@ export function SummaryDashboard({
       case 'categories':
         return {
           title: 'Sem categorias neste mês',
-          hint: 'Cadastre gastos fixos ou parcelas para ver a distribuição.',
+          hint: 'Cadastre despesas fixas ou parcelas para ver a distribuição.',
         };
       case 'cards':
         return {
@@ -160,7 +162,7 @@ export function SummaryDashboard({
       return (
         <ChartEmpty
           title="Sem parcelamentos"
-          hint="Cadastre parcelamentos na aba Parcelas para ver os valores mensais."
+          hint="Cadastre parcelamentos na aba Cartoes para ver os valores mensais."
         />
       );
     }
@@ -211,6 +213,7 @@ export function SummaryDashboard({
           onToggleMonthPaid(OVERRIDE_TYPES.CARD_BILL_PAYMENT, card, paid)
         }
         cardList={cardList}
+        onOpenCards={onOpenCards}
       />
 
       <section className="charts-grid">
@@ -273,7 +276,7 @@ export function SummaryDashboard({
       <section className="metrics metrics--support">
         <div className="mcard mcard--mini mcard--fixed">
           <div className="mcard-head">
-            <p className="mcard-label">GASTOS FIXOS</p>
+            <p className="mcard-label">DESPESAS FIXAS</p>
             <Wallet size={15} strokeWidth={2} aria-hidden />
           </div>
           <p className="mcard-val warn">{formatMoney(monthView.totals.despesasFixas)}</p>

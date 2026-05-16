@@ -50,6 +50,14 @@ export function normalizeRevenue(item: Record<string, unknown>): Revenue {
     updates.id = createFinanceId('rev');
   }
 
+  if (item.recurring === undefined) {
+    updates.recurring = true;
+  }
+
+  if (item.paymentDay === undefined) {
+    updates.paymentDay = null;
+  }
+
   if (Object.keys(updates).length > 0) {
     return { ...rest, ...updates } as unknown as Revenue;
   }

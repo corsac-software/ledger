@@ -41,6 +41,8 @@ export interface Revenue {
   baseAmount: number;
   active: boolean;
   startMonth: string;
+  paymentDay?: number | null;
+  recurring?: boolean;
   endMonth: string | null;
   notes: string;
 }

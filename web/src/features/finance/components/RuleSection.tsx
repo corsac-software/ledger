@@ -19,6 +19,7 @@ interface RuleSectionProps<TItem extends RuleSectionItem> {
   onAddClick: () => void;
   sortBy?: 'name' | 'value-asc' | 'value-desc';
   topContent?: ReactNode;
+  className?: string;
 }
 
 export default function RuleSection<TItem extends RuleSectionItem>({
@@ -32,6 +33,7 @@ export default function RuleSection<TItem extends RuleSectionItem>({
   onAddClick,
   sortBy = 'name',
   topContent,
+  className = '',
 }: RuleSectionProps<TItem>) {
   const [sort, setSort] = useState(sortBy);
 
@@ -53,19 +55,21 @@ export default function RuleSection<TItem extends RuleSectionItem>({
   const normalizedAddLabel = addLabel.replace(/^\+\s*/, '');
 
   return (
-    <section className="section">
+    <section className={`section ${className}`.trim()}>
       <div className="sec-header">
         <div>
           <p className="sec-title">{title}</p>
-          <p className="sec-description">
-            {descriptionText}
-            {descriptionMetric ? (
-              <>
-                {' '}
-                - <span>{descriptionMetric}</span>
-              </>
-            ) : null}
-          </p>
+          {descriptionText || descriptionMetric ? (
+            <p className="sec-description">
+              {descriptionText}
+              {descriptionMetric ? (
+                <>
+                  {' '}
+                  - <span>{descriptionMetric}</span>
+                </>
+              ) : null}
+            </p>
+          ) : null}
         </div>
         <div className="sec-actions">
           <select

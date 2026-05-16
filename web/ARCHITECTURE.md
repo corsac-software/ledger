@@ -78,10 +78,11 @@ Principais grupos:
 - `app-shell/`: abas e tela de loading.
 - `inputs/`: `Input`.
 - `modals/`: `ModalShell`, `ConfirmModal`, `RuleModal`.
-- `sections/`: telas CRUD de receitas, gastos fixos e parcelamentos.
+- `sections/`: telas de receitas, despesas e cartoes.
 - `sections/shared/`: abstracoes compartilhadas pelas sections.
 - `summary/`: dashboard/resumo e estados vazios de graficos.
-- `MonthNav.tsx`: navegacao mensal e faturas por cartao.
+- `CardBillsSection.tsx`: painel de faturas por cartao usado dentro da aba Cartoes.
+- `MonthNav.tsx`: wrapper legado/testavel que combina navegacao mensal e `CardBillsSection`.
 - `RuleSection.tsx`: tabela generica ordenavel usada pelas sections.
 
 ### 3.2 Sections
@@ -89,8 +90,9 @@ Principais grupos:
 As sections especificas ainda preservam as diferencas de dominio:
 
 - `RevenuesSection`: receitas recorrentes e override mensal de valor.
-- `FixedExpensesSection`: gastos fixos, override mensal de valor, pago/no pago e cartao.
-- `InstallmentsSection`: parcelamentos, cartao e pago/no pago.
+- `ExpensesSection`: composicao de Despesas; hoje exibe `Fixas` e reserva `Variaveis` para fase futura.
+- `FixedExpensesSection`: despesas fixas, override mensal de valor, pago/no pago e cartao.
+- `InstallmentsSection`: parcelamentos, cartao e pago/no pago dentro da aba Cartoes.
 
 O shell comum foi extraido para `sections/shared/CrudSection.tsx`, que cuida de:
 
@@ -102,9 +104,11 @@ O shell comum foi extraido para `sections/shared/CrudSection.tsx`, que cuida de:
 - `useCrudFormFlow`.
 
 As sections continuam responsaveis por preparar dados derivados locais e renderizar
-suas rows. `InstallmentsSection` e a excecao visual principal: ela preserva os
-mesmos hooks, modais, payloads e acoes do CRUD, mas renderiza cards de progresso
-em vez da tabela generica porque parcelamentos se beneficiam de leitura temporal.
+suas rows. `ExpensesSection` e uma camada de composicao para a nova linguagem de
+produto, sem criar dominio de despesas variaveis ainda. `InstallmentsSection` e a
+excecao visual principal: ela preserva os mesmos hooks, modais, payloads e acoes
+do CRUD, mas renderiza cards de progresso em vez da tabela generica porque
+parcelamentos se beneficiam de leitura temporal.
 
 ### 3.3 Domain
 
@@ -173,9 +177,10 @@ interface FinanceState {
 }
 ```
 
-### 4.2 Gastos Fixos
+### 4.2 Despesas Fixas
 
-`FixedExpense` representa um gasto recorrente.
+`FixedExpense` representa uma despesa recorrente. Na UI, ele aparece dentro da
+aba **Despesas > Fixas**.
 
 Campos principais:
 
@@ -214,7 +219,7 @@ Remocao e soft-delete: a remocao define `closedAt` usando `softDeleteItem`.
 
 ### 4.4 Receitas
 
-`Revenue` representa uma receita recorrente.
+`Revenue` representa uma receita do mes, recorrente ou pontual.
 
 Campos principais:
 
@@ -223,11 +228,15 @@ Campos principais:
 - `baseAmount`
 - `active`
 - `startMonth`
+- `paymentDay`
+- `recurring`
 - `endMonth`
-- `category`
 - `notes`
 
-Receitas podem ter override mensal de valor.
+`startMonth` e o mes de validade inicial no dominio. Na UI, o usuario informa o
+dia de recebimento (`paymentDay`) e se a receita e recorrente. Receitas nao
+recorrentes aparecem apenas no mes em que foram criadas. Receitas podem ter
+override mensal de valor.
 
 ### 4.5 Overrides Mensais
 

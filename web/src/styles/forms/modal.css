@@ -32,8 +32,8 @@
   overflow: hidden;
 }
 
-.modal-box:has(.modal-message) {
-  width: min(390px, 95vw);
+.modal-box:has(.confirm-modal-content) {
+  width: min(420px, 95vw);
 }
 
 .modal-title {
@@ -53,8 +53,14 @@
 
 .modal-message {
   margin: 0;
-  padding: 20px 20px 2px;
+  padding: 0;
   color: var(--color-text-secondary);
   font-size: 13px;
   line-height: 1.5;
+}
+
+.confirm-modal-content {
+  display: grid;
+  gap: 16px;
+  padding: 20px;
 }

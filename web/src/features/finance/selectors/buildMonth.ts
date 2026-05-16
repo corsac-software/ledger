@@ -91,7 +91,11 @@ export function buildMonthView(
   for (const item of state.fixedExpenses) {
     // Check all conditions in one pass
     if (item.active === false) continue;
-    if (!isMonthInRange(currentMonthKey, item.startMonth, item.endMonth)) continue;
+    if (item.recurring === false) {
+      if (item.startMonth !== currentMonthKey) continue;
+    } else if (!isMonthInRange(currentMonthKey, item.startMonth, item.endMonth)) {
+      continue;
+    }
 
     const overridden = applyOverride(
       item,
@@ -115,7 +119,11 @@ export function buildMonthView(
   for (const item of state.revenues) {
     // Check all conditions in one pass
     if (item.active === false) continue;
-    if (!isMonthInRange(currentMonthKey, item.startMonth, item.endMonth)) continue;
+    if (item.recurring === false) {
+      if (item.startMonth !== currentMonthKey) continue;
+    } else if (!isMonthInRange(currentMonthKey, item.startMonth, item.endMonth)) {
+      continue;
+    }
 
     // Apply full revenue override (name/hidden/etc) if present, similar to fixed expenses
     const overridden = applyOverride(

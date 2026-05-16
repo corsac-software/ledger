@@ -70,14 +70,107 @@
   font-weight: 800;
 }
 
-.add-btn--primary:hover {
-  background: var(--color-accent-strong);
-  color: #ffffff;
-}
-
 .add-btn:hover {
   background: var(--color-background-secondary);
   border-color: var(--color-accent);
+}
+
+.add-btn--primary:hover {
+  border-color: color-mix(in srgb, var(--color-accent-strong) 86%, var(--color-border));
+  background: var(--color-accent-strong);
+  color: #ffffff;
+  box-shadow: 0 12px 24px -18px color-mix(in srgb, var(--color-accent) 72%, #000000 28%);
+}
+
+.add-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.62;
+  box-shadow: none;
+}
+
+.add-btn--primary:disabled,
+.add-btn--primary:disabled:hover {
+  border-color: var(--color-border-secondary);
+  background: var(--color-background-secondary);
+  color: var(--color-text-secondary);
+}
+
+.expenses-section,
+.cards-section {
+  display: grid;
+  gap: var(--layout-gap-section);
+}
+
+.expense-content-section,
+.installments-section {
+  display: grid;
+  gap: 12px;
+}
+
+.expense-content-section .sec-header,
+.installments-section .sec-header {
+  margin: 0;
+}
+
+.expense-content-section .rule-table-card,
+.installments-section .installment-card-list,
+.installments-section .installments-empty {
+  margin-top: 0;
+}
+
+.expense-mode-tabs {
+  display: inline-flex;
+  align-items: center;
+  width: min(100%, 420px);
+  padding: 4px;
+  border: 1px solid var(--color-border-secondary);
+  border-radius: 999px;
+  background: var(--color-background-primary);
+}
+
+.expense-mode-tab {
+  flex: 1;
+  min-height: 30px;
+  padding: 6px 14px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.expense-mode-tab.active {
+  background: var(--color-background-secondary);
+  color: var(--color-text-primary);
+  box-shadow: inset 0 0 0 1px var(--color-border-secondary);
+}
+
+.variable-expenses-empty {
+  display: grid;
+  place-items: center;
+  gap: 8px;
+  min-height: 150px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-xl);
+  background: var(--color-background-primary);
+  box-shadow: var(--shadow-surface);
+  text-align: center;
+}
+
+.variable-expenses-empty p {
+  margin: 0;
+  color: var(--color-text-primary);
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.variable-expenses-empty span {
+  max-width: 520px;
+  color: var(--color-text-secondary);
+  font-size: 12px;
+  line-height: 1.5;
 }
 
 @media (max-width: 640px) {

@@ -120,7 +120,8 @@ describe('Summary.tsx', () => {
     );
 
     expect(screen.getByText('acima da receita do mes')).toBeInTheDocument();
-    expect(screen.getByText('Priorize faturas e gastos recorrentes.')).toBeInTheDocument();
+    expect(screen.getByText('Priorize faturas')).toBeInTheDocument();
+    expect(screen.getByTitle('Priorize faturas e gastos recorrentes.')).toBeInTheDocument();
 
     rerender(
       <Summary

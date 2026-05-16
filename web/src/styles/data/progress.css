@@ -55,11 +55,6 @@
   white-space: nowrap;
 }
 
-.installments-section {
-  display: grid;
-  gap: var(--layout-gap-section);
-}
-
 .installment-card-list {
   display: grid;
   gap: 18px;
@@ -273,7 +268,7 @@
   display: grid;
   place-items: center;
   gap: 6px;
-  min-height: 180px;
+  min-height: 150px;
   padding: var(--layout-gap-lg);
   border: 1px solid var(--color-border);
   border-radius: var(--border-radius-xl);

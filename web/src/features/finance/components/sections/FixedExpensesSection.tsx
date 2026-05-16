@@ -97,6 +97,7 @@ export function FixedExpensesSection({
 
   return (
     <CrudSection
+      className="expense-content-section"
       labels={fixedLabels}
       items={activeItems}
       form={form}

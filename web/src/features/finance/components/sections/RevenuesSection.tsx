@@ -14,7 +14,13 @@ import { CrudSection } from './shared/CrudSection';
 import type { CrudSectionCommonProps } from './shared/types';
 import { useRevenueMonthAmountInput } from './shared/useRevenueMonthAmountInput';
 
-type RevenuePayload = { name: string; amount: number; startMonth: string };
+type RevenuePayload = {
+  name: string;
+  amount: number;
+  startMonth: string;
+  paymentDay: number | null;
+  recurring: boolean;
+};
 type RevenuesSectionProps = CrudSectionCommonProps<Revenue, RevenuePayload> & {
   currentMonthKey: string;
   monthRevenueAmounts: Record<string, number>;
@@ -45,9 +51,25 @@ export function RevenuesSection({
         : item.baseAmount;
     return sum + Number(amount || 0);
   }, 0);
-  const averageRevenue = activeItems.length ? totalRevenue / activeItems.length : 0;
+  const today = new Date();
+  const [currentYear, currentMonth] = currentMonthKey.split('-').map(Number);
+  const selectedMonthIndex = new Date(currentYear, currentMonth - 1, 1).getTime();
+  const realMonthIndex = new Date(today.getFullYear(), today.getMonth(), 1).getTime();
+  const receivedTotal = activeItems.reduce((sum, item) => {
+    const amount =
+      monthRevenueAmounts && monthRevenueAmounts[item.id] !== undefined
+        ? monthRevenueAmounts[item.id]
+        : item.baseAmount;
+    const paymentDay = item.paymentDay || 1;
+    const received =
+      selectedMonthIndex < realMonthIndex ||
+      (selectedMonthIndex === realMonthIndex && paymentDay <= today.getDate());
+    return received ? sum + Number(amount || 0) : sum;
+  }, 0);
+  const pendingTotal = Math.max(0, totalRevenue - receivedTotal);
 
-  const buildPayload = (currentForm: RevenueFormState) => buildRevenuePayload(currentForm);
+  const buildPayload = (currentForm: RevenueFormState) =>
+    buildRevenuePayload(currentForm, currentMonthKey);
 
   const {
     tempInputValues,
@@ -76,12 +98,12 @@ export function RevenuesSection({
             <p className="mcard-val pos">{formatMoney(totalRevenue)}</p>
           </div>
           <div className="mcard">
-            <p className="mcard-label">LANCAMENTOS</p>
-            <p className="mcard-val">{activeItems.length}</p>
+            <p className="mcard-label">JA RECEBIDO</p>
+            <p className="mcard-val">{formatMoney(receivedTotal)}</p>
           </div>
           <div className="mcard">
-            <p className="mcard-label">MEDIA</p>
-            <p className="mcard-val">{formatMoney(averageRevenue)}</p>
+            <p className="mcard-label">A RECEBER</p>
+            <p className="mcard-val info">{formatMoney(pendingTotal)}</p>
           </div>
         </section>
       }

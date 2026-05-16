@@ -15,6 +15,8 @@ export function createDefaultRevenue(data: Partial<Revenue>): Revenue {
   return {
     id: createFinanceId('rev'),
     active: true,
+    recurring: true,
+    paymentDay: null,
     notes: '',
     endMonth: null,
     ...data,

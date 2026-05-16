@@ -6,6 +6,8 @@ export type RevenueFormState = {
   name: string;
   amount: string;
   startMonth: string;
+  paymentDay: string;
+  recurring: boolean;
 };
 
 interface RevenueFormProps {
@@ -37,15 +39,31 @@ export function RevenueForm({ form, setForm }: RevenueFormProps) {
           placeholder="0,00"
         />
       </div>
-      <Input
-        label="Mes de inicio"
-        type="month"
-        value={form.startMonth}
-        onChange={(e: ChangeEvent<HTMLInputElement>) =>
-          setForm((prev) => ({ ...prev, startMonth: e.target.value }))
-        }
-        placeholder=""
-      />
+      <div className="form-grid">
+        <Input
+          label="Dia de recebimento"
+          type="number"
+          min="1"
+          max="31"
+          value={form.paymentDay}
+          onChange={(e: ChangeEvent<HTMLInputElement>) =>
+            setForm((prev) => ({ ...prev, paymentDay: e.target.value }))
+          }
+          placeholder="Ex.: 5"
+        />
+        <label className="field checkbox-field">
+          <span>Recorrente</span>
+          <select
+            value={form.recurring ? 'sim' : 'nao'}
+            onChange={(e: ChangeEvent<HTMLSelectElement>) =>
+              setForm((prev) => ({ ...prev, recurring: e.target.value === 'sim' }))
+            }
+          >
+            <option value="sim">Sim</option>
+            <option value="nao">Nao, apenas este mes</option>
+          </select>
+        </label>
+      </div>
     </>
   );
 }

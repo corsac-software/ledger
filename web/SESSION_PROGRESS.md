@@ -450,3 +450,40 @@ Data: 2026-05-12
   - Cards de chart em modo compacto ficaram menores para reduzir espaco em branco.
   - Lista de parcelas em aberto teve altura minima reduzida para ocupar menos area vazia quando ha poucos itens.
   - Validado sem testes/build com Prettier, ESLint, `tsc --noEmit --pretty false` e `git diff --check`.
+- Ajuste de layout do modal de exclusao:
+  - `ConfirmModal` ganhou um corpo proprio para separar mensagem e rodape de acoes.
+  - Modal de confirmacao teve largura, padding, gap e botoes ajustados para evitar aperto visual.
+  - Acoes de confirmacao ficam alinhadas no desktop e empilhadas em telas estreitas.
+- Planejamento de reorganizacao conceitual:
+  - Criado `roadmap-despesas-cartoes.md` para planejar a evolucao de `Gastos Fixos` para `Despesas`.
+  - Roadmap tambem planeja transformar `Parcelamentos` em `Cartoes`, movendo `Faturas do mes` para essa aba.
+  - Documento separa fases de navegacao, layout, resumo e dominio futuro de despesas variaveis.
+- Inicio da reorganizacao Despesas/Cartoes:
+  - Abas visiveis passaram a ser `Resumo`, `Despesas`, `Cartoes` e `Receitas`, preservando ids internos para reduzir risco.
+  - `Gastos Fixos` evoluiu visualmente para `Despesas Fixas`, com segmentacao `Fixas / Variaveis`; variaveis fica planejado/desabilitado por enquanto.
+  - `Faturas do mes` saiu do topo global e passou a ser renderizado dentro da aba `Cartoes`, acima de `Parcelamentos`.
+  - Area de faturas foi extraida para `CardBillsSection.tsx`; `MonthNav.tsx` fica como wrapper legado/testavel.
+  - `Resumo` manteve apenas leitura agregada de faturas, sem o CRUD completo no topo.
+  - Criado teste de `ExpensesSection` e ajustados testes existentes para os novos labels, sem executar a suite.
+  - `ARCHITECTURE.md` e `roadmap-despesas-cartoes.md` atualizados com o estado atual.
+- Ajustes de UX apos QA da reorganizacao:
+  - Hover dos botoes primarios de criar item foi corrigido para nao herdar fundo neutro.
+  - Cabecalho de `Faturas do mes` foi alinhado mais ao topo do painel e o vazio superior foi reduzido.
+  - Espacamento entre header e lista/empty state de `Parcelamentos` foi reduzido.
+  - Aba `Variaveis` em Despesas passou a ser acessivel, com placeholder e botao desabilitado ate a fase de CRUD.
+  - Receitas passaram a modelar `paymentDay` e `recurring`, mantendo `startMonth` como controle interno de validade.
+  - UI de Receitas removeu o subtexto, trocou `Mes de inicio` por `Dia de recebimento` e adicionou seletor de recorrencia.
+  - Cards de Receitas agora mostram `Total do mes`, `Ja recebido` e `A receber`, removendo `Lancamentos` e `Media`.
+  - Criados/ajustados testes para Receitas, Despesas variaveis e receita nao recorrente, sem executar a suite.
+- Padronizacao estrutural de Despesas:
+  - `RuleSection` e `CrudSection` passaram a aceitar `className` para sections com identidade visual propria.
+  - `Despesas Fixas` usa `expense-content-section`, igualando a arquitetura visual com `Parcelamentos`.
+  - Aba `Variaveis` usa a mesma estrutura de section.
+  - Gap entre header/subtexto e tabela/empty state foi reduzido de forma consistente para Despesas e Parcelamentos.
+- Planejamento de gastos variaveis e faturas:
+  - Criado `roadmap-gastos-variaveis-e-faturas.md`.
+  - Documento planeja `VariableExpense`, vencimento de fatura por cartao, edicao de cartao e reducao de friccao no cadastro.
+  - Roadmap registra perguntas em aberto antes da implementacao, especialmente sobre fatura manual vs automatica e escopo de automacoes.
+- Limpeza de roadmaps:
+  - `roadmap-finflow-layout.md` foi validado como encerrado e removido.
+  - `roadmap-despesas-cartoes.md` foi mantido porque ainda registra decisoes/pendencias de navegacao, Cartoes e validacao visual, alem de parte ter sido desdobrada no roadmap novo.

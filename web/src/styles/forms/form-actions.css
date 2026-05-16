@@ -10,6 +10,17 @@
   padding: var(--layout-gap-sm) 0 0;
 }
 
+.confirm-modal-actions {
+  align-items: center;
+  gap: 10px;
+  padding: 0;
+}
+
+.confirm-modal-actions .btn-del,
+.confirm-modal-actions .btn-cancel {
+  min-width: 112px;
+}
+
 .btn-save {
   min-height: 38px;
   padding: 10px 20px;
@@ -57,4 +68,16 @@
 
 .btn-del:hover {
   background: #c42b2b;
+}
+
+@media (max-width: 440px) {
+  .confirm-modal-actions {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+
+  .confirm-modal-actions .btn-del,
+  .confirm-modal-actions .btn-cancel {
+    width: 100%;
+  }
 }

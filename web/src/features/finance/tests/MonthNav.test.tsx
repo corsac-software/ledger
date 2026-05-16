@@ -166,13 +166,14 @@ describe('MonthNav.tsx', () => {
 
   it('renders card bill panel title', () => {
     render(<MonthNav {...defaultProps} />);
-    expect(screen.getByText('Faturas do mês')).toBeInTheDocument();
+    expect(screen.getByText('Faturas do mes')).toBeInTheDocument();
   });
 
-  it('hides "+ Novo cartão" when there are no cards', () => {
+  it('hides "+ Novo cartao" when there are no cards', () => {
     render(<MonthNav {...defaultProps} cardList={[]} onSetCardList={vi.fn()} />);
-    expect(screen.queryByText('+ Novo cartão')).not.toBeInTheDocument();
-    expect(screen.getByText('Nenhum cartão adicionado')).toBeInTheDocument();
+    expect(screen.queryByText('Novo cartao')).not.toBeInTheDocument();
+    expect(screen.getByText('Nenhum cartao adicionado')).toBeInTheDocument();
+    expect(screen.getByText('Adicionar cartao')).toBeInTheDocument();
   });
 
   it('renders the card name and delete action', () => {
@@ -199,12 +200,12 @@ describe('MonthNav.tsx', () => {
       />
     );
 
-    fireEvent.click(screen.getByText('+ Novo cartão'));
-    expect(screen.getByText('Adicionar cartão')).toBeInTheDocument();
+    fireEvent.click(screen.getByText('Novo cartao'));
+    expect(screen.getByText('Adicionar cartao')).toBeInTheDocument();
     expect(
       screen.getByText('Opcional. Voce pode adicionar o cartao agora e informar a fatura depois.')
     ).toBeInTheDocument();
-    fireEvent.change(screen.getByLabelText('Nome do cartão'), {
+    fireEvent.change(screen.getByLabelText('Nome do cartao'), {
       target: { value: 'Cartao novo' },
     });
     fireEvent.click(screen.getByText('Adicionar'));
@@ -228,11 +229,11 @@ describe('MonthNav.tsx', () => {
       />
     );
 
-    fireEvent.click(screen.getByText('+ Novo cartão'));
-    fireEvent.change(screen.getByLabelText('Nome do cartão'), {
+    fireEvent.click(screen.getByText('Novo cartao'));
+    fireEvent.change(screen.getByLabelText('Nome do cartao'), {
       target: { value: 'Cartao novo' },
     });
-    fireEvent.change(screen.getByLabelText('Fatura deste mês'), {
+    fireEvent.change(screen.getByLabelText('Fatura deste mes'), {
       target: { value: '2.400,00' },
     });
     fireEvent.click(screen.getByText('Adicionar'));
@@ -253,10 +254,10 @@ describe('MonthNav.tsx', () => {
       />
     );
 
-    fireEvent.click(screen.getByText('+ Novo cartão'));
+    fireEvent.click(screen.getByText('Novo cartao'));
 
-    expect(screen.getByText('Adicionar cartão')).toBeInTheDocument();
-    expect(screen.queryByLabelText('Cor do cartão:')).not.toBeInTheDocument();
+    expect(screen.getByText('Adicionar cartao')).toBeInTheDocument();
+    expect(screen.queryByLabelText('Cor do cartao:')).not.toBeInTheDocument();
     expect(
       screen.queryByTitle('Clique para escolher uma cor personalizada')
     ).not.toBeInTheDocument();
@@ -275,8 +276,8 @@ describe('MonthNav.tsx', () => {
       />
     );
 
-    fireEvent.click(screen.getByRole('button', { name: 'Apagar cartão Nubank' }));
-    expect(screen.getByText('Apagar cartão')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Apagar cartao Nubank' }));
+    expect(screen.getByText('Apagar cartao')).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: 'Apagar' }));
 
@@ -295,6 +296,6 @@ describe('MonthNav.tsx', () => {
 
     const status = screen.getByText('EM USO');
     expect(status).toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: 'Apagar cartão Nubank' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Apagar cartao Nubank' })).not.toBeInTheDocument();
   });
 });
