@@ -2,6 +2,30 @@
   min-height: 100vh;
 }
 
+.app-scroll-shell {
+  width: 100%;
+  height: 100%;
+}
+
+.os-theme-ios {
+  box-sizing: border-box;
+  --os-size: 10px;
+  --os-padding-perpendicular: 2px;
+  --os-padding-axis: 2px;
+  --os-track-border-radius: 999px;
+  --os-handle-interactive-area-offset: 4px;
+  --os-handle-border-radius: 999px;
+  --os-handle-bg: rgba(0, 0, 0, 0.22);
+  --os-handle-bg-hover: rgba(0, 0, 0, 0.34);
+  --os-handle-bg-active: rgba(0, 0, 0, 0.46);
+}
+
+body[data-theme='premium'] .os-theme-ios {
+  --os-handle-bg: rgba(255, 255, 255, 0.24);
+  --os-handle-bg-hover: rgba(255, 255, 255, 0.36);
+  --os-handle-bg-active: rgba(255, 255, 255, 0.5);
+}
+
 .app-topbar {
   position: sticky;
   top: 0;
@@ -142,7 +166,7 @@
   padding: 0;
 }
 
-.app-content > * + * {
+.app-content>*+* {
   margin-top: var(--layout-gap-section);
 }
 
