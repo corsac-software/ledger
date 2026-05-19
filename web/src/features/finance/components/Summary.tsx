@@ -11,7 +11,6 @@ interface SummaryProps {
   currentMonthKey: string;
   onToggleBillPaid: (card: string, paid: boolean) => void;
   cardList: Array<{ key: string; label: string }> | undefined;
-  onOpenCards?: () => void;
 }
 
 type MonthStatusTone = 'comfortable' | 'tight' | 'negative';
@@ -57,7 +56,6 @@ export default function Summary({
   currentMonthKey,
   onToggleBillPaid,
   cardList,
-  onOpenCards,
 }: SummaryProps) {
   const summaryData = useMemo(
     () => buildSummaryData(monthView, cardBills, monthOverrides, currentMonthKey, cardList),
@@ -178,15 +176,6 @@ export default function Summary({
             </div>
           ))}
         </section>
-      ) : null}
-
-      {onOpenCards ? (
-        <div className="summary-cards-cta">
-          <button type="button" className="summary-cards-link" onClick={onOpenCards}>
-            <CreditCard size={14} strokeWidth={2} aria-hidden />
-            Ver cartoes
-          </button>
-        </div>
       ) : null}
     </>
   );

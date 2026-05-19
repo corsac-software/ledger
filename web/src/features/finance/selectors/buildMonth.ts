@@ -7,7 +7,9 @@ import type {
   MonthView,
   MonthViewFixedExpense,
   MonthViewInstallment,
+  MonthViewVariableExpense,
   Revenue,
+  VariableExpense,
 } from '../domain/types.js';
 import { isMonthInRange, monthKey } from '../lib/utils.js';
 
@@ -57,6 +59,7 @@ function calculateCurrentInstallment(
 
 interface BuildMonthParams {
   fixedExpenses: FixedExpense[];
+  variableExpenses?: VariableExpense[];
   installments: Installment[];
   revenues: Revenue[];
   monthOverrides: MonthOverride[];
@@ -86,6 +89,9 @@ export function buildMonthView(
   const fixedExpenses: MonthViewFixedExpense[] = [];
   let despesasFixasTotal = 0;
   let despesasFixasPagasTotal = 0;
+  const variableExpenses: MonthViewVariableExpense[] = [];
+  let despesasVariaveisTotal = 0;
+  let despesasVariaveisPagasTotal = 0;
 
   // Single pass: combine all filters into one loop
   for (const item of state.fixedExpenses) {
@@ -110,6 +116,18 @@ export function buildMonthView(
       despesasFixasTotal += Number(finalItem.amount || 0);
       despesasFixasPagasTotal += finalItem.paid ? Number(finalItem.amount || 0) : 0;
     }
+  }
+
+  for (const item of state.variableExpenses || []) {
+    if (item.monthKey !== currentMonthKey) continue;
+    const finalItem: MonthViewVariableExpense = {
+      ...item,
+      amount: Number(item.amount || 0),
+      paid: item.paid === true,
+    };
+    variableExpenses.push(finalItem);
+    despesasVariaveisTotal += Number(finalItem.amount || 0);
+    despesasVariaveisPagasTotal += finalItem.paid ? Number(finalItem.amount || 0) : 0;
   }
 
   const revenues: typeof state.revenues = [];
@@ -181,16 +199,19 @@ export function buildMonthView(
   const totals = {
     receitas: receitasTotal,
     despesasFixas: despesasFixasTotal,
+    despesasVariaveis: despesasVariaveisTotal,
     installments: installmentsTotal,
     fixedExpensesPaid: despesasFixasPagasTotal,
+    variableExpensesPaid: despesasVariaveisPagasTotal,
     installmentsPaid: installmentsPaidTotal,
-    despesasPaid: despesasFixasPagasTotal + installmentsPaidTotal,
-    despesas: despesasFixasTotal + installmentsTotal,
-    saldo: receitasTotal - despesasFixasTotal - installmentsTotal,
+    despesasPaid: despesasFixasPagasTotal + despesasVariaveisPagasTotal + installmentsPaidTotal,
+    despesas: despesasFixasTotal + despesasVariaveisTotal + installmentsTotal,
+    saldo: receitasTotal - despesasFixasTotal - despesasVariaveisTotal - installmentsTotal,
   };
 
   return {
     fixedExpenses,
+    variableExpenses,
     revenues,
     installments,
     totals,

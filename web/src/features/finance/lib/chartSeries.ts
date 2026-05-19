@@ -1,5 +1,9 @@
 import { DEFAULT_CARD_ID } from '../domain/constants.js';
-import type { MonthView, MonthViewFixedExpense } from '../domain/types.js';
+import type {
+  MonthView,
+  MonthViewFixedExpense,
+  MonthViewVariableExpense,
+} from '../domain/types.js';
 import { getExpenseCard } from '../selectors/summarySelectors.js';
 import { CARD_LABELS, CATEGORY_LABELS } from '../ui/constants.js';
 import { formatMoney } from './utils.js';
@@ -30,6 +34,11 @@ export function buildCategorySeries(monthView: MonthView) {
     categoryMap.set(cat, (categoryMap.get(cat) || 0) + Number(item.amount || 0));
   });
 
+  (monthView.variableExpenses || []).forEach((item) => {
+    const cat = item.category || 'outro';
+    categoryMap.set(cat, (categoryMap.get(cat) || 0) + Number(item.amount || 0));
+  });
+
   const sorted = sortEntriesByValue(Array.from(categoryMap.entries())).filter(
     ([, value]) => value > 0
   );
@@ -46,6 +55,12 @@ export function buildCardSeries(monthView: MonthView) {
 
   monthView.fixedExpenses.forEach((item) => {
     const card = getExpenseCard(item as MonthViewFixedExpense);
+    if (!card) return;
+    cardMap.set(card, (cardMap.get(card) || 0) + Number(item.amount || 0));
+  });
+
+  (monthView.variableExpenses || []).forEach((item) => {
+    const card = getExpenseCard(item as MonthViewVariableExpense);
     if (!card) return;
     cardMap.set(card, (cardMap.get(card) || 0) + Number(item.amount || 0));
   });
@@ -70,6 +85,16 @@ export function buildCardStatusSeries(monthView: MonthView) {
 
   monthView.fixedExpenses.forEach((item) => {
     const card = getExpenseCard(item as MonthViewFixedExpense);
+    if (!card) return;
+    const amount = Number(item.amount || 0);
+    const current = cardMap.get(card) || { total: 0, paid: 0 };
+    current.total += amount;
+    if (item.paid === true) current.paid += amount;
+    cardMap.set(card, current);
+  });
+
+  (monthView.variableExpenses || []).forEach((item) => {
+    const card = getExpenseCard(item as MonthViewVariableExpense);
     if (!card) return;
     const amount = Number(item.amount || 0);
     const current = cardMap.get(card) || { total: 0, paid: 0 };

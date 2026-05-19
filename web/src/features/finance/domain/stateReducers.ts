@@ -5,6 +5,7 @@ import {
   createDefaultFixedExpense,
   createDefaultInstallment,
   createDefaultRevenue,
+  createDefaultVariableExpense,
 } from './factories';
 import { matchOverride } from './overrides/repository';
 import type {
@@ -14,6 +15,7 @@ import type {
   Installment,
   OverrideType,
   Revenue,
+  VariableExpense,
 } from './types';
 
 export function changeMonth(state: FinanceState, step: number): FinanceState {
@@ -41,6 +43,7 @@ export function setCardBills(
   const normalizedCardBills = (cardBills || []).map((card) => {
     const normalized: CardBillItem = { id: card.id, name: card.name };
     if (card.color) normalized.color = card.color;
+    if (card.dueDay !== undefined) normalized.dueDay = card.dueDay;
     return normalized;
   });
 
@@ -61,10 +64,33 @@ export function addRevenue(state: FinanceState, data: Partial<Revenue>): Finance
   };
 }
 
+export function addVariableExpense(
+  state: FinanceState,
+  data: Partial<VariableExpense>
+): FinanceState {
+  return {
+    ...state,
+    variableExpenses: [...(state.variableExpenses || []), createDefaultVariableExpense(data)],
+  };
+}
+
 export function addInstallment(state: FinanceState, data: Partial<Installment>): FinanceState {
   return {
     ...state,
     installments: [...state.installments, createDefaultInstallment(data)],
+  };
+}
+
+export function updateVariableExpense(
+  state: FinanceState,
+  id: string,
+  updates: Partial<VariableExpense>
+): FinanceState {
+  return {
+    ...state,
+    variableExpenses: (state.variableExpenses || []).map((item) =>
+      item.id === id ? { ...item, ...updates } : item
+    ),
   };
 }
 
@@ -78,6 +104,13 @@ export function updateFixedExpense(
     fixedExpenses: state.fixedExpenses.map((item) =>
       item.id === id ? { ...item, ...updates } : item
     ),
+  };
+}
+
+export function removeVariableExpense(state: FinanceState, id: string): FinanceState {
+  return {
+    ...state,
+    variableExpenses: (state.variableExpenses || []).filter((item) => item.id !== id),
   };
 }
 

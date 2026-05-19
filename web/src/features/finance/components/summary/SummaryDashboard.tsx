@@ -1,4 +1,4 @@
-import { CalendarDays, ReceiptText, Wallet, WalletCards } from 'lucide-react';
+import { CalendarDays, CreditCard, ReceiptText, Wallet, WalletCards } from 'lucide-react';
 import type { RefObject } from 'react';
 import { useMemo } from 'react';
 import { OVERRIDE_TYPES } from '../../domain/constants';
@@ -213,7 +213,6 @@ export function SummaryDashboard({
           onToggleMonthPaid(OVERRIDE_TYPES.CARD_BILL_PAYMENT, card, paid)
         }
         cardList={cardList}
-        onOpenCards={onOpenCards}
       />
 
       <section className="charts-grid">
@@ -261,7 +260,15 @@ export function SummaryDashboard({
           </div>
         </div>
         <div className={`chart-card ${showInstallmentList ? 'chart-card--compact' : ''}`}>
-          <p className="chart-title">PARCELAS EM ABERTO</p>
+          <div className="chart-title-row">
+            <p className="chart-title">PARCELAS EM ABERTO</p>
+            {onOpenCards ? (
+              <button type="button" className="chart-card-action" onClick={onOpenCards}>
+                <CreditCard size={13} strokeWidth={2} aria-hidden />
+                Ver cartoes
+              </button>
+            ) : null}
+          </div>
           {installmentFocus ? <p className="chart-note">{installmentFocus}</p> : null}
           <div
             className={`chart-frame chart-frame--bar ${

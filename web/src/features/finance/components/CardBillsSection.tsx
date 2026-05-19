@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import { Plus, Trash2 } from 'lucide-react';
+import { Pencil, Plus, Trash2 } from 'lucide-react';
 import type { CardBillItem } from '../domain/types';
 import { useCardList } from '../hooks/useCardList';
 import { detectBankColor } from '../lib/bankColors';
@@ -22,6 +22,7 @@ function BillCard({
   value,
   onChange,
   onDelete,
+  onEdit,
   _canDelete,
   deleteReason,
 }: {
@@ -30,6 +31,7 @@ function BillCard({
   value: string;
   onChange: (value: string) => void;
   onDelete: () => void;
+  onEdit: () => void;
   _canDelete: boolean;
   deleteReason?: string;
 }) {
@@ -138,32 +140,45 @@ function BillCard({
       style={getCardStyle()}
     >
       <div className="bill-card-top">
-        <span className="bill-card-name" title={displayName}>
-          {displayName}
-        </span>
-        {deleteReason ? (
-          <span className="bill-card-status">EM USO</span>
-        ) : (
-          <button
-            type="button"
-            className="bill-card-delete"
-            onClick={(e) => {
-              e.stopPropagation();
-              onDelete();
-            }}
-            aria-label={`Apagar cartao ${displayName}`}
-            title={`Apagar cartao ${displayName}`}
-          >
-            <Trash2 size={11} strokeWidth={2} aria-hidden />
-            Excluir
-          </button>
-        )}
+        <button
+          type="button"
+          className="bill-card-name-btn"
+          onClick={(e) => {
+            e.stopPropagation();
+            onEdit();
+          }}
+          aria-label={`Editar cartao ${displayName}`}
+          title={`Editar cartao ${displayName}`}
+        >
+          <span className="bill-card-name">{displayName}</span>
+          <Pencil size={11} strokeWidth={2.4} aria-hidden />
+        </button>
+        <div className="bill-card-actions">
+          {deleteReason ? (
+            <span className="bill-card-status">EM USO</span>
+          ) : (
+            <button
+              type="button"
+              className="bill-card-delete"
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete();
+              }}
+              aria-label={`Apagar cartao ${displayName}`}
+              title={`Apagar cartao ${displayName}`}
+            >
+              <Trash2 size={11} strokeWidth={2} aria-hidden />
+              Excluir
+            </button>
+          )}
+        </div>
       </div>
 
       <div className="bill-card-divider" />
 
       <div className="bill-card-bottom">
         <span className="bill-card-label">FATURA</span>
+        {card.dueDay ? <span className="bill-card-due">Vence dia {card.dueDay}</span> : null}
       </div>
 
       <div className={`bill-display${isEditing ? ' editing' : ''}`}>
@@ -261,11 +276,16 @@ export function CardBillsSection({
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [newCardName, setNewCardName] = useState('');
+  const [newCardDueDay, setNewCardDueDay] = useState('');
   const [newCardBillInput, setNewCardBillInput] = useState('');
+  const [editTarget, setEditTarget] = useState<CardBillItem | null>(null);
+  const [editCardName, setEditCardName] = useState('');
+  const [editCardDueDay, setEditCardDueDay] = useState('');
   const [deleteTarget, setDeleteTarget] = useState<CardBillItem | null>(null);
 
   const resetAddCardForm = () => {
     setNewCardName('');
+    setNewCardDueDay('');
     setNewCardBillInput('');
   };
 
@@ -286,6 +306,7 @@ export function CardBillsSection({
 
     const cardColor = detectBankColor(newCardName);
     const initialBill = parseMoneyInput(newCardBillInput, { allowZero: false });
+    const dueDay = newCardDueDay ? Number(newCardDueDay) : null;
 
     const newCard: CardBillItem = {
       id,
@@ -293,6 +314,9 @@ export function CardBillsSection({
     };
     if (cardColor) {
       newCard.color = cardColor;
+    }
+    if (dueDay !== null) {
+      newCard.dueDay = dueDay;
     }
     const next = [...(cardList || []), newCard];
     onSetCardList(next);
@@ -307,6 +331,41 @@ export function CardBillsSection({
     const target = cards.find((card) => card.id === cardId);
     if (!target) return;
     setDeleteTarget(target);
+  };
+
+  const openEditCardModal = (card: CardBillItem) => {
+    setEditTarget(card);
+    setEditCardName(card.name);
+    setEditCardDueDay(card.dueDay ? String(card.dueDay) : '');
+  };
+
+  const closeEditCardModal = () => {
+    setEditTarget(null);
+    setEditCardName('');
+    setEditCardDueDay('');
+  };
+
+  const handleEditCard = () => {
+    if (!onSetCardList || !editTarget) return;
+    const name = editCardName.trim();
+    if (!name) return;
+    const dueDay = editCardDueDay ? Number(editCardDueDay) : null;
+    const detectedColor = detectBankColor(name);
+    onSetCardList(
+      (cardList || []).map((card) => {
+        if (card.id !== editTarget.id) return card;
+        const nextCard: CardBillItem = {
+          ...card,
+          name,
+          dueDay,
+        };
+        if (!card.color && detectedColor) {
+          nextCard.color = detectedColor;
+        }
+        return nextCard;
+      })
+    );
+    closeEditCardModal();
   };
 
   useEffect(() => {
@@ -340,6 +399,7 @@ export function CardBillsSection({
                 value={billInputs?.[c.id] || ''}
                 onChange={(v) => handleBillInputChange(c.id, v)}
                 onDelete={() => handleDeleteCard(c.id)}
+                onEdit={() => openEditCardModal(c)}
                 _canDelete={!cardDeleteReasons?.[c.id]}
                 deleteReason={cardDeleteReasons?.[c.id]}
               />
@@ -384,8 +444,21 @@ export function CardBillsSection({
               autoComplete="off"
             />
           </label>
+          <label className="field card-bill-add-field">
+            <span>Dia de vencimento</span>
+            <input
+              className="card-bill-add-input"
+              type="number"
+              min="1"
+              max="31"
+              placeholder="Opcional"
+              value={newCardDueDay}
+              onChange={(e) => setNewCardDueDay(e.target.value)}
+              autoComplete="off"
+            />
+          </label>
           <p className="card-bill-add-hint">
-            Opcional. Voce pode adicionar o cartao agora e informar a fatura depois.
+            Fatura e vencimento sao opcionais. Voce pode preencher depois.
           </p>
           {newCardName && detectBankColor(newCardName) ? (
             <div className="color-detection-info">
@@ -402,6 +475,44 @@ export function CardBillsSection({
               />
             </div>
           ) : null}
+        </div>
+      </RuleModal>
+
+      <RuleModal
+        open={!!editTarget}
+        title="Editar cartao"
+        submitLabel="Salvar alteracoes"
+        onClose={closeEditCardModal}
+        onSubmit={(event) => {
+          event.preventDefault();
+          handleEditCard();
+        }}
+      >
+        <div className="card-bill-add-form">
+          <label className="field card-bill-add-field">
+            <span>Nome do cartao</span>
+            <input
+              className="card-bill-add-input"
+              type="text"
+              placeholder="Ex.: Sicredi"
+              value={editCardName}
+              onChange={(e) => setEditCardName(e.target.value)}
+              autoComplete="off"
+            />
+          </label>
+          <label className="field card-bill-add-field">
+            <span>Dia de vencimento</span>
+            <input
+              className="card-bill-add-input"
+              type="number"
+              min="1"
+              max="31"
+              placeholder="Opcional"
+              value={editCardDueDay}
+              onChange={(e) => setEditCardDueDay(e.target.value)}
+              autoComplete="off"
+            />
+          </label>
         </div>
       </RuleModal>
 

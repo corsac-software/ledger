@@ -55,6 +55,57 @@ describe('buildMonthView', () => {
     expect(result.totals.despesasFixas).toBe(1620);
   });
 
+  it('includes variable expenses in the selected month totals', () => {
+    const state = {
+      ...emptyFinanceState(),
+      currentDate: new Date('2026-04-15'),
+      revenues: [
+        {
+          id: 'r1',
+          name: 'Salario',
+          baseAmount: 1000,
+          active: true,
+          startMonth: '2026-01',
+          endMonth: null,
+          notes: '',
+        },
+      ],
+      variableExpenses: [
+        {
+          id: 'v1',
+          name: 'Mercado',
+          amount: 120,
+          date: '2026-04-10',
+          monthKey: '2026-04',
+          category: 'casa',
+          paymentMethod: 'pix',
+          card: null,
+          paid: true,
+          notes: '',
+        },
+        {
+          id: 'v2',
+          name: 'Outro mes',
+          amount: 90,
+          date: '2026-05-01',
+          monthKey: '2026-05',
+          category: 'outro',
+          paymentMethod: 'pix',
+          card: null,
+          paid: true,
+          notes: '',
+        },
+      ],
+    };
+
+    const result = buildMonthView(state);
+
+    expect(result.variableExpenses).toHaveLength(1);
+    expect(result.totals.despesasVariaveis).toBe(120);
+    expect(result.totals.despesas).toBe(120);
+    expect(result.totals.saldo).toBe(880);
+  });
+
   it('includes revenues with null endMonth (infinite) for future months', () => {
     const state = {
       ...emptyFinanceState(),

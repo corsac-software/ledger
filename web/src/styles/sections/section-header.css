@@ -79,7 +79,7 @@
   border-color: color-mix(in srgb, var(--color-accent-strong) 86%, var(--color-border));
   background: var(--color-accent-strong);
   color: #ffffff;
-  box-shadow: 0 12px 24px -18px color-mix(in srgb, var(--color-accent) 72%, #000000 28%);
+  box-shadow: 0 10px 22px -16px color-mix(in srgb, var(--color-accent) 62%, #020617 38%);
 }
 
 .add-btn:disabled {
@@ -121,7 +121,8 @@
 .expense-mode-tabs {
   display: inline-flex;
   align-items: center;
-  width: min(100%, 420px);
+  width: max-content;
+  max-width: 100%;
   padding: 4px;
   border: 1px solid var(--color-border-secondary);
   border-radius: 999px;
@@ -129,9 +130,9 @@
 }
 
 .expense-mode-tab {
-  flex: 1;
+  flex: 0 0 auto;
   min-height: 30px;
-  padding: 6px 14px;
+  padding: 6px 22px;
   border: 0;
   border-radius: 999px;
   background: transparent;
@@ -173,6 +174,53 @@
   line-height: 1.5;
 }
 
+.variable-quick-add {
+  display: grid;
+  grid-template-columns: minmax(180px, 1fr) minmax(110px, 150px) auto;
+  gap: 8px;
+  padding: 12px;
+  border-bottom: 1px solid var(--color-border-tertiary);
+  background: color-mix(in srgb, var(--color-background-secondary) 36%, transparent);
+}
+
+.variable-quick-add input {
+  min-width: 0;
+  min-height: 34px;
+  padding: 8px 11px;
+  border: 1px solid var(--color-border-secondary);
+  border-radius: 999px;
+  background: var(--color-background-primary);
+  color: var(--color-text-primary);
+  font-size: 12px;
+}
+
+.variable-quick-add input:focus {
+  outline: none;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 2px var(--color-accent-muted);
+}
+
+.variable-quick-add button {
+  min-height: 34px;
+  padding: 8px 14px;
+  border: 1px solid color-mix(in srgb, var(--color-accent) 84%, var(--color-border));
+  border-radius: 999px;
+  background: var(--color-accent);
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.variable-quick-add button:hover:not(:disabled) {
+  border-color: color-mix(in srgb, var(--color-accent-strong) 86%, var(--color-border));
+  background: var(--color-accent-strong);
+}
+
+.variable-quick-add button:disabled {
+  cursor: not-allowed;
+  opacity: 0.58;
+}
+
 @media (max-width: 640px) {
   .sec-header {
     align-items: flex-start;
@@ -183,5 +231,9 @@
     width: 100%;
     justify-content: flex-start;
     flex-wrap: wrap;
+  }
+
+  .variable-quick-add {
+    grid-template-columns: 1fr;
   }
 }

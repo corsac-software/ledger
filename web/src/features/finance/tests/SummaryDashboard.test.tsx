@@ -66,7 +66,9 @@ describe('SummaryDashboard.tsx', () => {
     expect(screen.queryByText('QUASE NO FIM')).not.toBeInTheDocument();
     expect(screen.getByText('100%', { selector: '.chart-insight-percent' })).toBeInTheDocument();
     expect(screen.getByText('Principal foco')).toBeInTheDocument();
-    expect(screen.getByText('TELEFONE', { selector: '.chart-insight-list-row span' })).toBeInTheDocument();
+    expect(
+      screen.getByText('TELEFONE', { selector: '.chart-insight-list-row span' })
+    ).toBeInTheDocument();
     expect(
       screen.getByText('Mac concentra a maior parte das parcelas deste mes.')
     ).toBeInTheDocument();
@@ -129,5 +131,28 @@ describe('SummaryDashboard.tsx', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Ver cartoes' }));
 
     expect(onOpenCards).toHaveBeenCalledTimes(1);
+  });
+
+  it('keeps chart mode controls scoped to the chart card', () => {
+    render(
+      <SummaryDashboard
+        monthView={monthView}
+        monthCardBills={{}}
+        monthOverrides={[]}
+        currentMonthKey="2026-05"
+        pieMode="categories"
+        setPieMode={vi.fn()}
+        pieChartRef={createRef<HTMLCanvasElement>()}
+        barChartRef={createRef<HTMLCanvasElement>()}
+        onToggleMonthPaid={vi.fn()}
+        cardList={[]}
+      />
+    );
+
+    expect(screen.getByRole('tab', { name: 'Categorias' }).closest('.chart-switch')).toBeTruthy();
+    expect(screen.getByRole('tab', { name: 'Cartoes' }).closest('.chart-switch')).toBeTruthy();
+    expect(
+      screen.getByRole('tab', { name: 'Pago x pendente' }).closest('.chart-switch')
+    ).toBeTruthy();
   });
 });

@@ -47,6 +47,19 @@ export interface Revenue {
   notes: string;
 }
 
+export interface VariableExpense {
+  id: string;
+  name: string;
+  amount: number;
+  date: string;
+  monthKey: string;
+  category: string;
+  paymentMethod: string;
+  card?: string | null;
+  paid: boolean;
+  notes: string;
+}
+
 export type OverrideType =
   | 'fixedExpense'
   | 'fixedExpensePayment'
@@ -79,6 +92,7 @@ export interface Meta {
 export interface FinanceState {
   currentDate: Date;
   fixedExpenses: FixedExpense[];
+  variableExpenses: VariableExpense[];
   installments: Installment[];
   revenues: Revenue[];
   monthOverrides: MonthOverride[];
@@ -94,21 +108,26 @@ export interface MonthViewInstallment extends Installment {
   paid: boolean;
 }
 
+export interface MonthViewVariableExpense extends VariableExpense {}
+
 export interface MonthView {
   fixedExpenses: MonthViewFixedExpense[];
+  variableExpenses: MonthViewVariableExpense[];
   installments: MonthViewInstallment[];
   revenues: Revenue[];
   totals: {
     despesasFixas: number;
+    despesasVariaveis: number;
     receitas: number;
     installments: number;
   };
 }
 
-export type FinanceIdPrefix = 'fixed' | 'rev' | 'inst' | 'ovr' | 'test';
+export type FinanceIdPrefix = 'fixed' | 'var' | 'rev' | 'inst' | 'ovr' | 'test';
 
 export interface CardBillItem {
   id: string;
   name: string;
   color?: string;
+  dueDay?: number | null;
 }

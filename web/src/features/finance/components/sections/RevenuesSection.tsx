@@ -80,6 +80,7 @@ export function RevenuesSection({
 
   return (
     <CrudSection
+      className="revenues-section"
       labels={REVENUE_LABELS}
       items={activeItems}
       form={form}

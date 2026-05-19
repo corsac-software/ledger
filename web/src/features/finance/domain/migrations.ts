@@ -25,12 +25,13 @@ function createEmptyFinanceState(): FinanceState {
   return {
     currentDate: new Date(),
     fixedExpenses: [],
+    variableExpenses: [],
     installments: [],
     revenues: [],
     monthOverrides: [],
     settings: { theme: 'default' },
     meta: {
-      schemaVersion: 3,
+      schemaVersion: 5,
       createdAt: new Date(),
       lastResetAt: null,
     },
@@ -50,6 +51,9 @@ function normalizeCardBills(value: unknown): CardBillItem[] | undefined {
     const normalized: CardBillItem = { id, name };
     if (typeof record.color === 'string' && record.color.trim()) {
       normalized.color = record.color.trim();
+    }
+    if (typeof record.dueDay === 'number' && Number.isFinite(record.dueDay)) {
+      normalized.dueDay = record.dueDay;
     }
     return [normalized];
   });

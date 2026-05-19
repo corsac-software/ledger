@@ -293,13 +293,13 @@ Depois do CRUD basico:
 
 **Objetivo:** evitar criar uma regra errada no dominio.
 
-| Passo | Acao                                                                  |
-| ----- | --------------------------------------------------------------------- |
-| 0.1   | Confirmar se despesa variavel e sempre mensal/pontual.                |
-| 0.2   | Confirmar se `dueDay` do cartao entra agora sem logica de fechamento. |
-| 0.3   | Confirmar que edicao de cartao entra antes ou junto de `dueDay`.      |
-| 0.4   | Confirmar campos obrigatorios do cadastro rapido: descricao e valor.  |
-| 0.5   | Confirmar defaults inteligentes iniciais.                             |
+| Passo | Acao                                                                           |
+| ----- | ------------------------------------------------------------------------------ |
+| 0.1   | [feito] Confirmar se despesa variavel e sempre mensal/pontual.                 |
+| 0.2   | [feito] Confirmar que `dueDay` do cartao entra agora sem logica de fechamento. |
+| 0.3   | [feito] Confirmar que edicao de cartao entra antes ou junto de `dueDay`.       |
+| 0.4   | [feito] Confirmar campos obrigatorios do cadastro rapido: descricao e valor.   |
+| 0.5   | [feito] Confirmar defaults inteligentes iniciais.                              |
 
 ---
 
@@ -307,15 +307,15 @@ Depois do CRUD basico:
 
 **Objetivo:** preparar dominio e persistencia.
 
-| Passo | Acao                                                          |
-| ----- | ------------------------------------------------------------- |
-| 1.1   | Criar tipo `VariableExpense`.                                 |
-| 1.2   | Adicionar `variableExpenses` em `FinanceState`.               |
-| 1.3   | Criar factory `createDefaultVariableExpense`.                 |
-| 1.4   | Criar normalizer para dados importados/legados.               |
-| 1.5   | Criar reducers: add/update/remove.                            |
-| 1.6   | Atualizar schema/migrations se necessario.                    |
-| 1.7   | Incluir `VariableExpense` nos tipos de actions/context/hooks. |
+| Passo | Acao                                                                  |
+| ----- | --------------------------------------------------------------------- |
+| 1.1   | [feito] Criar tipo `VariableExpense`.                                 |
+| 1.2   | [feito] Adicionar `variableExpenses` em `FinanceState`.               |
+| 1.3   | [feito] Criar factory `createDefaultVariableExpense`.                 |
+| 1.4   | [feito] Criar normalizer para dados importados/legados.               |
+| 1.5   | [feito] Criar reducers: add/update/remove.                            |
+| 1.6   | [feito] Atualizar schema/migrations se necessario.                    |
+| 1.7   | [feito] Incluir `VariableExpense` nos tipos de actions/context/hooks. |
 
 Campos iniciais sugeridos:
 
@@ -340,13 +340,13 @@ interface VariableExpense {
 
 **Objetivo:** fazer despesas variaveis afetarem a leitura mensal.
 
-| Passo | Acao                                                                 |
-| ----- | -------------------------------------------------------------------- |
-| 2.1   | Incluir variaveis em `buildMonthView`.                               |
-| 2.2   | Atualizar totais: despesas variaveis, despesas totais e saldo.       |
-| 2.3   | Atualizar graficos de distribuicao por categoria/cartao.             |
-| 2.4   | Atualizar cards de resumo que hoje consideram fixas + parcelamentos. |
-| 2.5   | Atualizar selectors de paid/pending se variaveis tiverem status.     |
+| Passo | Acao                                                                         |
+| ----- | ---------------------------------------------------------------------------- |
+| 2.1   | [feito] Incluir variaveis em `buildMonthView`.                               |
+| 2.2   | [feito] Atualizar totais: despesas variaveis, despesas totais e saldo.       |
+| 2.3   | [feito] Atualizar graficos de distribuicao por categoria/cartao.             |
+| 2.4   | [feito] Atualizar cards de resumo que hoje consideram fixas + parcelamentos. |
+| 2.5   | [feito] Atualizar selectors de paid/pending se variaveis tiverem status.     |
 
 ---
 
@@ -354,14 +354,14 @@ interface VariableExpense {
 
 **Objetivo:** substituir placeholder por CRUD funcional.
 
-| Passo | Acao                                                             |
-| ----- | ---------------------------------------------------------------- |
-| 3.1   | Criar `VariableExpensesSection`.                                 |
-| 3.2   | Criar row/tabela ou lista compacta para variaveis.               |
-| 3.3   | Criar form/modal de cadastro rapido.                             |
-| 3.4   | Integrar com `ExpensesSection` na aba `Variaveis`.               |
-| 3.5   | Criar edicao/exclusao usando `CrudSection` quando fizer sentido. |
-| 3.6   | Garantir empty state bom e curto.                                |
+| Passo | Acao                                                       |
+| ----- | ---------------------------------------------------------- |
+| 3.1   | [feito] Criar `VariableExpensesSection`.                   |
+| 3.2   | [feito] Criar row/tabela ou lista compacta para variaveis. |
+| 3.3   | [feito] Criar form/modal de cadastro rapido.               |
+| 3.4   | [feito] Integrar com `ExpensesSection` na aba `Variaveis`. |
+| 3.5   | [feito] Criar edicao/exclusao usando fluxo modal atual.    |
+| 3.6   | [feito] Garantir empty state bom e curto.                  |
 
 ### Forma Visual Recomendada
 
@@ -383,14 +383,14 @@ Depois, se ficar muito pesado, evoluir para lista compacta.
 
 **Objetivo:** reduzir tempo real de cadastro.
 
-| Passo | Acao                                                                               |
-| ----- | ---------------------------------------------------------------------------------- |
-| 4.1   | Criar defaults de formulario com ultimo comportamento usado.                       |
-| 4.2   | Persistir preferencias simples: ultima categoria, ultimo pagamento, ultimo cartao. |
-| 4.3   | Focar primeiro campo automaticamente ao abrir modal.                               |
-| 4.4   | Permitir submit rapido por Enter quando campos minimos estiverem validos.          |
-| 4.5   | Manter campos secundarios compactos e pre-preenchidos.                             |
-| 4.6   | Avaliar um botao/linha de "Adicionar rapido" dentro de `Variaveis`.                |
+| Passo | Acao                                                                                       |
+| ----- | ------------------------------------------------------------------------------------------ |
+| 4.1   | [feito] Criar defaults de formulario com comportamento simples por mes/cartao.             |
+| 4.2   | [feito] Persistir preferencias simples: ultima categoria, ultimo pagamento, ultimo cartao. |
+| 4.3   | [feito] Focar primeiro campo automaticamente ao abrir modal.                               |
+| 4.4   | [feito] Permitir submit rapido por Enter quando campos minimos estiverem validos.          |
+| 4.5   | [feito] Manter campos secundarios compactos e pre-preenchidos.                             |
+| 4.6   | [feito] Avaliar um botao/linha de "Adicionar rapido" dentro de `Variaveis`.                |
 
 ---
 
@@ -398,15 +398,15 @@ Depois, se ficar muito pesado, evoluir para lista compacta.
 
 **Objetivo:** tornar cartoes editaveis e preparar faturas para leitura melhor.
 
-| Passo | Acao                                                                   |
-| ----- | ---------------------------------------------------------------------- |
-| 5.1   | Adicionar `dueDay` em `CardBillItem`.                                  |
-| 5.2   | Atualizar modal de novo cartao com campo opcional `Dia de vencimento`. |
-| 5.3   | Criar acao de editar cartao.                                           |
-| 5.4   | Criar modal de edicao de cartao.                                       |
-| 5.5   | Exibir vencimento no card de fatura sem poluir visual.                 |
-| 5.6   | Garantir que renomear cartao nao quebre referencias por `id`.          |
-| 5.7   | Atualizar testes de adicionar/editar/excluir cartao.                   |
+| Passo | Acao                                                                           |
+| ----- | ------------------------------------------------------------------------------ |
+| 5.1   | [feito] Adicionar `dueDay` em `CardBillItem`.                                  |
+| 5.2   | [feito] Atualizar modal de novo cartao com campo opcional `Dia de vencimento`. |
+| 5.3   | [feito] Criar acao de editar cartao.                                           |
+| 5.4   | [feito] Criar modal de edicao de cartao.                                       |
+| 5.5   | [feito] Exibir vencimento no card de fatura sem poluir visual.                 |
+| 5.6   | [feito] Garantir que renomear cartao nao quebre referencias por `id`.          |
+| 5.7   | [feito] Atualizar testes de adicionar/editar/excluir cartao.                   |
 
 ### Observacao Sobre ID
 
@@ -419,14 +419,14 @@ porque despesas, fixas e parcelamentos referenciam o cartao por id.
 
 **Objetivo:** proteger regras novas.
 
-| Passo | Acao                                                           |
-| ----- | -------------------------------------------------------------- |
-| 6.1   | Testes de reducers/factories/normalizers de `VariableExpense`. |
-| 6.2   | Testes de `buildMonthView` com variaveis.                      |
-| 6.3   | Testes de resumo e graficos com variaveis.                     |
-| 6.4   | Testes de `VariableExpensesSection`.                           |
-| 6.5   | Testes de criacao/edicao de cartao com `dueDay`.               |
-| 6.6   | Testes de bloqueio de exclusao de cartao em uso por variaveis. |
+| Passo | Acao                                                                   |
+| ----- | ---------------------------------------------------------------------- |
+| 6.1   | [feito] Testes de reducers/factories/normalizers de `VariableExpense`. |
+| 6.2   | [feito] Testes de `buildMonthView` com variaveis.                      |
+| 6.3   | [feito] Testes de resumo e graficos com variaveis.                     |
+| 6.4   | [feito] Testes de `VariableExpensesSection`.                           |
+| 6.5   | [feito] Testes de criacao/edicao de cartao com `dueDay`.               |
+| 6.6   | [feito] Testes de bloqueio de exclusao de cartao em uso por variaveis. |
 
 ---
 
@@ -447,14 +447,14 @@ porque despesas, fixas e parcelamentos referenciam o cartao por id.
 
 ## Perguntas Em Aberto
 
-1. Despesa variavel paga no cartao deve aparecer automaticamente na fatura do
-   cartao, ou a fatura continua sendo informada manualmente por enquanto?
-2. O usuario precisa poder marcar uma despesa variavel como paga/pendente?
-3. A primeira versao deve permitir parcelar uma variavel, ou isso continua apenas
-   em `Parcelamentos`?
-4. `dueDay` do cartao sera apenas informativo agora, ou deve gerar alertas no
-   resumo?
-5. O cadastro rapido deve ser modal ou uma linha inline dentro da aba Variaveis?
+1. [decidido] Despesa variavel paga no cartao entra no rastreamento da fatura
+   do cartao no mes, seguindo a opcao simples da V1.
+2. [decidido] O usuario pode marcar uma despesa variavel como paga/pendente.
+3. [decidido] Parcelar uma variavel continua fora da V1; permanece em
+   `Parcelamentos`.
+4. [decidido] `dueDay` do cartao e informativo agora, sem alertas no resumo.
+5. [decidido] O cadastro rapido comeca em modal compacto; linha inline fica
+   para melhoria futura.
 
 ---
 

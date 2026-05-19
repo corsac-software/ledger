@@ -58,6 +58,7 @@ export default function FinanceApp() {
   const cardDeleteReasons = useCardDeleteReasons({
     cardBills: settings.cardBills || [],
     fixedExpenses,
+    monthViewVariableExpenses: monthView.variableExpenses,
     monthViewInstallments: monthView.installments,
     monthCardBills,
     currentKey,
@@ -92,6 +93,7 @@ export default function FinanceApp() {
       return (
         <ExpensesSection
           items={fixedExpenses}
+          variableItems={monthView.variableExpenses}
           currentMonthKey={currentKey}
           monthOverrides={monthOverrides}
           cardList={cardBillsList}
@@ -104,6 +106,9 @@ export default function FinanceApp() {
             actions.updateFixedExpense(id, rest as any);
           }}
           onDelete={actions.removeFixedExpense}
+          onAddVariable={actions.addVariableExpense}
+          onEditVariable={actions.updateVariableExpense}
+          onDeleteVariable={actions.removeVariableExpense}
           onMonthFixedExpenseAmount={setMonthFixedExpenseAmount}
           onTogglePaid={(itemId, paid) =>
             toggleMonthPaid(OVERRIDE_TYPES.FIXED_EXPENSE_PAYMENT, itemId, paid)

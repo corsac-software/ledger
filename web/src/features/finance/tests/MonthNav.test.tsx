@@ -203,7 +203,7 @@ describe('MonthNav.tsx', () => {
     fireEvent.click(screen.getByText('Novo cartao'));
     expect(screen.getByText('Adicionar cartao')).toBeInTheDocument();
     expect(
-      screen.getByText('Opcional. Voce pode adicionar o cartao agora e informar a fatura depois.')
+      screen.getByText('Fatura e vencimento sao opcionais. Voce pode preencher depois.')
     ).toBeInTheDocument();
     fireEvent.change(screen.getByLabelText('Nome do cartao'), {
       target: { value: 'Cartao novo' },
@@ -243,6 +243,55 @@ describe('MonthNav.tsx', () => {
       { id: 'cartao-novo', name: 'Cartao novo' },
     ]);
     expect(onSetCardBill).toHaveBeenCalledWith('cartao-novo', 2400);
+  });
+
+  it('adds a new card with optional due day', () => {
+    const onSetCardList = vi.fn();
+    render(
+      <MonthNav
+        {...defaultProps}
+        cardList={[{ id: 'nubank', name: 'Nubank' }]}
+        onSetCardList={onSetCardList}
+      />
+    );
+
+    fireEvent.click(screen.getByText('Novo cartao'));
+    fireEvent.change(screen.getByLabelText('Nome do cartao'), {
+      target: { value: 'Cartao novo' },
+    });
+    fireEvent.change(screen.getByLabelText('Dia de vencimento'), {
+      target: { value: '15' },
+    });
+    fireEvent.click(screen.getByText('Adicionar'));
+
+    expect(onSetCardList).toHaveBeenCalledWith([
+      { id: 'nubank', name: 'Nubank' },
+      { id: 'cartao-novo', name: 'Cartao novo', dueDay: 15 },
+    ]);
+  });
+
+  it('edits card name and due day without changing card id', () => {
+    const onSetCardList = vi.fn();
+    render(
+      <MonthNav
+        {...defaultProps}
+        cardList={[{ id: 'nubank', name: 'Nubank', dueDay: 10 }]}
+        onSetCardList={onSetCardList}
+      />
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'Editar cartao Nubank' }));
+    fireEvent.change(screen.getByLabelText('Nome do cartao'), {
+      target: { value: 'Nubank PJ' },
+    });
+    fireEvent.change(screen.getByLabelText('Dia de vencimento'), {
+      target: { value: '20' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Salvar alteracoes' }));
+
+    expect(onSetCardList).toHaveBeenCalledWith([
+      { id: 'nubank', name: 'Nubank PJ', dueDay: 20, color: '#820AD1' },
+    ]);
   });
 
   it('does not render manual visual pickers for new cards', () => {

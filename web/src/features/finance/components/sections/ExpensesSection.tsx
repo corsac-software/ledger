@@ -1,8 +1,13 @@
-import type { CardBillItem, FixedExpense, MonthOverride } from '../../domain/types';
+import type {
+  CardBillItem,
+  FixedExpense,
+  MonthOverride,
+  VariableExpense,
+} from '../../domain/types';
 import { FixedExpensesSection } from './FixedExpensesSection';
 import type { MonthPaidSectionProps } from './shared/types';
 import { useState } from 'react';
-import { Plus } from 'lucide-react';
+import { VariableExpensesSection } from './VariableExpensesSection';
 
 type FixedExpensePayload = {
   name: string;
@@ -14,14 +19,30 @@ type FixedExpensePayload = {
   category: string;
 };
 
+type VariableExpensePayload = {
+  name: string;
+  amount: number;
+  date: string;
+  monthKey: string;
+  category: string;
+  paymentMethod: string;
+  card: string | null;
+  paid: boolean;
+  notes: string;
+};
+
 interface ExpensesSectionProps extends MonthPaidSectionProps {
   items: FixedExpense[];
+  variableItems: VariableExpense[];
   currentMonthKey: string;
   monthOverrides: MonthOverride[];
   cardList?: CardBillItem[];
   onAdd: (payload: FixedExpensePayload) => void | Promise<void>;
   onEdit: (id: string, payload: FixedExpensePayload) => void | Promise<void>;
   onDelete: (id: string) => void | Promise<void>;
+  onAddVariable: (payload: VariableExpensePayload) => void | Promise<void>;
+  onEditVariable: (id: string, payload: VariableExpensePayload) => void | Promise<void>;
+  onDeleteVariable: (id: string) => void | Promise<void>;
   onMonthFixedExpenseAmount?: (itemId: string, amount: number | null) => void;
 }
 
@@ -54,28 +75,14 @@ export function ExpensesSection(props: ExpensesSectionProps) {
       {activeMode === 'fixed' ? (
         <FixedExpensesSection {...props} />
       ) : (
-        <section className="section expense-content-section variable-expenses-section">
-          <div className="sec-header section-header--finflow">
-            <div>
-              <p className="sec-title">DESPESAS VARIAVEIS</p>
-              <p className="sec-description">
-                Lancamentos avulsos do mes entram no proximo roadmap.
-              </p>
-            </div>
-            <div className="sec-actions">
-              <button type="button" className="add-btn add-btn--primary" disabled>
-                <Plus size={13} strokeWidth={2.4} aria-hidden />
-                Nova despesa variavel
-              </button>
-            </div>
-          </div>
-          <div className="rule-empty-state variable-expenses-empty">
-            <p>Nenhuma despesa variavel lancada ainda.</p>
-            <span>
-              O cadastro rapido foi movido para o roadmap de gastos variaveis e faturas.
-            </span>
-          </div>
-        </section>
+        <VariableExpensesSection
+          items={props.variableItems}
+          currentMonthKey={props.currentMonthKey}
+          cardList={props.cardList}
+          onAdd={props.onAddVariable}
+          onEdit={props.onEditVariable}
+          onDelete={props.onDeleteVariable}
+        />
       )}
     </section>
   );

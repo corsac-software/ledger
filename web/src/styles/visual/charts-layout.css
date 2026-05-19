@@ -7,9 +7,9 @@
 
 .chart-card {
   background: var(--color-background-primary);
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-border-secondary);
   border-radius: var(--border-radius-xl);
-  padding: 22px;
+  padding: 20px;
   min-height: 330px;
   min-width: 0;
   overflow: hidden;
@@ -118,7 +118,7 @@
   gap: var(--layout-gap);
   padding: var(--layout-gap-section);
   border-radius: 8px;
-  background: color-mix(in srgb, var(--color-background-secondary) 42%, transparent);
+  background: color-mix(in srgb, var(--color-background-secondary) 62%, transparent);
   border: 0.5px solid var(--color-border-tertiary);
 }
 
@@ -178,7 +178,7 @@
 }
 
 .chart-insight-list-row span {
-  color: var(--color-text-secondary);
+  color: var(--color-text-primary);
   font-size: 12px;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -194,7 +194,7 @@
 }
 
 .chart-insight-list-row small {
-  color: var(--color-text-tertiary);
+  color: var(--color-text-primary);
   font-size: 10px;
   font-weight: 700;
 }
@@ -219,7 +219,7 @@
   gap: var(--layout-gap);
   padding: 10px 12px;
   border-radius: 8px;
-  background: color-mix(in srgb, var(--color-background-secondary) 42%, transparent);
+  background: color-mix(in srgb, var(--color-background-secondary) 52%, transparent);
   border: 0.5px solid var(--color-border-tertiary);
 }
 
@@ -264,7 +264,7 @@
 .installment-insight-track {
   height: 7px;
   border-radius: 999px;
-  background: color-mix(in srgb, var(--color-background-secondary) 74%, transparent);
+  background: color-mix(in srgb, var(--color-background-secondary) 82%, transparent);
   overflow: hidden;
 }
 
@@ -272,16 +272,54 @@
   display: block;
   height: 100%;
   border-radius: inherit;
-  background: color-mix(in srgb, var(--color-accent) 64%, #b5d4f4 36%);
+  background: var(--color-accent);
 }
 
 .chart-title {
   font-size: 13px;
   font-weight: 800;
-  color: var(--color-text-secondary);
+  color: var(--color-text-primary);
   letter-spacing: 0.05em;
   margin-bottom: var(--layout-gap-sm);
   text-transform: uppercase;
+}
+
+.chart-title-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--layout-gap);
+  margin-bottom: var(--layout-gap-sm);
+  min-width: 0;
+}
+
+.chart-title-row .chart-title {
+  margin-bottom: 0;
+  min-width: 0;
+}
+
+.chart-card-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  flex: 0 0 auto;
+  min-height: 28px;
+  padding: 6px 11px;
+  border: 1px solid var(--color-border-secondary);
+  border-radius: 999px;
+  background: var(--color-background-primary);
+  color: var(--color-text-primary);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.chart-card-action:hover {
+  border-color: color-mix(in srgb, var(--color-accent) 42%, var(--color-border-secondary));
+  color: var(--color-text-primary);
+  background: var(--color-background-hover);
 }
 
 .chart-head {
@@ -298,14 +336,16 @@
 }
 
 .chart-switch {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  display: inline-grid;
+  grid-template-columns: repeat(3, max-content);
   gap: 3px;
   background: var(--color-background-secondary);
   border-radius: 999px;
   padding: 4px;
   border: 0.5px solid var(--color-border-tertiary);
-  width: 100%;
+  width: max-content;
+  max-width: 100%;
+  justify-self: start;
 }
 
 .chart-switch-btn {
@@ -314,7 +354,7 @@
   color: var(--color-text-secondary);
   font-size: 11px;
   line-height: 1.15;
-  padding: 7px 8px;
+  padding: 7px 16px;
   border-radius: 999px;
   cursor: pointer;
   text-wrap: balance;
@@ -324,7 +364,8 @@
 .chart-switch-btn.active {
   background: var(--color-background-primary);
   color: var(--color-text-primary);
-  border: 0.5px solid var(--color-border-tertiary);
+  border: 0.5px solid var(--color-border-secondary);
+  box-shadow: 0 4px 12px -10px rgba(15, 23, 42, 0.35);
 }
 
 .chart-card canvas {

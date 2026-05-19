@@ -487,3 +487,30 @@ Data: 2026-05-12
 - Limpeza de roadmaps:
   - `roadmap-finflow-layout.md` foi validado como encerrado e removido.
   - `roadmap-despesas-cartoes.md` foi mantido porque ainda registra decisoes/pendencias de navegacao, Cartoes e validacao visual, alem de parte ter sido desdobrada no roadmap novo.
+- Fechamento de Despesas/Cartoes:
+  - `Resumo` ganhou CTA discreto `Ver cartoes`, apontando para a aba `Cartoes`.
+  - Empty states de faturas, parcelamentos e despesas variaveis foram ajustados para orientar melhor o usuario.
+  - `roadmap-despesas-cartoes.md` foi encerrado como reorganizacao estrutural.
+  - Itens de dominio novo, como despesas variaveis, vencimento de fatura por cartao e edicao de cartao, seguem no roadmap ativo `roadmap-gastos-variaveis-e-faturas.md`.
+- Refinamento do tema claro:
+  - Criado `roadmap-tema-claro-ui.md` com foco em fundo neutro, cards brancos, cores semanticas vivas e tabs de chart alinhadas a esquerda.
+  - Tokens claros foram ajustados para sair do creme pesado e usar cinza claro, branco, bordas suaves e sombras leves.
+  - Verde/vermelho do tema claro ficaram mais diretos para valores, status e acoes principais.
+  - Tabs principais mantem verde vivo, mas sem a borda preta pesada da referencia.
+  - Tabs internas dos graficos agora ficam alinhadas a esquerda e ocupam apenas a largura necessaria.
+  - Criado teste para garantir que os controles de modo do grafico continuam escopados ao card de chart.
+  - Segunda passada suavizou alertas, modais, inputs, empty states e bordas remanescentes do tema claro.
+  - Fonte da referencia FinFlow identificada como Geist; `web` agora carrega Geist via Google Fonts e usa como fonte principal.
+  - Tema escuro redesenhado para combinar com o tema claro: canvas quase-preto neutro, surfaces menos azuladas, bordas discretas e cores semanticas vivas sem neon.
+- Inicio do roadmap de gastos variaveis e faturas:
+  - Removidos `roadmap-despesas-cartoes.md` e `roadmap-tema-claro-ui.md`, mantendo apenas o roadmap ativo.
+  - Adicionado dominio inicial de `VariableExpense` com tipo, factory, normalizer, reducers, actions, context, persistencia Dexie e export/import.
+  - `buildMonthView`, resumo, faturas rastreadas e series de graficos agora consideram despesas variaveis do mes.
+  - Aba `Despesas > Variaveis` ganhou CRUD funcional com cadastro rapido por descricao/valor, campos secundarios compactos, edicao, exclusao e empty state.
+  - Exclusao de cartoes passa a considerar uso por despesas variaveis no mes.
+  - Cartoes ganharam `dueDay`, campo opcional de vencimento na criacao, modal de edicao de nome/vencimento e exibicao discreta do vencimento no card.
+  - Cards de fatura mantiveram largura estavel; edicao do cartao foi movida para o nome clicavel com icone discreto, deixando o topo livre para status/exclusao.
+  - CTA `Ver cartoes` saiu da linha propria do resumo e foi incorporado ao cabecalho do card `Parcelas em aberto`.
+  - Despesas variaveis ganharam linha de cadastro rapido dentro da tabela e preferencias locais para ultima categoria, ultimo pagamento e ultimo cartao.
+  - Roadmap ativo `roadmap-gastos-variaveis-e-faturas.md` foi fechado: itens de baixa friccao, testes de dominio, resumo/graficos e bloqueio de exclusao por variaveis foram marcados como feitos.
+  - Testes direcionados rodados: `ExpensesSection`, dominio de `VariableExpense`, series de graficos, selectors de resumo e `useCardDeleteReasons`.

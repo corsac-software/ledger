@@ -5,6 +5,7 @@ import { isMonthInRange } from '../lib/utils';
 interface UseCardDeleteReasonsParams {
   cardBills: CardBillItem[];
   fixedExpenses: FixedExpense[];
+  monthViewVariableExpenses: MonthView['variableExpenses'];
   monthViewInstallments: MonthView['installments'];
   monthCardBills: Record<string, number>;
   currentKey: string;
@@ -13,6 +14,7 @@ interface UseCardDeleteReasonsParams {
 export function useCardDeleteReasons({
   cardBills,
   fixedExpenses,
+  monthViewVariableExpenses,
   monthViewInstallments,
   monthCardBills,
   currentKey,
@@ -32,6 +34,9 @@ export function useCardDeleteReasons({
         .map((item) => item.card as string),
       ...monthViewInstallments
         .filter((item) => !!item.card && item.currentInstallment <= item.totalInstallments)
+        .map((item) => item.card as string),
+      ...monthViewVariableExpenses
+        .filter((item) => item.paymentMethod === 'cartao' && !!item.card)
         .map((item) => item.card as string),
       ...Object.keys(monthCardBills || {}),
     ]);
@@ -57,6 +62,13 @@ export function useCardDeleteReasons({
       ) {
         labels.push('parcelamentos');
       }
+      if (
+        monthViewVariableExpenses.some(
+          (item) => item.paymentMethod === 'cartao' && item.card === cardId
+        )
+      ) {
+        labels.push('despesas variaveis');
+      }
       if (Object.prototype.hasOwnProperty.call(monthCardBills, cardId)) {
         labels.push('fatura do mês');
       }
@@ -67,5 +79,12 @@ export function useCardDeleteReasons({
     });
 
     return reasons;
-  }, [cardBills, fixedExpenses, monthViewInstallments, monthCardBills, currentKey]);
+  }, [
+    cardBills,
+    fixedExpenses,
+    monthViewVariableExpenses,
+    monthViewInstallments,
+    monthCardBills,
+    currentKey,
+  ]);
 }
